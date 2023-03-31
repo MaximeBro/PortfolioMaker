@@ -1,0 +1,38 @@
+.c-navbar > .nav-item {
+	padding: 0 4em 0 4em;
+	font-size: large;
+}
+
+.c-clicked {
+	color: white;
+	text-decoration: underline;
+}
+
+.c-default {
+	color: rgb(172, 172, 172);
+	text-decoration: none;
+}
+
+.c-bg-navbar {
+	background-color: rgb(58, 58, 58);
+	border-bottom: solid rgb(215, 215, 215) 1px;
+}
+
+.c-expand {
+	display: block;
+
+	height: 80%;
+	width: 80%;
+
+	position: relative;
+	left: 50%; top: 35%;
+	transform: translate(-50%, -35%);
+
+	border: solid rgb(215, 215, 215) 1px;
+	border-radius: 5px;
+	padding: 30 50 30 50;
+}
+
+.c-none {
+	display: none;
+}

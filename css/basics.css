@@ -1,0 +1,193 @@
+
+/* GLOBAL DIVS */
+.c-container {
+	display: flex;
+	height: 100%;
+}
+
+.c-div {
+	background-color: rgb(241, 241, 241);
+	border: solid rgb(215, 215, 215) 1px;
+	border-radius: 5px;
+}
+
+.c-sep {
+	border: solid rgb(40, 40, 40) 1px;
+	position: inherit;
+	left: 50%;
+	transform: translate(-50%, 0);
+
+	width: 70%;
+}
+
+.c-demi-sep {
+	border: solid rgb(40, 40, 40) 1px;
+	position: inherit;
+	left: 50%;
+	transform: translate(-50%, 0);
+
+	width: 35%;
+}
+
+.c-div-login {
+	padding: 25 50 25 50;
+}
+
+.c-main {
+	display: block;
+	flex: 5;
+}
+
+.c-section {
+	height: 80%;
+	width: 80%;
+
+	position: relative;
+	left: 50%; top: 35%;
+	transform: translate(-50%, -35%);
+
+	border: solid rgb(215, 215, 215) 1px;
+	border-radius: 5px;
+	padding: 30 50 30 50;
+}
+
+.c-aside {
+	display: block;
+	position: relative;
+	top: 0; left: 0;
+	height: 100%;
+	flex: 1;
+
+	background-color: rgb(241, 241, 241);
+	border: solid rgb(215, 215, 215) 1px;
+}
+
+.c-navbar {
+	display: flex;
+	padding: 0 0 0 1rem;
+	color: white;
+	list-style-type: none;
+	position: relative;
+	left: 50%;
+	transform: translate(-50%);
+}
+
+.c-1em {
+	display: block;
+	height: 1em;
+}
+
+.c-2em {
+	display: block;
+	height: 2em;
+}
+
+.c-3em {
+	display: block;
+	height: 3em;
+}
+
+.c-4em {
+	display: block;
+	height: 4em;
+}
+
+/* BUTTONS */
+.c-btn {
+	display: inline-block;
+	color: white;
+	border-style: none;
+	border-radius: 3px;
+	font-weight: 400;
+	padding: 0.5rem 1rem 0.5rem 1rem;
+	font-size: 1.25rem;
+	border-radius: 0.5rem;
+	user-select: none;
+}
+
+.c-btn-green {
+	background-color: rgb(54, 190, 95);
+}
+
+.c-btn-green:hover {
+	background-color: rgb(40, 150, 73);
+}
+
+.c-btn-blue {
+	background-color: #0d6efd;
+}
+
+.c-btn-blue:hover {
+	background-color: #0b5ed7
+}
+
+
+/* INPUTS */
+.c-input {
+	width: 75%;
+}
+
+.c-ibox-elem {
+	display: inline;
+}
+
+.c-ibox {
+	display: inline-block;
+	position: inherit;
+	top: 50%; left: 50%;
+}
+
+
+/* ASIDES */
+.c-aside-title {
+	display: block;
+	margin-top: 15px;
+	position: inherit;
+	left: 50%;
+	transform: translate(-50%, 0);
+	text-align: center;
+}
+
+.c-aside-bottom {
+	display: block;
+	position: absolute;
+	bottom: 2em;
+	width: 100%;
+}
+
+.c-aside-content {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	bottom: 0; left: 50%;
+	text-align: center;
+	transform: translate(-50%);
+}
+
+.c-aside-image > svg {
+	display: block;
+	position: relative;
+	left: 50%;
+	transform: translate(-50%);
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.c-aside-h4 {
+	display: block;
+	position: relative;
+	left: 1.5rem;
+	text-align: justify;
+	color: #0b5ed7;
+}
+
+
+/* SECTION */
+.c-section-content {
+	border-left: solid rgb(40, 40, 40) 2px;
+	height: 70%;
+	width: 80%;
+	position: relative;
+	left: 20%; top: 45%;
+	transform: translate(-20%, -45%);
+}

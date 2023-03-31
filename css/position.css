@@ -1,0 +1,19 @@
+.fixed {
+	position: fixed;
+}
+
+.top {
+	top: 20px;
+}
+
+.right {
+	right: 20px;
+}
+
+.left {
+	left: 20px;
+}
+
+.bottom {
+	bottom: 20px;
+}
