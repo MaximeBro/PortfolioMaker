@@ -7,8 +7,15 @@
 
 .c-div {
 	background-color: rgb(241, 241, 241);
-	border: solid rgb(215, 215, 215) 1px;
+	border: solid rgb(179, 179, 179) 1px;
 	border-radius: 5px;
+}
+
+.c-div-dragNdrop {
+	background-color: rgb(255, 255, 255);
+	border: dashed rgb(140, 140, 140) 2px;
+	border-radius: 5px;
+	cursor: pointer;
 }
 
 .c-sep {
@@ -33,6 +40,14 @@
 	padding: 25 50 25 50;
 }
 
+.c-div-section {
+	margin: 0 25 0 25;
+	padding: 15 25 0 25;
+	background-color: rgb(241, 241, 241);
+	border-radius: 5px;
+	height: auto;
+}
+
 .c-main {
 	display: block;
 	flex: 5;
@@ -43,8 +58,10 @@
 	width: 80%;
 
 	position: relative;
-	left: 50%; top: 35%;
-	transform: translate(-50%, -35%);
+	left: 50%;
+	transform: translate(-50%);
+
+	margin-top: 2em;
 
 	border: solid rgb(215, 215, 215) 1px;
 	border-radius: 5px;
@@ -118,7 +135,15 @@
 }
 
 .c-btn-blue:hover {
-	background-color: #0b5ed7
+	background-color: #0b5ed7;
+}
+
+.c-btn-bluep {
+	background-color: #6c9ce3;
+}
+
+.c-btn-bluep:hover {
+	background-color: #4f86d9;
 }
 
 
@@ -135,6 +160,10 @@
 	display: inline-block;
 	position: inherit;
 	top: 50%; left: 50%;
+}
+
+.c-ibox > input {
+	display: inline-block;
 }
 
 
@@ -190,4 +219,37 @@
 	position: relative;
 	left: 20%; top: 45%;
 	transform: translate(-20%, -45%);
+}
+
+.c-section-multiple {
+	display: flex;
+	flex-direction: row;
+	position: relative;
+	top: 50%; 
+	transform: translate(0, -50%);
+	height: 90%;
+	width: 100%;
+}
+
+.c-section-form {
+	flex: 4;
+}
+
+.c-section-h4 {
+	display: block;
+	position: relative;
+	text-align: justify;
+}
+
+.c-ibox-form {
+	display: flex;
+	flex-direction: row;
+}
+
+.c-ibox-form > input {
+	flex: 3;
+}
+
+.c-ibox-form > div {
+	flex: 1;
 }

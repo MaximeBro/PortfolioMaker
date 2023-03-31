@@ -17,3 +17,14 @@
 .bottom {
 	bottom: 20px;
 }
+
+.centered {
+	position: relative;
+	left: 50%;
+	transform: translate(-50%);
+	text-align: center;
+}
+
+.italic {
+	font-style: italic;
+}

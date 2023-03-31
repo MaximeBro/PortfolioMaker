@@ -70,10 +70,6 @@
 					<li class="nav-item">
 						<a class="nav-link" id="compteLink" href="#" onclick="clickEvent('compteLink')">Compte</a>
 					</li>
-
-					<li class="nav-item">
-						<a class="nav-link" id="supportLink" href="#" onclick="clickEvent('supportLink')">Support</a>
-					</li>
 				</ul>
 			</div>
 			
@@ -92,69 +88,96 @@
 			<div style="width: 100%; height: 100%;">
 				<h3>Compte</h3>
 				<div class="c-section-content">
-				
+
+					<div class="c-section-multiple">
+						<div class="c-div-section c-section-form">
+							<form class="form-signin" method="post">
+								<div class="mb-3 c-ibox-form">
+									<input type="text" class="form-control mb-1 c-ibox-elem c-input" name="nom" id="nomInput" placeholder="Nom">
+									<div></div>
+									<input type="text" class="form-control c-ibox-elem c-input" name="prenom" id="nomInput" placeholder="Prénom">
+								</div>
+
+								<input type="email" class="form-control mb-2" id="floatingInput" placeholder="Email">
+								<input type="password" class="form-control mb-1" id="floatingPassword" placeholder="Mot de passe">
+								<input type="password" class="form-control mb-1" id="passwordConfirm" placeholder="Confirmer">
+
+								<button class="btn btn-lg btn-primary mt-4 centered" type="submit">Enregistrer</button>
+							</form>
+						</div>
+
+						<div class="c-div-section">
+							<h4 class="c-section-h4">Image de profil</h4>
+							<div class="c-1em"></div>
+							<div class="c-div-dragNdrop" onclick="ouvrirFichier()" id="dragNdropDiv">
+								<div class="c-3em"></div>
+								<p class="text-muted centered italic">glisser - déposer</p>
+								<div class="c-3em"></div>
+							</div>
+
+							<div class="c-2em"></div>
+							<button class="btn btn-lg btn-secondary centered" onclick="ouvrirFichier()" id="btnFichier">Ouvrir</button>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</section>
+	</div> <!-- Main closure -->
 
-		<section class="c-section" id="support">
-			<div style="width: 100%; height: 100%;">
-				<h3>Support</h3>
-				<div class="c-section-content">
-				
-				</div>
-			</div>
-		</section>
-	</div>
-
-</div>
+</div> <!-- Container closure -->
 
 
 
-
-<!-- Gestion des intéractions avec la navbar -->
 <script>
 
+	// Gestion de l'ouverture de fichiers
+
+	async function ouvrirFichier() {
+		var dragNdropDiv = document.getElementById("dragNdropDiv");
+		let files = await selectFile("Pictures/*");
+		dragNdropDiv.innerHTML = files.map(file => `<img src="${URL.createObjectURL(file)}" style="width: 100px; height: auto;">`).join('');
+	}
+
+	function selectFile (contentType) {
+		return new Promise(resolve => {
+		let input = document.createElement('input');
+			input.type = 'file';
+			input.multiple = false;
+			input.accept = contentType;
+
+			input.onchange = _ => { let files = resolve(files[0]); };
+
+			input.click();
+		});
+	}
+
+
+	// Gestion des intéractions avec la navbar
 	function clickEvent(element) {
 		if(element == "portfoliosLink") {
 			document.getElementById("portfoliosLink").setAttribute("class", "c-clicked");
 			document.getElementById("compteLink").setAttribute("class", "c-default");
-			document.getElementById("supportLink").setAttribute("class", "c-default");
 
 			document.getElementById("portfolios").setAttribute("class", "c-expand");
 			document.getElementById("compte").setAttribute("class", "c-none");
-			document.getElementById("support").setAttribute("class", "c-none");
 		}
 
 		if(element == "compteLink") {
 			document.getElementById("portfoliosLink").setAttribute("class", "c-default");
 			document.getElementById("compteLink").setAttribute("class", "c-clicked");
-			document.getElementById("supportLink").setAttribute("class", "c-default");
 
 			document.getElementById("portfolios").setAttribute("class", "c-none");
 			document.getElementById("compte").setAttribute("class", "c-expand");
-			document.getElementById("support").setAttribute("class", "c-none");
-		}
-
-		if(element == "supportLink") {
-			document.getElementById("portfoliosLink").setAttribute("class", "c-default");
-			document.getElementById("compteLink").setAttribute("class", "c-default");
-			document.getElementById("supportLink").setAttribute("class", "c-clicked");
-
-			document.getElementById("portfolios").setAttribute("class", "c-none");
-			document.getElementById("compte").setAttribute("class", "c-none");
-			document.getElementById("support").setAttribute("class", "c-expand");
 		}
 	}
 
 	window.onload = function() {
 		document.getElementById("portfoliosLink").setAttribute("class", "c-clicked");
 		document.getElementById("compteLink").setAttribute("class", "c-default");
-		document.getElementById("supportLink").setAttribute("class", "c-default");
 
 		document.getElementById("portfolios").setAttribute("class", "c-expand");
 		document.getElementById("compte").setAttribute("class", "c-none");
-		document.getElementById("support").setAttribute("class", "c-none");
 	}
 
 </script>
