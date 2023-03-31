@@ -89,6 +89,10 @@
 	transform: translate(-50%);
 }
 
+.CGU p {
+	width: 70%;
+}
+
 .c-1em {
 	display: block;
 	height: 1em;
@@ -107,6 +111,18 @@
 .c-4em {
 	display: block;
 	height: 4em;
+}
+
+.c-back {
+	background-color: #0d6efd;
+	border-radius: 5em;
+	padding: 5 15 5 15;
+	line-height: 1.2em;
+	color:white;
+}
+
+.c-back:hover {
+	background-color: #0b5ed7;
 }
 
 /* BUTTONS */

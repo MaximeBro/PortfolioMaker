@@ -2,6 +2,15 @@
 	position: fixed;
 }
 
+.static {
+	position: static;
+}
+
+.absolute {
+	position: absolute;
+	z-index: 1020;
+}
+
 .top {
 	top: 20px;
 }
@@ -19,6 +28,7 @@
 }
 
 .centered {
+	display: block;
 	position: relative;
 	left: 50%;
 	transform: translate(-50%);
