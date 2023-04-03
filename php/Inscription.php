@@ -13,7 +13,7 @@ $passwordC = $_POST['passwordConfirm'];
 function verification($nom, $prenom, $email, $password, $passwordC) {
 
 	// Vérification de la bonne correspondance des mots de passe renseignés
-	if($password != $passwordC) { erreur("Les mots de passe ne correspondent pas !"); exit(); }
+	if($password != $passwordC) { erreur("Les mots de passe ne correspondent pas !"); Header("Location: ../Inscription.html"); exit(); }
 
 
 	// Vérification de l'adresse email dans la base, si elle est déjà renseignée on envoie une erreur !
@@ -40,8 +40,9 @@ function verification($nom, $prenom, $email, $password, $passwordC) {
 
 	// Après validation de toutes les étapes de vérification
 
-	$author = new Auteur($count, $nom, $prenom, $email, $password, $passwordC);
+	$author = new Auteur($nom, $prenom, $email, $password, $passwordC);
 	$_SESSION['utilisateur'] = serialize($author);
+	Console.log("n°" + $count);
 
 	header("Location: ../Compte.html");
 	exit();
