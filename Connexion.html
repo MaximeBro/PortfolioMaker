@@ -16,16 +16,18 @@
 <div class="h-100 d-flex align-items-center justify-content-center">
 
 	<div class="c-div c-div-login">
-		<form class="form-signin" method="post">
+		<form class="form-signin" method="post" action="php/Connexion.php">
 			<h2 class="mb-4">Connexion</h2>
-			<input type="email" class="form-control mb-3" id="floatingInput" placeholder="Email">
-			<input type="password" class="form-control" id="floatingPassword" placeholder="Mot de passe">
+			<input type="email" class="form-control mb-3" id="emailInput" placeholder="Email" name="emailInput">
+			<input type="password" class="form-control" id="passwordInput" placeholder="Mot de passe" name="passwordInput">
 
 			<div class="checkbox my-3">
 				<label>
 					<input type="checkbox" value="remember-me"> Se souvenir de moi
 				</label>
 			</div>
+
+			<p id="erreur" class="erreur"></p>
 
 			<button class="btn btn-lg btn-primary mt-3" type="submit">Se connecter</button>
 

@@ -7,15 +7,15 @@ class DB {
 	private $connect=null; //connexion PDO à la base
 
 	/************************************************************************/
-	//	Constructeur gerant  la connexion à la base via PDO
-	//	NB : il est non utilisable a l'exterieur de la classe DB
+	//	Constructeur gerant  la connexion à la base via PDO                 //
+	//	NB : il est non utilisable a l'exterieur de la classe DB            //
 	/************************************************************************/
 	private function __construct() {
 		// Connexion à la base de données
-		$connStr = 'pgsql:host=woody port=5432 dbname=la212847';
+		$connStr = 'pgsql:host=woody port=5432 dbname=bv200989';
 		try {
 			// Connexion à la base
-			$this->connect = new PDO($connStr, 'la212847', 'aymeric');
+			$this->connect = new PDO($connStr, 'bv200989', 'valentin');
 
 			// Configuration facultative de la connexion
 			$this->connect->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
@@ -50,7 +50,7 @@ class DB {
 	} //fin getInstance
 
 	/************************************************************************/
-	//	Methode permettant de fermer la connexion a la base de données
+	//	Methode permettant de fermer la connexion a la base de données      //
 	/************************************************************************/
 	public function close() {
 		$this->connect = null;
@@ -75,8 +75,16 @@ class DB {
 	private function execQuery($requete,$tparam,$nomClasse) {
 		//on prépare la requête
 		$stmt = $this->connect->prepare($requete);
+
+		// Si la requête est un count, on renvoie le résultat sous forme de String
+		if(strpos($requete, "count(*)") !== false || strpos($requete, "max(") !== false ) {
+			$stmt->execute();
+			return $stmt->fetchColumn();
+		}
+		
 		//on indique que l'on va récupére les tuples sous forme d'objets instance de Client
 		$stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, $nomClasse);
+		
 		//on exécute la requête
 		if ($tparam != null) {
 			$stmt->execute($tparam);
@@ -115,35 +123,35 @@ class DB {
 	}
 
 	/*************************************************************************
-	 * Fonctions qui peuvent être utilisées dans les scripts PHP
+	 * Fonctions qui peuvent être utilisées dans les scripts PHP             *
 	 *************************************************************************/
 
 	public function getMaxAuteurs() {
-		$requete = 'select max(idauteur) from auteur';
+		$requete = 'select max(idAuteur) from Auteur';
 		return $this->execQuery($requete, null, 'Auteur');
 	}
 
 	public function getAuteurs() {
-		$requete = 'select * from auteur orber by idauteur';
+		$requete = 'select * from auteur';
 		return $this->execQuery($requete, null, 'Auteur');
 	}
 
-	public function insertAuteur($idAuteur, $nom, $prenom, $email, $mdp, $image) {
-		$requete = 'insert into client values(?,?,?,?,?,?)';
-		$tparam = array($idAuteur, $nom, $prenom, $email, $mdp, $image);
-		return $this->execMaj($requete,$tparam);
+	public function insertAuteur($idA, $nom, $prenom, $email, $mdp, $image) {
+		$requete = 'insert into auteur values(?,?,?,?,?,?)';
+		$tparam = array($idA, $nom, $prenom, $email, $mdp, $image);
+		return $this->execMaj($requete, $tparam);
 	}
 
 	public function updateAuteur($idAuteur, $nom, $prenom, $email, $mdp, $image) {
 		$requete = 'update auteur set nom = ? , prenom = ? , email = ? , mdp = ? , image = ? where idauteur = ?';
 		$tparam = array($nom, $prenom, $email, $mdp, $image, $idAuteur);
-		return $this->execMaj($requete,$tparam);
+		return $this->execMaj($requete, $tparam);
 	}
 
 	public function deleteAuteur($idAuteur) {
-		$requete = 'delete from auteur where idauteur = ?';
+		$requete = 'delete from auteur where idAuteur = ?';
 		$tparam = array($idAuteur);
-		return $this->execMaj($requete,$tparam);
+		return $this->execMaj($requete, $tparam);
 	}
 
 	/*

@@ -10,6 +10,40 @@
 	<link rel="stylesheet" href="css/position.css">
 
 	<title>Inscription</title>
+
+
+<script type="text/javascript">
+
+	function verifEmail() {
+		let regex = /[A-Za-z]+@[A-Za-z]+\.[A-Za-z]+/i;
+		let input = document.getElementById("emailInput").value;
+		if(!regex.test(input)) {
+			document.getElementById("erreur").innerHTML = 'Format email invalide !';
+			Console.log($input.value);
+		} else {
+			document.getElementById("erreur").innerHTML = '';
+		}
+	}
+
+	function verifMdp() {
+		let mdp = document.getElementById("passwordInput");
+		let mdpConfirm = document.getElementById("passwordConfirm");
+		if(mdp.value != mdpConfirm.value) {
+			document.getElementById("erreur").innerHTML = 'Les mots de passe ne correspondent pas !';
+		} else {
+			document.getElementById("erreur").innerHTML = '';
+		}
+	}
+
+	function chargerEvents() {
+		document.getElementById("emailInput").addEventListener("input", verifEmail, false);
+		document.getElementById("passwordConfirm").addEventListener("input", verifMdp, false);
+	}
+
+	window.addEventListener("load", chargerEvents, false);
+
+</script>
+
 </head>
 <body class="text-center">
 
@@ -18,14 +52,14 @@
 		<form class="form-signin" method="post" action="php/Inscription.php">
 			<h2 class="mb-4">Inscription</h2>
 			<div class="mb-3 c-ibox-form">
-				<input type="text" class="form-control mb-1 c-ibox-elem c-input" name="nom" id="nomInput" placeholder="Nom" required>
+				<input type="text" class="form-control mb-1 c-ibox-elem c-input" name="nomInput" id="nomInput" placeholder="Nom" required>
 				<div></div>
-				<input type="text" class="form-control c-ibox-elem c-input" name="prenom" id="nomInput" placeholder="Prénom" required>
+				<input type="text" class="form-control c-ibox-elem c-input" name="prenomInput" id="prenomInput" placeholder="Prénom" required>
 			</div>
 
-			<input type="email" class="form-control mb-3" id="emailInput" placeholder="Email" required>
-			<input type="password" class="form-control mb-1" id="passwordInput" placeholder="Mot de passe" required>
-			<input type="password" class="form-control" id="passwordConfirm" placeholder="Confirmer" required>
+			<input type="email" class="form-control mb-3" id="emailInput" name="emailInput" placeholder="Email" required>
+			<input type="password" class="form-control mb-1" id="passwordInput" name="passwordInput" placeholder="Mot de passe" required>
+			<input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm" placeholder="Confirmer" required>
 
 			<div class="checkbox my-3">
 				<label>
@@ -33,9 +67,9 @@
 				</label>
 			</div>
 
-			<p id="erreur" class="text-muted" style="color: red;"></p>
+			<p id="erreur" class="erreur"></p>
 
-			<button class="btn btn-lg btn-primary mt-3" type="submit">S'inscrire</button>
+			<button class="btn btn-lg btn-primary mt-1" type="submit">S'inscrire</button>
 
 			<p class="text-muted mt-3">
 				Déjà inscrit ?

@@ -21,10 +21,7 @@
 
 	<div class="c-aside">
 		<div class="c-aside-image">
-			<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-				<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-				<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-			</svg>
+			<div> <img src="images/minion.png" alt="Utilisateur.png"> </div>
 		</div>
 		<div class="c-demi-sep"></div>
 		<h2 class="c-aside-title" id="nomProfil">Jean Magie</h2>
@@ -45,14 +42,12 @@
 
 		<div class="c-aside-bottom">
 			<div class="centered">
-				<a href="Connexion.html">
+				<form action="php/Deconnexion.php">
 					<button class="c-btn c-btn-blue">Déconnexion</button>
-				</a>
+				</form>
 			</div>
 		</div>
 	</div>
-
-
 
 	<!-- Contenu principal, regroupe toute la partie droite de la page -->
 
@@ -89,16 +84,19 @@
 
 					<div class="c-section-multiple">
 						<div class="c-div-section c-section-form">
-							<form class="form-signin" method="post">
-								<div class="mb-3 c-ibox-form">
-									<input type="text" class="form-control mb-1 c-ibox-elem c-input" name="nom" id="nomInput" placeholder="Nom">
+							<form class="form-signin" method="post" action="modifCompte.php">
+								<div class="mb-2 c-ibox-form">
+									<input type="text" class="form-control mb-1 c-ibox-elem c-input" name="nomInput" id="nomInput" placeholder="Nom">
 									<div></div>
-									<input type="text" class="form-control c-ibox-elem c-input" name="prenom" id="nomInput" placeholder="Prénom">
+									<input type="text" class="form-control c-ibox-elem c-input" name="prenomInput" id="prenomInput" placeholder="Prénom">
 								</div>
 
-								<input type="email" class="form-control mb-2" id="floatingInput" placeholder="Email">
-								<input type="password" class="form-control mb-1" id="floatingPassword" placeholder="Mot de passe">
-								<input type="password" class="form-control mb-1" id="passwordConfirm" placeholder="Confirmer">
+								<input type="email" class="form-control mb-2" id="emailInput" placeholder="Email" name="emailInput">
+								<input type="password" class="form-control mb-2" id="passwordOld" placeholder="Mot de passe actuel" name="passwordOl" required>
+								<input type="password" class="form-control mb-1" id="passwordInput" placeholder="Nouveau mot de passe" name="passwordInput">
+								<input type="password" class="form-control mb-1" id="passwordConfirm" placeholder="Confirmer nouveau mot de passe" name="passwordConfirm">
+
+								<p class="erreur" id="erreur"></p>
 
 								<button class="btn btn-lg btn-primary mt-4 centered" type="submit">Enregistrer</button>
 							</form>
@@ -122,6 +120,8 @@
 			</div>
 		</section>
 	</div> <!-- Main closure -->
+
+
 
 </div> <!-- Container closure -->
 

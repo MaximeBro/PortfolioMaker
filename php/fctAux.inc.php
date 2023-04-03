@@ -4,7 +4,7 @@ session_start();
 function validerSession() {
 
 	if(isset($_SESSION['utilisateur'])) {
-		header("Location: ../Compte.html");
+		header("Location: ../Compte.php");
 	} else {
 		header ("Location: ../Connexion.html");
 	}

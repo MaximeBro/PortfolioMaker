@@ -18,6 +18,20 @@
 	cursor: pointer;
 }
 
+.c-large-dragNdrop {
+	display: block;
+	position: relative;
+	width: 75%;
+	height: 45%;
+}
+
+.c-large-dragNdrop p {
+	display: block;
+	position: relative;
+	top: 50%; left: 50%;
+	transform: translate(-50%, -50%);
+}
+
 .c-sep {
 	border: solid rgb(40, 40, 40) 1px;
 	position: inherit;
@@ -93,6 +107,10 @@
 	width: 70%;
 }
 
+.erreur {
+	color: red;
+}
+
 .c-1em {
 	display: block;
 	height: 1em;
@@ -114,7 +132,7 @@
 }
 
 .c-back {
-	background-color: #0d6efd;
+	background-color: #136AE8;
 	border-radius: 5em;
 	padding: 5 15 5 15;
 	line-height: 1.2em;
@@ -122,8 +140,14 @@
 }
 
 .c-back:hover {
-	background-color: #0b5ed7;
+	background-color: #0050C3;
 }
+
+
+
+/***************/
+/* OTHER STUFF */
+/***************/
 
 /* BUTTONS */
 .c-btn {
@@ -155,11 +179,11 @@
 }
 
 .c-btn-bluep {
-	background-color: #6c9ce3;
+	background-color: #16ABF0;
 }
 
 .c-btn-bluep:hover {
-	background-color: #4f86d9;
+	background-color: #0E92CF;
 }
 
 
@@ -210,13 +234,25 @@
 	width: auto;
 }
 
-.c-aside-image > svg {
-	display: block;
+.c-aside-image div{
+	display: flex;
 	position: relative;
 	left: 50%;
 	transform: translate(-50%);
 	margin-top: 1em;
 	margin-bottom: 1em;
+	width: 50%;
+	height: auto;
+	user-select: none;
+}
+
+.c-aside-image div img {
+	position: relative;
+	display: block;
+	max-width: 100%;
+	max-height: 100%;
+	flex: 1;
+	border-radius: 50%;
 }
 
 .c-aside-h4 {
@@ -268,5 +304,28 @@
 }
 
 .c-ibox-form > div {
+	flex: 1;
+}
+
+.c-content {
+	display: none;
+}
+
+.c-content-active {
+	display: block;
+}
+
+.c-section-btn-box {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	position: relative;
+}
+
+.c-section-btn-box button {
+	flex: 1;
+}
+
+.c-section-btn-box div {
 	flex: 1;
 }

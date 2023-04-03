@@ -6,9 +6,17 @@
 	position: static;
 }
 
+.relative {
+	position: relative;
+}
+
 .absolute {
 	position: absolute;
 	z-index: 1020;
+}
+
+.sticky {
+	position: sticky;
 }
 
 .top {
@@ -37,4 +45,19 @@
 
 .italic {
 	font-style: italic;
+}
+
+.pt-4 {
+	padding-top: 4em;
+}
+
+.pb-4 {
+	padding-bottom: 4em;
+}
+
+.centerH {
+	text-align: center;
+	position: relative;
+	left: 50%;
+	transform: translate(-50%);
 }

@@ -25,17 +25,17 @@ drop table if exists CV cascade;
 
 
 CREATE TABLE Auteur (
-	idAuteur serial primary key NOT NULL,
+	idAuteur integer primary key NOT NULL,
 	nom VARCHAR(50) NOT NULL,
 	prenom VARCHAR(50) NOT NULL,
 	email VARCHAR(50) NOT NULL,
-	mdp VARCHAR(50) NOT NULL,
+	mdp text NOT NULL,
 	cheminPhoto text NOT NULL
 );
 
 CREATE TABLE Portfolio (
 	idPortfolio serial NOT NULL,
-	idAuteur serial references Auteur(idAuteur) NOT NULL,
+	idAuteur 	integer references Auteur(idAuteur) NOT NULL,
 	titreP text NOT NULL,
 	cheminAuteur text NOT NULL,
 	cheminSpec text NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE Image (
 CREATE TABLE Licence (
 	idLicence serial NOT NULL,
 	idPortfolio serial references Portfolio(idPortfolio) NOT NULL,
-	idAuteur 	serial references Auteur(idAuteur) NOT NULL,
+	idAuteur 	integer references Auteur(idAuteur) NOT NULL,
 	titreL VARCHAR(255) NOT NULL,
 	texteL VARCHAR(255) NOT NULL,
 
@@ -63,7 +63,7 @@ CREATE TABLE Licence (
 CREATE TABLE Contact (
 	emailC VARCHAR(50) NOT NULL,
 	idPortfolio serial references Portfolio(idPortfolio) NOT NULL,
-	idAuteur 	serial references Auteur(idAuteur) NOT NULL,
+	idAuteur 	integer references Auteur(idAuteur) NOT NULL,
 
 	numTel VARCHAR(50),
 	github text,
@@ -78,7 +78,7 @@ CREATE TABLE Contact (
 CREATE TABLE Projet (
 	idProjet serial NOT NULL,
 	idPortfolio serial references Portfolio(idPortfolio) NOT NULL,
-	idAuteur 	serial references Auteur(idAuteur) NOT NULL,
+	idAuteur 	integer references Auteur(idAuteur) NOT NULL,
 
 	titreP text NOT NULL,
 	descriptionP text NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE Projet (
 CREATE TABLE Competence (
 	idComp serial NOT NULL,
 	idPortfolio serial references Portfolio(idPortfolio) NOT NULL,
-	idAuteur 	serial references Auteur(idAuteur) NOT NULL,
+	idAuteur 	integer references Auteur(idAuteur) NOT NULL,
 
 	titre VARCHAR(255) NOT NULL,
 	texte VARCHAR(255) NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE Competence (
 CREATE TABLE CV (
 	idCv serial NOT NULL,
 	idPortfolio serial references Portfolio(idPortfolio) NOT NULL,
-	idAuteur 	serial references Auteur(idAuteur) NOT NULL,
+	idAuteur 	integer references Auteur(idAuteur) NOT NULL,
 
 	cheminCV text,
 	imageCV text NOT NULL,
@@ -113,4 +113,4 @@ CREATE TABLE CV (
 );
 
 
-
+INSERT INTO AUTEUR VALUES(1, 'admin', 'admin', 'admin@ecareus.fr', 'admin', 'admin.png');

@@ -8,7 +8,7 @@ class Auteur {
 	private $mdp;
 	private $pdp;
 
-	public function __construct($i, $name="Jean", $lastName="Magie", $email="exemple@gmail.com", $password="encrypted", $image="base64") {
+	public function __construct($i=-1, $name="", $lastName="", $email="", $password="", $image="") {
 		$this->idAuteur = $i;
 		$this->nom = $name;
 		$this->prenom = $lastName;
@@ -30,7 +30,7 @@ class Auteur {
 		$res = $res ."prénom:".$this->prenom."\n";
 		$res = $res ."email:".$this->email."\n";
 		$res = $res ."mdp:".$this->mdp."\n";
-		$res = $res ."pdp:".$this->image."\n";
+		$res = $res ."pdp:".$this->pdp."\n";
 		$res = $res ."<br/>";
 		return $res;
 
