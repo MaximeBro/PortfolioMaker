@@ -15,12 +15,9 @@
 </head>
 <body>
 	
-<div class="c-container">
+<!-- Contenu principal, regroupe toute la page -->
+<div class="containe-fluid">	
 
-	<!-- Contenu principal, regroupe toute la page -->
-
-	<div class="c-main">
-		
 		<!-- Barre de navigation -->
 		<nav class="navbar navbar-expand-lg c-4em c-bg-navbar">
 			<div class="navbar-collapse offcanvas-collapse c-3em">
@@ -92,7 +89,9 @@
 			</div>
 		</section>
 
-		<section class="c-section none" id="creationCv" >
+		<!-- Création CV -->
+		<section id="creationCv">
+			<div style="width: 100%; height: 100%; ">
 				<ul class="list-group">
 					<li class="list-group-item">
 						<h3 class="c-competence-title">Titre et Bio</h3>
@@ -131,9 +130,8 @@
 						</div>
 					</li>
 				</ul>
-		</section>
-			
-			
+			</div>
+		</section>		
 
 		<!-- Compétences -->
 		<section class="c-section" id="competences">
@@ -175,16 +173,10 @@
 				<h3>Contact</h3>
 			</div>
 		</section>
-	</div> <!-- Main closure -->
-
 </div> <!-- Container closure -->
 
-
-
 <script>
-
 	// Gestion de l'ouverture de fichiers
-
 	async function ouvrirFichier() {
 		var dragNdropDiv = document.getElementById("dragNdropDiv");
 		let files = await selectFile("Pictures/*");
@@ -205,16 +197,9 @@
 	}
 
 	function creerCV(){
-		let div = document.getElementById("creationCv");
-		let 
-		if(div.style.display == "block"){
-			div.style.display = "none";
-		}
-		else{
-			div.style.display = "block";
-		}
+		document.getElementById("creationCv").setAttribute("class", "c-expand");
+		document.getElementById("cv").setAttribute("class", "c-none");
 	}
-
 
 	// Gestion des intéractions avec la navbar
 	function clickEvent(element) {
@@ -246,7 +231,7 @@
 			document.getElementById(el).setAttribute("class", elClass);
 		});
 		
-		const sectionList = ["accueil", "cv", "competences", "projet", "license", "contact"];
+		const sectionList = ["accueil", "cv", "competences", "projet", "license", "contact", "creationCv"];
 		sectionList.forEach((el) => {
 			const elClass = (el === element.replace("Link", "")) ? "c-expand" : "c-none";
 			document.getElementById(el).setAttribute("class", elClass);
@@ -274,6 +259,5 @@
 	}
 
 </script>
-
 </body>
 </html>
