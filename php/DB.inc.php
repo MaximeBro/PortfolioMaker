@@ -118,6 +118,11 @@ class DB {
 	 * Fonctions qui peuvent être utilisées dans les scripts PHP
 	 *************************************************************************/
 
+	public function getMaxAuteurs() {
+		$requete = 'select max(idauteur) from auteur';
+		return $this->execQuery($requete, null, 'Auteur');
+	}
+
 	public function getAuteurs() {
 		$requete = 'select * from auteur orber by idauteur';
 		return $this->execQuery($requete, null, 'Auteur');

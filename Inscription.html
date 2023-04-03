@@ -15,23 +15,25 @@
 
 <div class="h-100 d-flex align-items-center justify-content-center">
 	<div class="c-div c-div-login">
-		<form class="form-signin" method="post">
+		<form class="form-signin" method="post" action="php/Inscription.php">
 			<h2 class="mb-4">Inscription</h2>
 			<div class="mb-3 c-ibox-form">
-				<input type="text" class="form-control mb-1 c-ibox-elem c-input" name="nom" id="nomInput" placeholder="Nom">
+				<input type="text" class="form-control mb-1 c-ibox-elem c-input" name="nom" id="nomInput" placeholder="Nom" required>
 				<div></div>
-				<input type="text" class="form-control c-ibox-elem c-input" name="prenom" id="nomInput" placeholder="Prénom">
+				<input type="text" class="form-control c-ibox-elem c-input" name="prenom" id="nomInput" placeholder="Prénom" required>
 			</div>
 
-			<input type="email" class="form-control mb-3" id="emailInput" placeholder="Email">
-			<input type="password" class="form-control mb-1" id="passwordInput" placeholder="Mot de passe">
-			<input type="password" class="form-control" id="passwordConfirm" placeholder="Confirmer">
+			<input type="email" class="form-control mb-3" id="emailInput" placeholder="Email" required>
+			<input type="password" class="form-control mb-1" id="passwordInput" placeholder="Mot de passe" required>
+			<input type="password" class="form-control" id="passwordConfirm" placeholder="Confirmer" required>
 
 			<div class="checkbox my-3">
 				<label>
-					<input type="checkbox"> En cochant cette case vous acceptez nos <a href="general/cgu/CGU.html">CGU</a>.
+					<input type="checkbox" required> En cochant cette case vous acceptez nos <a href="general/cgu/CGU.html">CGU</a>.
 				</label>
 			</div>
+
+			<p id="erreur" class="text-muted" style="color: red;"></p>
 
 			<button class="btn btn-lg btn-primary mt-3" type="submit">S'inscrire</button>
 

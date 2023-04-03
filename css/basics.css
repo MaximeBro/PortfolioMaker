@@ -72,7 +72,7 @@
 	display: block;
 	position: relative;
 	top: 0; left: 0;
-	height: 100%;
+	height: 100vh;
 	flex: 1;
 
 	background-color: rgb(241, 241, 241);
@@ -187,7 +187,7 @@
 .c-aside-title {
 	display: block;
 	margin-top: 15px;
-	position: inherit;
+	position: relative;
 	left: 50%;
 	transform: translate(-50%, 0);
 	text-align: center;
@@ -196,7 +196,7 @@
 .c-aside-bottom {
 	display: block;
 	position: absolute;
-	bottom: 2em;
+	bottom: 1.5rem;
 	width: 100%;
 }
 
@@ -207,6 +207,7 @@
 	bottom: 0; left: 50%;
 	text-align: center;
 	transform: translate(-50%);
+	width: auto;
 }
 
 .c-aside-image > svg {
@@ -221,7 +222,7 @@
 .c-aside-h4 {
 	display: block;
 	position: relative;
-	left: 1.5rem;
+	padding-left: 1.5rem;
 	text-align: justify;
 	color: #0b5ed7;
 }
