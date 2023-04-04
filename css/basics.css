@@ -41,6 +41,12 @@
 	width: 70%;
 }
 
+.icone {
+	display: inline-block;
+	width: auto;
+	height: 100%;
+}
+
 .c-demi-sep {
 	border: solid rgb(40, 40, 40) 1px;
 	position: inherit;
@@ -109,6 +115,10 @@
 
 .erreur {
 	color: red;
+}
+
+.validation {
+	color: rgb(35, 152, 35);
 }
 
 .c-1em {
@@ -267,7 +277,7 @@
 /* SECTION */
 .c-section-content {
 	border-left: solid rgb(40, 40, 40) 2px;
-	height: 70%;
+	height: 80%;
 	width: 80%;
 	position: relative;
 	left: 20%; top: 45%;

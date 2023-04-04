@@ -19,7 +19,7 @@ class DB {
 
 			// Configuration facultative de la connexion
 			$this->connect->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
-			$this->connect->setAttribute(PDO::ATTR_ERRMODE , PDO::ERRMODE_EXCEPTION);
+			$this->connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
 		catch (PDOException $e) {
 			echo "problème de connexion :".$e->getMessage();
@@ -76,13 +76,18 @@ class DB {
 		//on prépare la requête
 		$stmt = $this->connect->prepare($requete);
 
+		if(strpos($requete, "email =") !== false) {
+			$stmt->execute($tparam);
+			return $stmt->fetchColumn();
+		}
+
 		// Si la requête est un count, on renvoie le résultat sous forme de String
-		if(strpos($requete, "count(*)") !== false || strpos($requete, "max(") !== false ) {
+		if(strpos($requete, "count(*)") !== false || strpos($requete, "max(") !== false) {
 			$stmt->execute();
 			return $stmt->fetchColumn();
 		}
 		
-		//on indique que l'on va récupére les tuples sous forme d'objets instance de Client
+		//on indique que l'on va récupére les tuples sous forme d'objets instance de Auteur
 		$stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, $nomClasse);
 		
 		//on exécute la requête
@@ -126,8 +131,26 @@ class DB {
 	 * Fonctions qui peuvent être utilisées dans les scripts PHP             *
 	 *************************************************************************/
 
+	public function getImage($email) {
+		$requete = 'select cheminphoto from Auteur where email = ?';
+		$tparam = array($email);
+		return $this->execQuery($requete, $tparam, 'Auteur');
+	}
+
+	public function getAuteur($id) {
+		$requete = 'select * from auteur where idauteur = ?';
+		$tparam = array($id);
+		return $this->execQuery($requete, $tparam, 'Auteur');
+	}
+
+	public function getId($email) {
+		$requete = 'select idauteur from Auteur where email = ?';
+		$tparam = array($email);
+		return $this->execQuery($requete, $tparam, 'Auteur');
+	}
+
 	public function getMaxAuteurs() {
-		$requete = 'select max(idAuteur) from Auteur';
+		$requete = 'select max(idauteur) from Auteur';
 		return $this->execQuery($requete, null, 'Auteur');
 	}
 
@@ -138,14 +161,24 @@ class DB {
 
 	public function insertAuteur($idA, $nom, $prenom, $email, $mdp, $image) {
 		$requete = 'insert into auteur values(?,?,?,?,?,?)';
-		$tparam = array($idA, $nom, $prenom, $email, $mdp, $image);
+		$tparam = array($idA, $nom, $prenom, $email, md5($mdp), $image);
 		return $this->execMaj($requete, $tparam);
 	}
 
 	public function updateAuteur($idAuteur, $nom, $prenom, $email, $mdp, $image) {
-		$requete = 'update auteur set nom = ? , prenom = ? , email = ? , mdp = ? , image = ? where idauteur = ?';
-		$tparam = array($nom, $prenom, $email, $mdp, $image, $idAuteur);
+		// $stmt = $this->connect->prepare('UPDATE Auteur SET nom = :nom, prenom = :prenom, email = :email, mdp = :mdp WHERE idauteur = :id');
+		// $stmt->execute(array('nom' => $nom, 'prenom' => $prenom, 'email' => $email, 'mdp' => $mdp, 'id' => $idAuteur));
+		// return $stmt->rowCount();
+
+		$requete = 'update auteur set nom = ? , prenom = ? , email = ? , mdp = ? , cheminphoto = ? where idauteur = ?';
+		$tparam = array($nom, $prenom, $email, md5($mdp), $image, $idAuteur);
 		return $this->execMaj($requete, $tparam);
+	}
+
+	public function updateImage($id, $img) {
+		$stmt = $this->connect->prepare('UPDATE Auteur SET cheminphoto = :img WHERE idauteur = :idauteur');
+		$stmt->execute(array('img' => $img, 'id' => $id));
+		return $stmt->rowCount();
 	}
 
 	public function deleteAuteur($idAuteur) {

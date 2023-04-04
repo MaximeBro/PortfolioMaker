@@ -1,12 +1,59 @@
 <?php
+
 session_start();
 
 function validerSession() {
 
 	if(isset($_SESSION['utilisateur'])) {
-		header("Location: ../Compte.php");
+		Header("Location: ../Compte.php");
 	} else {
-		header ("Location: ../Connexion.html");
+		Header ("Location: ../Connexion.html");
+	}
+}
+
+function validerModif() {
+	if(!isset($_SESSION['utilisateur'])) {
+		Header("Location: ../Connexion.html");
+	}
+
+}
+
+function getIdByEmail($email) {
+
+	$db = DB::getInstance();
+	if ($db == null) {
+		erreur ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+	} else {
+		try {
+
+			$id = $db->getId($email);
+			if($id == null || $id <= 0)
+				erreur("Adresse email inexistante");
+
+			$db->close();
+
+			return $id;
+		} catch (Exception $e) { echo $e->getMessage(); }
+	}
+
+}
+
+
+function getImageByEmail($email) {
+
+	$db = DB::getInstance();
+	if ($db == null) {
+		erreur ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+	} else {
+		try {
+			$image = $db->getImage($email);
+			if($image == null || $image == "")
+				erreur("Adresse email inexistante");
+
+			$db->close();
+
+			return $image;
+		} catch (Exception $e) { echo $e->getMessage(); }
 	}
 }
 

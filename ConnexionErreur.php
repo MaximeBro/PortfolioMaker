@@ -39,7 +39,7 @@ function connexionE($msg) {
 
 					<p class="text-muted mt-3">
 						Vous n\'êtes pas inscrit ? <br>
-						<a class="link-primary" href="Inscription.html">Inscrivez-vous</a> 
+						<a class="link-primary" href="../Inscription.html">Inscrivez-vous</a> 
 					</p>
 					
 				</form>

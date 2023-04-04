@@ -1,12 +1,11 @@
 <?php
 
-require("DB.inc.php");
-include("fctAux.inc.php");
-include("../ConnexionErreur.php");
-
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+require("DB.inc.php");
+include("fctAux.inc.php");
+include("../ConnexionErreur.php");
 
 $email = $_POST['emailInput'];
 $mdp = $_POST['passwordInput'];
@@ -20,12 +19,21 @@ function verification($email, $mdp) {
 		erreur ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
 	} else {
 		try {
+
 			$clients = $db->getAuteurs();
 			foreach($clients as $client) {
+				echo $client;
 				if($client != null && $client->getEmail() == $email) {
-					if($client->getPassword() == $mdp) {
+					if($client->getPassword() == md5($mdp)) {
 						$_SESSION['utilisateur'] = serialize($client);
+
+						$_SESSION['image'] = $client->getImage();
+						$_SESSION['nom'] = $client->getNom();
+						$_SESSION['prenom'] = $client->getPrenom();
+						$_SESSION['email'] = $email;
+
 						Header("Location: ../Compte.php");
+						exit();
 					}
 					else {
 						erreur("Mot de passe incorrect");

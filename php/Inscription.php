@@ -41,8 +41,12 @@ function verification($nom, $prenom, $email, $password, $passwordC) {
 			$count = (int) $db->getMaxAuteurs(); // Enregistrement du dernier id libre (max id enregistré + 1)
 			$count = $count + 1;
 
-			$db->insertAuteur($count, $nom, $prenom, $email, $password, "../images/user.png");
-			$_SESSION['utilisateur'] = serialize(new Auteur($count, $nom, $prenom, $email, $password, "../images/user.png"));
+			$db->insertAuteur($count, $nom, $prenom, $email, $password, "./images/user.png");
+			$_SESSION['utilisateur'] = serialize(new Auteur($count, $nom, $prenom, $email, $password, "./images/user.png"));
+			$_SESSION['image'] = "./images/user.png";
+			$_SESSION['nom'] = $nom;
+			$_SESSION['prenom'] = $prenom;
+			$_SESSION['email'] = $email;
 
 			Header("Location: ../Compte.php");
 

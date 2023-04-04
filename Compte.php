@@ -1,10 +1,10 @@
 <?php
 
-require("php/Auteur.inc.php");
-include("php/fctAux.inc.php");
-
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+
+require 'php/DB.inc.php';
+include("php/fctAux.inc.php");
 
 afficherPage();
 
@@ -13,6 +13,11 @@ function afficherPage() {
 	if(strpos($_SESSION['utilisateur'], "@")) {
 
 		$utilisateur = unserialize($_SESSION['utilisateur']);
+		$nom = isset($_SESSION['nom']) ? $_SESSION['nom'] : "";
+		$prenom = isset($_SESSION['prenom']) ? $_SESSION['prenom'] : "";
+		$email = isset($_SESSION['email']) ? $_SESSION['email'] : "";
+		$image = getImageByEmail($email);
+
 		print('
 		
 		<html lang="fr">
@@ -38,16 +43,16 @@ function afficherPage() {
 
 			<div class="c-aside">
 				<div class="c-aside-image">
-					<div> <img src="./images/minion.png"> </div>
+					<div> <img src="'.$image.'"> </div>
 				</div>
 				<div class="c-demi-sep"></div>
-				<h2 class="c-aside-title" id="nomProfil">'.$utilisateur->getNom().' '.$utilisateur->getPrenom().'</h2>
+				<h2 class="c-aside-title" id="nomProfil">'.$prenom.' '.$nom.'</h2>
 
 				<div class="c-4em"></div>
 
 				<div class="c-aside-content">
 					<h4 class="c-aside-h4">Email</h4>
-					<p class="text-muted">'.$utilisateur->getEmail().'</p>
+					<p class="text-muted">'.$email.'</p>
 
 					<div class="c-3em"></div>
 					<h4 class="c-aside-h4">Projets</h4>
@@ -99,16 +104,17 @@ function afficherPage() {
 
 							<div class="c-section-multiple">
 								<div class="c-div-section c-section-form">
-									<form class="form-signin" method="post">
-										<div class="mb-3 c-ibox-form">
-											<input type="text" class="form-control mb-1 c-ibox-elem c-input" name="nom" id="nomInput" placeholder="Nom">
+									<form class="form-signin" method="post" action="./modifCompte.php">
+										<div class="mb-2 c-ibox-form">
+											<input type="text" class="form-control mb-1 c-ibox-elem c-input" name="nomInput" id="nomInput" placeholder="Nom">
 											<div></div>
-											<input type="text" class="form-control c-ibox-elem c-input" name="prenom" id="nomInput" placeholder="Prénom">
+											<input type="text" class="form-control c-ibox-elem c-input" name="prenomInput" id="prenomInput" placeholder="Prénom">
 										</div>
 
-										<input type="email" class="form-control mb-2" id="floatingInput" placeholder="Email">
-										<input type="password" class="form-control mb-1" id="floatingPassword" placeholder="Mot de passe">
-										<input type="password" class="form-control mb-1" id="passwordConfirm" placeholder="Confirmer">
+										<input type="email" class="form-control mb-2" id="emailInput" placeholder="Email" name="emailInput">
+										<input type="password" class="form-control mb-2" id="passwordOld" placeholder="Mot de passe actuel" name="passwordOld" required>
+										<input type="password" class="form-control mb-1" id="passwordInput" placeholder="Nouveau mot de passe" name="passwordInput">
+										<input type="password" class="form-control mb-1" id="passwordConfirm" placeholder="Confirmer nouveau mot de passe" name="passwordConfirm">
 
 										<button class="btn btn-lg btn-primary mt-4 centered" type="submit">Enregistrer</button>
 									</form>
@@ -123,8 +129,10 @@ function afficherPage() {
 										<div class="c-3em"></div>
 									</div>
 
-									<div class="c-2em"></div>
-									<button class="btn btn-lg btn-secondary centered" onclick="ouvrirFichier()" id="btnFichier">Ouvrir</button>
+									<button class="btn btn-lg btn-secondary centered mt-4 mb-2" onclick="ouvrirFichier()" id="btnFichier">Ouvrir</button>
+									<form method="POST" action="php/imgDefault.php">
+										<button class="btn btn-lg btn-secondary centered" type="submit" id="imgDefault">Par défaut</button>
+									</form>
 								</div>
 							</div>
 
@@ -132,8 +140,6 @@ function afficherPage() {
 					</div>
 				</section>
 			</div> <!-- Main closure -->
-
-
 
 		</div> <!-- Container closure -->
 
@@ -146,7 +152,7 @@ function afficherPage() {
 			async function ouvrirFichier() {
 				var dragNdropDiv = document.getElementById("dragNdropDiv");
 				let files = await selectFile("Pictures/*");
-				dragNdropDiv.innerHTML = files.map(file => `<img src="${URL.createObjectURL(file)}" style="width: 100px; height: auto;">`).join(\'\');
+				dragNdropDiv.innerHTML = files.map(file => \'<img src="${URL.createObjectURL(file)}" style="width: 100px; height: auto;">\').join(\'\');
 			}
 
 			function selectFile (contentType) {
@@ -190,6 +196,70 @@ function afficherPage() {
 				document.getElementById("portfolios").setAttribute("class", "c-expand");
 				document.getElementById("compte").setAttribute("class", "c-none");
 			}
+
+
+			// Gestion du dragover pour indiquer que l\'on peut drop
+			dragNdropDiv.addEventListener(\'dragover\', (event) => {
+				// Empêche le navigateur de faire son comportement par défaut (ouvrir le fichier)
+				event.stopPropagation();
+				event.preventDefault(); 
+				// Permet de montrer que l\'on peut drop dans la zone
+				event.dataTransfer.dropEffect = \'copy\';
+			});
+
+
+			// Gestion du drop de l\'image
+			dragNdropDiv.addEventListener(\'drop\', (event) => {
+				// Empêche le navigateur de faire son comportement par défaut (ouvrir le fichier)
+				event.stopPropagation();
+				event.preventDefault();
+				var image = event.dataTransfer.files[0]; // Récupération de l\'image déposée
+
+				// Création d\'un objet FormData pour envoyer l\'image
+				var formData = new FormData();
+				formData.append(\'image\', image);
+
+				// Envoi de l\'image et du $_SESSION au script PHP en utilisant fetch
+				fetch(\'./php/ajax/SaveImage.php\', {
+					method: \'POST\',
+					body: formData
+				})
+				.then(response => response.text()) // Réponse du script PHP (200 si tout s\'est bien passé)
+				.then(data => {
+					console.log(data, \'\tfrom SaveImagePHP\'); // Affichage de la réponse du script PHP dans la console
+					let dataSave = data;
+					switch(dataSave.charAt(0)) {
+						// L\'image a été enregistrée
+						case \'1\':
+							console.log("Image enregistrée");
+							// script pour changer l\'image dans la base de données et sur la page
+							fetch(\'./php/ajax/changeImageUtilisateur.php\', {
+								method: \'POST\',
+								body: dataSave.substring(2)
+							})
+							.then(response => response.text())
+							.then(data => {
+								let data2 = data;
+								console.log(data2, typeof data2);
+								console.log(data2 == \'0\');
+								console.log(data2, dataSave);
+								if(data2 == \'0\') {
+									console.log("après if");
+									location.reload(); // On recharge la page pour mettre à jour l\'image
+								}
+							})
+							break;
+						// L\'image n\'a pas été enregistrée
+						case \'2\':
+							alert(\'Ce n\\\'est pas une image.\');
+							break;
+					}
+				})
+				.catch(error => {
+					console.error(error);
+					alert(\'Une erreur est survenue lors de l\\\'enregistrement de l\\\'image.\');
+				});
+			});
 
 		</script>
 
