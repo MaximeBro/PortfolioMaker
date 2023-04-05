@@ -85,6 +85,11 @@ class DB {
 			return $stmt->fetchColumn();
 		}
 
+		if(strpos($requete, "count(*)") !== false || strpos($requete, "max(") !== false && strpos($requete, "idauteur =") !== false) {
+			$stmt->execute($tparam);
+			return $stmt->fetchColumn();
+		}
+
 		// Si la requête est un count, on renvoie le résultat sous forme de String
 		if(strpos($requete, "count(*)") !== false || strpos($requete, "max(") !== false) {
 			$stmt->execute();
@@ -153,7 +158,10 @@ class DB {
 
 	public function getMaxAuteurs() {
 		$requete = 'select max(idauteur) from Auteur';
-		return $this->execQuery($requete, null, 'Auteur');
+		$res = $this->execQuery($requete, null, 'Auteur');
+		
+		if(!isset($res) || is_null($res)) { $res = 0; }
+		return $res;
 	}
 
 	public function getAuteurs() {
@@ -162,6 +170,7 @@ class DB {
 	}
 
 	public function insertAuteur($idA, $nom, $prenom, $email, $mdp, $image) {
+		
 		$requete = 'insert into auteur values(?,?,?,?,?,?)';
 		$tparam = array($idA, $nom, $prenom, $email, md5($mdp), $image);
 		return $this->execMaj($requete, $tparam);
@@ -184,10 +193,24 @@ class DB {
 	}
 
 	public function deleteAuteur($idAuteur) {
-		$requete = 'delete from auteur where idAuteur = ?';
+		$requete = 'delete from auteur where idauteur = ?';
 		$tparam = array($idAuteur);
 		return $this->execMaj($requete, $tparam);
 	}
+
+	public function getPorfolioCountWithId($id) {
+		$requete = 'select count(*) from portfolio where idauteur = ?';
+		return $this->execQuery($requete, array($id), 'Auteur');
+	}
+
+	public function getMaxPortfolio($id) {
+		$requete = 'select max(idportfolio) from Portfolio where idauteur = ?';
+		$res = $this->execQuery($requete, array($id), 'Portfolio');
+		
+		if(!isset($res) || is_null($res)) { $res = 0; }
+		return $res;
+	}
+
 
 	/*
 

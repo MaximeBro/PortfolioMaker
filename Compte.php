@@ -8,6 +8,39 @@ include("php/fctAux.inc.php");
 
 afficherPage();
 
+function getPortfolioCount($email) {
+
+	$db = DB::getInstance();
+	if ($db == null) {
+		echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+	} else {
+		try {
+			$id = getIdByEmail($email);
+			$nb = $db->getPorfolioCountWithId($id);
+
+			return $nb;
+		} catch (Exception $e) { echo $e->getMessage(); }
+	}
+
+}
+
+function getLastPortfolio($email) {
+
+	$db = DB::getInstance();
+	if ($db == null) {
+		echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+	} else {
+		try {
+			$id = getIdByEmail($email);
+			$nb = $db->getMaxPortfolio($id);
+
+			return $nb;
+		} catch (Exception $e) { echo $e->getMessage(); }
+	}
+
+}
+
+
 function afficherPage() {
 
 	if(strpos($_SESSION['utilisateur'], "@")) {
@@ -56,7 +89,7 @@ function afficherPage() {
 
 					<div class="c-3em"></div>
 					<h4 class="c-aside-h4">Projets</h4>
-					<p class="text-muted">2 Portfolios</p>
+					<p class="text-muted">'.getPortfolioCount($email).' Portfolios</p>
 				</div>
 
 
@@ -88,21 +121,25 @@ function afficherPage() {
 					
 				</nav>
 
+
 				<section class="c-section" id="portfolios">
 					<div style="width: 100%; height: 100%;">
 						<h3>Portfolios</h3>
-						<div class="c-section-content">
-						
+						<button class="btn btn-lg btn-danger absolute right top" onclick="creerPortfolio()">Créer</button>
+						<div class="c-section-content flexC">
+							<div class="c-section-multiple-reverse c-scrollable" id="lstPortfolios">
+							</div>
 						</div>
 					</div>
 				</section>
+
 
 				<section class="c-section" id="compte">
 					<div style="width: 100%; height: 100%;">
 						<h3>Compte</h3>
 						<div class="c-section-content">
 
-							<div class="c-section-multiple">
+							<div class="c-section-multiple flexR">
 								<div class="c-div-section c-section-form">
 									<form class="form-signin" method="post" action="./modifCompte.php">
 										<div class="mb-2 c-ibox-form">
@@ -125,11 +162,11 @@ function afficherPage() {
 									<div class="c-1em"></div>
 									<div class="c-div-dragNdrop" onclick="ouvrirFichier()" id="dragNdropDiv">
 										<div class="annotation"><p class="nomargin">image carrée préférable</p></div>
-										<div class=" c-1em"></div>
+										<div class=" c-3em"></div>
 										<div>
 											<p class="text-muted centered italic nomargin">glisser - déposer</p>
 										</div>
-										<div class="c-1em"></div>
+										<div class="c-3em"></div>
 									</div>
 
 									<button class="btn btn-lg btn-secondary centered mt-3" onclick="ouvrirFichier()" id="btnFichier">Ouvrir</button>
@@ -149,6 +186,46 @@ function afficherPage() {
 
 
 		<script>
+
+			// Bouton création de portfolios
+			function creerPortfolio() {
+				let portfolio = document.createElement(\'div\');
+				let input = document.createElement(\'input\');
+				let btnDel = document.createElement(\'button\');
+ 				let btnEdit = document.createElement(\'button\');
+				let icon = document.createElement(\'img\');
+
+				portfolio.setAttribute("class", "c-portfolio-div mb-3");
+				portfolio.setAttribute("id", "portfolio'.(getLastPortfolio($email)+1).'");
+
+				input.setAttribute("class", "form-control");
+
+				btnDel.setAttribute("class", "btn btn-lg btn-danger mx-2");
+				let method = "supprimerPortfolio(\'" + portfolio.id + "\')";
+				btnDel.setAttribute("onclick", method);
+				btnDel.innerHTML = "Supprimer";
+
+				let method2 = "modifierPortfolio(\'" + portfolio.id + "\')";
+				btnEdit.setAttribute("onclick", method2);
+				btnEdit.setAttribute("class", "mx-2");
+
+				icon.setAttribute("src", "./images/icons/edit.png");
+				btnEdit.appendChild(icon);
+
+				portfolio.appendChild(btnDel);
+				portfolio.appendChild(input);
+				portfolio.appendChild(btnEdit);
+				document.getElementById("lstPortfolios").appendChild(portfolio);
+			}
+
+
+			// Bouton suppression portfolio
+			function supprimerPortfolio(id) {
+				document.getElementById("lstPortfolios").removeChild(document.getElementById(id));
+			}
+
+
+
 
 			// Gestion de l\'ouverture de fichiers
 

@@ -84,3 +84,7 @@
 .nopadding {
 	padding: 0 0 0 0;
 }
+
+.inline {
+	display: inline-block;
+}

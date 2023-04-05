@@ -11,6 +11,10 @@
 	border-radius: 5px;
 }
 
+.c-scrollable {
+	overflow-y: scroll;
+}
+
 .c-div-dragNdrop {
 	background-color: rgb(255, 255, 255);
 	border: dashed rgb(140, 140, 140) 2px;
@@ -310,8 +314,6 @@
 }
 
 .c-section-multiple {
-	display: flex;
-	flex-direction: row;
 	position: relative;
 	top: 50%; 
 	transform: translate(0, -50%);
@@ -363,4 +365,55 @@
 
 .c-section-btn-box div {
 	flex: 1;
+}
+
+
+.c-portfolio-div {
+	display: flex;
+	background-color: rgb(241, 241, 241);
+	border: solid rgb(179, 179, 179) 1px;
+	border-radius: 12px;
+	
+	margin-left: 15px;
+	width: 90%;
+	height: auto;
+
+	padding: 10 0 10 0;
+}
+
+.c-portfolio-div .btn-p, .c-portfolio-div input {
+	display: inline-flex;
+}
+
+.c-portfolio-div button {
+	border: none;
+}
+
+.c-portfolio-div button img {
+	height: 2em;
+	width: auto;
+}
+
+
+
+
+/* Scrollbar Custom */
+
+*::-webkit-scrollbar {
+	-webkit-appearance: none;
+}
+*::-webkit-scrollbar:vertical {
+	width: 11px;
+}
+*::-webkit-scrollbar:horizontal {
+	height: 11px;
+}
+*::-webkit-scrollbar-thumb {
+	border-radius: 8px;
+	border: 2px solid white;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+*::-webkit-scrollbar-track { 
+	background-color: #fff; 
+	border-radius: 8px; 
 }

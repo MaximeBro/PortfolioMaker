@@ -1,11 +1,10 @@
 <?php
-
 	// Fonction qui permet de créer les rubriques des compétences
 	function creerRubriqueCompetence($numero) {
 		$html = '
 			<div class="accordion-item">
 				<h3 class="accordion-header" id="hComp'.$numero.'">
-					<button id="btnComp'.$numero.'class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComp'.$numero.'" 
+					<button id="btnComp'.$numero.'" class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComp'.$numero.'" 
 							aria-expanded="false" aria-controls="collapseComp'.$numero.'">
 						Compétence n°'.$numero.' :  
 						<input type="text" class="mx-2" id="titreCompetence'.$numero.'" placeholder="Nom de la compétence '.$numero.'" required>
@@ -34,11 +33,32 @@
 						'.$nomRubrique.'
 					</button>
 				</h3>
-				<div id="collapseCv'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionCv">
+				<div id="collapseCv'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionCreaCv">
 					<div class="accordion-body">
-						<textarea id="textRubrique'.$numero.'" name="textRubrique'.$numero.'" required></textarea>
+						<textarea id="textCv'.$numero.'" name="textCv" required></textarea>
 						<script>
-							var simplemde = new SimpleMDE({ element: document.getElementById("textRubrique'.$numero.'") });
+							var simplemde = new SimpleMDE({ element: document.getElementById("textCv'.$numero.'") });
+						</script>
+					</div>
+				</div>
+			</div>';
+
+		echo $html;
+	}
+
+	function creerRubriqueAccueil($numero) {
+		$html = '
+			<div class="accordion-item">
+				<h3 class="accordion-header" id="hAccueil'.$numero.'">
+					<button class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAccueil" aria-expanded="false" aria-controls="collapseAccueil">
+						Accueil
+					</button>
+				</h3>
+				<div id="collapseAccueil" class="accordion-collapse collapse" data-bs-parent="#accordionAccueil">
+					<div class="accordion-body">
+						<textarea id="textAccueil" name="textAccueil" required></textarea>
+						<script>
+							var simplemde = new SimpleMDE({ element: document.getElementById("textAccueil") });
 						</script>
 					</div>
 				</div>
@@ -63,6 +83,8 @@
 	
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 	<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
+
 
 	<title>Création du portfolio</title>
 </head>
@@ -107,7 +129,7 @@
 
 				<!-- Bouton visualisation -->
 				<li class="nav-item mx-5 fs-5">
-					<a href="Compte.php">
+					<a href="Compte.php" id="enregistrer">
 						<button class="btn btn-primary">Enregistrer</button>
 					</a>
 				</li>
@@ -123,6 +145,9 @@
 				<div class="c-div-dragNdrop c-large-dragNdrop centerH" onclick="ouvrirFichier()" id="dragNdropDiv">
 					<p class="text-muted centerH italic">glisser - déposer</p>
 				</div>
+				<embed id="pdfEmbed" type="application/pdf" width="100%" height="600" />
+
+
 
 				<div class="c-section-btn-box centerH my-4">
 					<div></div>
@@ -276,10 +301,20 @@
 				<div class="c-div c-div-login centerH flexC w-50">
 					<label>Jean Magie</label>
 
-					<textarea id="textAccueil" name="Accueil"></textarea>
+					<textarea id="textAccueil" name="Accueil" required></textarea>
+
+					<button class="btn btn-lg btn-secondary mx-2" onclick="retourAccueil()" id="btnAccueilSubmit">Submit</button>
 					
 				</div>
 			</div>
+		</section>
+
+		<section id="accueilArticle" class="position-relative my-5 p-5 border rounded-5" >
+			
+			<?php
+
+			?>
+			<button class="btn btn-lg btn-secondary mx-2" onclick="creerAccueil()" id="btnAccueilretour">Retour</button>
 		</section>
 	</div> <!-- Container closure -->
 </div> <!-- Container fluid closure -->
@@ -291,10 +326,47 @@
 
 	// Gestion de l'ouverture de fichiers
 	async function ouvrirFichier() {
-		var dragNdropDiv = document.getElementById("dragNdropDiv");
-		let files = await selectFile("Pictures/*");
-		dragNdropDiv.innerHTML = files.map(file => `<img src="${URL.createObjectURL(file)}" style="width: 100px; height: auto;">`).join('');
+		var input = document.createElement('input');
+		input.type = 'file';
+		input.accept = 'application/pdf';
+		input.onchange = function() {
+			var file = input.files[0];
+			var fileReader = new FileReader();
+			fileReader.onload = function() {
+			var pdfUrl = fileReader.result;
+			showPdf(pdfUrl);
+			};
+			fileReader.readAsDataURL(file);
+		};
+		input.click();
 	}
+
+	function showPdf(pdfUrl) {
+		var pdfEmbed = document.getElementById('pdfEmbed');
+		pdfEmbed.src = pdfUrl;
+		pdfEmbed.type = 'application/pdf';
+
+		// supprime la div dragNdrop
+		var divDragNdrop = document.getElementById("divDragNdrop");
+		divDragNdrop.style.display = "none";
+	}
+
+
+/* 	function selectFile (contentType) {
+		return new Promise(resolve => {
+		let input = document.createElement(\'input\');
+			input.type = \'file\';
+			input.multiple = false;
+			input.accept = contentType;
+
+			input.onchange = _ => { 
+				let files = Array.from(input.files);
+				changementImage(files[0]);
+			};
+
+			input.click();
+		});
+	} */
 
 	function collapseLicence(){
 		console.log(document.getElementById("licence-select").value);
@@ -306,37 +378,58 @@
 		}
 	}
 
-	function selectFile (contentType) {
-		return new Promise(resolve => {
-		let input = document.createElement('input');
-			input.type = 'file';
-			input.multiple = false;
-			input.accept = contentType;
+	function hexToRgb(hex) {
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		console.log(result)
+		return result ? {
+			r: parseInt(result[1], 16),
+			g: parseInt(result[2], 16),
+			b: parseInt(result[3], 16)
+		} : null;
+	}
 
-			input.onchange = _ => { let files = resolve(files[0]); };
-
-			input.click();
-		});
+	function couleurProjet(nb) {
+		var couleur = document.getElementById("couleurProjet" + nb).value;
+		
+		document.getElementById("btnProjet" + nb).style.backgroundColor = couleur;
+		// convertir la couleur de #???? en rgb
+		var rgb = hexToRgb(couleur);
+		// Si le texte est trop sombre par rapport au fond, le mettre en blanc
+		if(rgb.r < 100 && rgb.g < 100 && rgb.b < 100){
+			document.getElementById("btnProjet" + nb).style.color = "white";
+		}
+		else{
+			document.getElementById("btnProjet" + nb).style.color = "black";
+		}
 	}
 
 	function couleurCompetence(nb) {
-		console.log("couleurComp" + nb);
 		var couleur = document.getElementById("couleurComp" + nb).value;
-		console.log(couleur);
-		console.log("btnComp" + nb);
 		
-		document.getElementById("btnComp" + nb).style.ba
-	}
+		document.getElementById("btnComp" + nb).style.backgroundColor = couleur;
 
-	// Supprime len dernier projet ajouté
-	function supprimerProjet(){
-		var nbProjet = document.getElementById("ulProjet").childElemetCount;
-
-		if(nbProjet >= 0){
-			var ulProjet = document.getElementById("ulProjet");
-			ulProjet.removeChild(ulProjet.lastChild);
+		// convertir la couleur de #???? en rgb
+		var rgb = hexToRgb(couleur);
+		// Si le texte est trop sombre par rapport au fond, le mettre en blanc
+		if(rgb.r < 100 && rgb.g < 100 && rgb.b < 100){
+			document.getElementById("btnComp" + nb).style.color = "white";
+		}
+		else{
+			document.getElementById("btnComp" + nb).style.color = "black";
 		}
 	}
+
+	// Supprime le dernier projet ajouté, c'est la div-projet
+ 	function supprimerProjet() {
+		var nbProjet = document.getElementById("accordionProjet").childElementCount;
+		console.log(nbProjet);
+		if(nbProjet >= 0){
+			var divProjet = document.getElementById("accordionProjet");
+			console.log(divProjet);
+			divProjet.removeChild(divProjet.lastChild);
+		}
+	}
+
 
 	// Affichage de la partie création du cv
 	function creerCV() {
@@ -350,6 +443,16 @@
 		document.getElementById("cv").style.display = "block";
 	}
 
+	function retourAccueil() {
+		document.getElementById("accueil").style.display = "none";
+		document.getElementById("accueilArticle").style.display = "block";
+	}
+
+	function creerAccueil() {
+		document.getElementById("accueil").style.display = "block";
+		document.getElementById("accueilArticle").style.display = "none";
+	}
+
 	// Gestion de la création des rubriques de projet
 	function creerRubriqueProjet() {
 		var nbProjet = document.getElementById("accordionProjet").childElementCount;
@@ -358,12 +461,14 @@
 
 		var div = document.createElement("div");
 		div.setAttribute("class", "accordion-item");
+		div.setAttribute("id", "divProjet");
 
 		var h2 = document.createElement("h2");
 		h2.setAttribute("class", "accordion-header");
 		h2.setAttribute("id", "heading"+nbProjet);
 
 		var button = document.createElement("button");
+		button.setAttribute("id", "btnProjet"+nbProjet);
 		button.setAttribute("class", "accordion-button collapsed");
 		button.setAttribute("type", "button");
 		button.setAttribute("data-bs-toggle", "collapse");
@@ -396,6 +501,11 @@
 		div.appendChild(h2);
 		div.appendChild(div2);
 		accordionProjet.appendChild(div);
+
+		// Ajout listener sur l'input couleur qui appelle la fonction couleurProjet
+		document.getElementById("couleurProjet" + nbProjet).addEventListener("change", function() {
+			couleurProjet(nbProjet);
+		});
 	}
 
 	// Gestion des intéractions avec la navbar
@@ -441,6 +551,20 @@
 		});
 	}
 
+	function envoieDonner() {
+		const monLien = document.getElementById("enregistrer");
+
+		event.preventDefault();
+
+		// Récupération des données
+
+		
+		alert("Données envoyées");
+
+		window.location.href = monLien.href;
+
+	}
+
 	// Chargement des events quand la page est chargée
 	window.onload = function() {
 		updateElementClass("accueilLink");
@@ -459,6 +583,9 @@
 				couleurCompetence(idDiv);
 			});
 		});
+
+		// Ajout d'un listener sur le bouton enregistrer qui appelle envoieDonner()
+		document.getElementById("enregistrer").addEventListener("click", envoieDonner);
 
 	}
 

@@ -1,10 +1,10 @@
 <?php
 
-require("DB.inc.php");
-include("fctAux.inc.php");
-
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+
+require("DB.inc.php");
+include("fctAux.inc.php");
 
 $nom = $_POST['nomInput'];
 $prenom = $_POST['prenomInput'];

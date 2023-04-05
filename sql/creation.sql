@@ -39,7 +39,7 @@ CREATE TABLE Auteur (
 		- cheminSpec    : chemin de la photo dans fichiers serveur
 */
 CREATE TABLE Portfolio (
-	idportfolio serial NOT NULL,
+	idportfolio integer NOT NULL,
 	idauteur 	integer references Auteur(idauteur) NOT NULL,
 	titrep text NOT NULL,
 	cheminauteur text NOT NULL,
@@ -173,4 +173,4 @@ CREATE TABLE CV (
 
 
 /* Insertion d'un auteur */
-INSERT INTO AUTEUR VALUES(1, 'admin', 'admin', 'admin@ecareus.fr', 'admin', 'admin.png');
+-- INSERT INTO AUTEUR VALUES(1, 'admin', 'admin', 'admin@ecareus.fr', 'admin', 'admin.png');

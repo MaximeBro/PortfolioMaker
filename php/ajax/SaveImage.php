@@ -21,7 +21,7 @@
 			echo $output;
 		}
 
-		// GARDEZ AU CAS OU CAR LES DROITS ET PHP C'EST RIGOLO
+		// Pour les droits
 		//mkdir('../client/'.$id.'/images', 0777, true);
 		//chown('../client/'.$id.'/images', 'bv200989');
 		//supprimer les fichiers dans le dossier
