@@ -3,7 +3,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-include("php/DB.inc.php");
+require 'php/DB.inc.php';
 include("php/fctAux.inc.php");
 
 $nom = !is_null($_POST['nomInput']) ? $_POST['nomInput'] : null;
@@ -14,60 +14,66 @@ $mdp = !is_null($_POST['passwordInput']) ? $_POST['passwordInput'] : null;
 $mdpC = !is_null($_POST['passwordConfirm']) ? $_POST['passwordConfirm'] : null;
 
 if(isset($_SESSION['email'])) {
-	$email = $_SESSION['email'];
-	verification($emailSession, $nom, $prenom, $email, $mdp, $mdpC);
+	$emailSession = $_SESSION['email'];
+	verification($emailSession, $nom, $prenom, $email, $mdpOld, $mdp, $mdpC);
 }
 
 
-function verification($emailSession, $nom, $prenom, $email, $mdp, $mdpC) {
+function verification($emailSession, $nom, $prenom, $email, $mdpOld, $mdp, $mdpC) {
 
+	$count = 0;
 	$db = DB::getInstance();
-	if ($db == null) {
-		erreur ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
-	} else {
-		try {
-			$mdpOld = $db->getAuteur(getIdByEmail($emailSession));
-			if($mdpOld == $mdp) { Header("Location: Compte.php"); exit(); }
-			if($mdp != $mdpC) { Header("Location: Compte.php"); exit(); }
+	while($db == null && $count !== 100) {
+		$db = DB::getInstance();
+		$count++;
+	}
 
-			if($email != null && $email != "") {
-				$clients = $db->getAuteurs();
-				foreach($clients as $client) {
-					if($client != null && $client->getEmail() == $email) {
-						Header("Location: Compte.php"); exit();
-					}
+	if($count >= 100) { echo("BD unrecheable"); exit(); }
+
+	
+	try {
+		$id = getIdByEmail($emailSession);
+		$mdpBD = $db->getAuteur($id)[0]->getPassword();
+
+		if(md5($mdpOld) != $mdpBD) { $db->close(); Header("Location: Compte.php");  exit(); } // Si celui entré différent de celui de la base
+		if($mdpOld == $mdp) { $db->close(); Header("Location: Compte.php"); exit(); } // Si saisie de l'ancien mdp comme nouveau
+		if($mdp != $mdpC) { $db->close(); Header("Location: Compte.php"); exit(); }   // Si nouveau est différent de la confirmation
+		
+
+		if($email != null && $email != "") {
+			$clients = $db->getAuteurs();
+			foreach($clients as $client) {
+				if($client != null && $client->getEmail() == $email) {
+					$db->close();
+					Header("Location: Compte.php");
+					echo("Adresse email déjà existante !");
+					exit();
 				}
 			}
+		}
+
+		$nom 	= $nom == null ? $_SESSION['nom'] : $nom;
+		$prenom = $prenom == null ? $_SESSION['prenom'] : $prenom;
+		$email = $email == null ? $emailSession : $email;
+		$mdp = $mdp == null ? $mdpOld : $mdp;
+		$image = $_SESSION['image'] == null ? "./images/user.png" : $_SESSION['image'];
+
+		echo (	'id : '.$id.' | nom : '.$nom.' | prénom : '.$prenom.' | email : '.$email.
+				' | mdp : '.$mdp.' | image : '.$image);
+
+		$_SESSION['utilisateur'] = serialize(new Auteur($id, $nom, $prenom, $email, $mdp, $image));
+		$_SESSION['nom'] = $nom;
+		$_SESSION['prenom'] = $prenom;
+		$_SESSION['email'] = $email;
 
 
-			// Après validation de toutes les étapes de vérification
+		// Après validation de toutes les étapes de vérification
+		$db->updateAuteur($id, $nom, $prenom, $email, md5($mdp), $image);
+		$db->close();
 
-			$nom 	= $nom == null ? $utilisateur->getNom() : $nom;
-			$prenom = $prenom == null ? $utilisateur->getPrenom() : $prenom;
-			$email = $email == null ? $utilisateur->getEmail() : $email;
-			$mdp = $mdp == null ? $mdpOld : $mdp;
-			$image = $utilisateur->getImage() == null ? "./images/user.png" : $utilisateur->getImage();
+		Header("Location: Compte.php");
 
-			$id = getIdByEmail($email);
-
-			echo (	'id : '.$id.' | nom : '.$nom.' | prénom : '.$prenom.' | email : '.$email.
-					' | mdp : '.$mdp.' | image : '.$image);
-
-			$_SESSION['utilisateur'] = serialize(new Auteur($id, $nom, $prenom, $email, $mdp, $image));
-			$_SESSION['nom'] = $nom;
-			$_SESSION['prenom'] = $prenom;
-			$_SESSION['email'] = $email;
-
-
-			echo (is_null($db) ? "DB null" : "DB ouverte"."\n\n");
-
-			$db->updateAuteur($id, $nom, $prenom, $email, $mdp, $image);
-			$db->close();
-
-			Header("Location: Compte.php");
-
-		} catch (Exception $e) { echo $e->getMessage(); }
-	}
+	} catch (Exception $e) { echo $e->getMessage(); }
 
 }
 

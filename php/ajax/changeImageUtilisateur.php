@@ -1,36 +1,43 @@
 <?php
-	require '../DB.inc.php';
-	include("../fctAux.inc.php");
-
 	ini_set('display_errors', 1);
 	error_reporting(E_ALL);
 
+	require '../DB.inc.php';
+	include("../fctAux.inc.php");
 
-	if(isset($_SESSION['utilisateur'])) {
-		$utilisateur = unserialize($_SESSION['utilisateur']);
+
+
+	// Vérification de la session (si l'utilisateur est connecté)
+	if(isset($_SESSION['email'])) {
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			// Récupération de la chaine envoyé dans Compte.php
 			$data = file_get_contents('php://input');
 			//var_dump($data);
 
 			// Changement dans la session
-			$utilisateur->setImage($data);
-			$_SESSION['utilisateur'] = serialize($utilisateur);
+			$_SESSION['image'] = $data;
 
 			// Changement dans la base de données
-			$email = $utilisateur->getEmail();
+			$email = $_SESSION['email'];
 			$id = getIdByEmail($email);
 			
-			/*$db = DB::getInstance();
-			if ($db == null) {
-				echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
-			} else {
-				try {
+			// On attend que la base de données soit disponible
+			// sinon
+			$count = 0;
+			$db = DB::getInstance();
+			while($db == null && $count !== 100) {
+				$db = DB::getInstance();
+				$count++;
+			}
 
-					$db->updateImage($id, $data);
+			if($count >= 100) { echo("BD unrecheable"); exit(); }
+			//echo ("Impossible de se connecter à la base de données !");
+			try {
 
-				} catch (Exception $e) { echo $e->getMessage(); }
-			}*/
+				$db->updateImage($id, $data);
+
+			} catch (Exception $e) { echo $e->getMessage(); }
+
 			
 			// Refresh de la page (via JS) pour que l'image soit mise à jour
 			echo "0";

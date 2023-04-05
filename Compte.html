@@ -132,6 +132,7 @@
 	async function ouvrirFichier() {
 		var dragNdropDiv = document.getElementById("dragNdropDiv");
 		let files = await selectFile("Pictures/*");
+		console.log(files);
 		dragNdropDiv.innerHTML = files.map(file => `<img src="${URL.createObjectURL(file)}" style="width: 100px; height: auto;">`).join('');
 	}
 
@@ -142,7 +143,10 @@
 			input.multiple = false;
 			input.accept = contentType;
 
-			input.onchange = _ => { let files = resolve(files[0]); };
+			input.onchange = _ => { 
+				let files = Array.from(input.files); 
+				changementImage(files[0]);
+			};
 
 			input.click();
 		});
@@ -176,6 +180,11 @@
 		document.getElementById("compte").setAttribute("class", "c-none");
 	}
 
+	dragNdropDiv.addEventListener('mouseover', (event) => {
+		// Affiche un message pour indiquer que les images carrées sont préférées
+		// Message par dessus qui suis le curseur
+		
+	});
 
 	// Gestion du dragover pour indiquer que l'on peut drop
 	dragNdropDiv.addEventListener('dragover', (event) => {
@@ -192,51 +201,56 @@
 		// Empêche le navigateur de faire son comportement par défaut (ouvrir le fichier)
 		event.stopPropagation();
 		event.preventDefault();
-		//var image = event.dataTransfer.files[0]; // Récupération de l'image déposée
+		let image = event.dataTransfer.files[0]; // Récupération de l\'image déposée
+		changementImage(image); // Envoi de l\'image au script PHP
+	});
 
-		// Création d'un objet FormData pour envoyer l'image
+	function changementImage(image) {
+		// Création d\'un objet FormData pour envoyer l\'image
 		var formData = new FormData();
 		formData.append('image', image);
 
-		// Envoi de l'image et du $_SESSION au script PHP en utilisant fetch
+		// Envoi de l\'image et du $_SESSION au script PHP en utilisant fetch
 		fetch('./php/ajax/SaveImage.php', {
 			method: 'POST',
 			body: formData
 		})
-		.then(response => response.text())
+		.then(response => response.text()) // Réponse du script PHP (200 si tout s\'est bien passé)
 		.then(data => {
-					console.log(data, '\tfrom SaveImagePHP'); // Affichage de la réponse du script PHP dans la console
-					
-					switch(data.charAt(0)) {
-						// L\'image a été enregistrée
-						case '1':
-							console.log("Image enregistrée");
-							// script pour changer l\'image dans la base de données et sur la page
-							fetch('./php/ajax/changeImageUtilisateur.php', {
-								method: 'POST',
-								body: data.substring(2)
-							})
-							.then(response => response.text())
-							.then(data => {
-								console.log(data, typeof data);
-								console.log(data == '0');
-								if(data == '0') {
-									console.log("NTM FDP");
-									location.reload(); // On recharge la page pour mettre à jour l\'image
-								}
-							})
-							break;
-						// L\'image n\'a pas été enregistrée
-						case '2':
-							alert('Ce n\\\'est pas une image.');
-							break;
-					}
-				})
+			console.log(data, '\tfrom SaveImagePHP'); // Affichage de la réponse du script PHP dans la console
+			let dataSave = data;
+			switch(dataSave.charAt(0)) {
+				// L\'image a été enregistrée
+				case '1':
+					console.log("Image enregistrée");
+					// script pour changer l\'image dans la base de données et sur la page
+					fetch('./php/ajax/changeImageUtilisateur.php', {
+						method: 'POST',
+						body: dataSave.substring(2)
+					})
+					.then(response => response.text())
+					.then(data => {
+						let data2 = data;
+						console.log(data2, typeof data2);
+						console.log(data2 == '0');
+						console.log(data2, dataSave);
+						if(data2 == '0') {
+							console.log("après if");
+							location.reload(true); // On recharge la page pour mettre à jour l\'image
+						}
+					})
+					break;
+				// L\'image n\'a pas été enregistrée
+				case '2':
+					alert('Ce n\'est pas une image.');
+					break;
+			}
+		})
 		.catch(error => {
 			console.error(error);
 			alert('Une erreur est survenue lors de l\'enregistrement de l\'image.');
 		});
-	});
+	}
 
 </script>
 

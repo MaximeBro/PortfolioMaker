@@ -71,3 +71,16 @@
 	display: flex;
 	flex-direction: row;
 }
+
+.flex1 {
+	display: block;
+	flex: 1;
+}
+
+.nomargin {
+	margin: 0 0 0 0;
+}
+
+.nopadding {
+	padding: 0 0 0 0;
+}

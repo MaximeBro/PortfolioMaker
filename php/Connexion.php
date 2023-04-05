@@ -22,12 +22,11 @@ function verification($email, $mdp) {
 
 			$clients = $db->getAuteurs();
 			foreach($clients as $client) {
-				echo $client;
 				if($client != null && $client->getEmail() == $email) {
 					if($client->getPassword() == md5($mdp)) {
 						$_SESSION['utilisateur'] = serialize($client);
 
-						$_SESSION['image'] = $client->getImage();
+						$_SESSION['image'] = getImageByEmail($email);
 						$_SESSION['nom'] = $client->getNom();
 						$_SESSION['prenom'] = $client->getPrenom();
 						$_SESSION['email'] = $email;

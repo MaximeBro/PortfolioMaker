@@ -18,6 +18,31 @@
 	cursor: pointer;
 }
 
+.annotation {
+	display: inline-block;
+	position: absolute;
+	right: -150px;
+	display: none;
+	padding: 8 12 8 12;
+
+	background-color: rgb(100, 133, 234);
+	border-radius: 5px;
+	z-index: 50000;
+}
+
+.annotation p {
+	color: white;
+	font-style: italic;
+}
+
+.annotation * {
+	display: inline-block;
+}
+
+.c-div-dragNdrop:hover > .annotation {
+	display: block;
+}
+
 .c-large-dragNdrop {
 	display: block;
 	position: relative;

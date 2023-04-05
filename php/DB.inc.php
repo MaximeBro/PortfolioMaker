@@ -74,7 +74,11 @@ class DB {
 	/************************************************************************/
 	private function execQuery($requete,$tparam,$nomClasse) {
 		//on prépare la requête
-		$stmt = $this->connect->prepare($requete);
+
+		try {
+			$stmt = $this->connect->prepare($requete);
+		} catch(Exception $e) { echo $e->getMessage(); }
+		
 
 		if(strpos($requete, "email =") !== false) {
 			$stmt->execute($tparam);
@@ -133,14 +137,12 @@ class DB {
 
 	public function getImage($email) {
 		$requete = 'select cheminphoto from Auteur where email = ?';
-		$tparam = array($email);
-		return $this->execQuery($requete, $tparam, 'Auteur');
+		return $this->execQuery($requete, array($email), 'Auteur');
 	}
 
 	public function getAuteur($id) {
 		$requete = 'select * from auteur where idauteur = ?';
-		$tparam = array($id);
-		return $this->execQuery($requete, $tparam, 'Auteur');
+		return $this->execQuery($requete, array($id), 'Auteur');
 	}
 
 	public function getId($email) {
@@ -155,7 +157,7 @@ class DB {
 	}
 
 	public function getAuteurs() {
-		$requete = 'select * from auteur';
+		$requete = 'select * from auteur order by idauteur';
 		return $this->execQuery($requete, null, 'Auteur');
 	}
 
@@ -171,14 +173,14 @@ class DB {
 		// return $stmt->rowCount();
 
 		$requete = 'update auteur set nom = ? , prenom = ? , email = ? , mdp = ? , cheminphoto = ? where idauteur = ?';
-		$tparam = array($nom, $prenom, $email, md5($mdp), $image, $idAuteur);
+		$tparam = array($nom, $prenom, $email, $mdp, $image, $idAuteur);
 		return $this->execMaj($requete, $tparam);
 	}
 
 	public function updateImage($id, $img) {
-		$stmt = $this->connect->prepare('UPDATE Auteur SET cheminphoto = :img WHERE idauteur = :idauteur');
-		$stmt->execute(array('img' => $img, 'id' => $id));
-		return $stmt->rowCount();
+		$requete = 'update auteur set cheminphoto = ? where idauteur = ?';
+		$tparam = array($img, $id);
+		return $this->execMaj($requete, $tparam);
 	}
 
 	public function deleteAuteur($idAuteur) {

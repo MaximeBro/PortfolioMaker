@@ -16,7 +16,7 @@ function afficherPage() {
 		$nom = isset($_SESSION['nom']) ? $_SESSION['nom'] : "";
 		$prenom = isset($_SESSION['prenom']) ? $_SESSION['prenom'] : "";
 		$email = isset($_SESSION['email']) ? $_SESSION['email'] : "";
-		$image = getImageByEmail($email);
+		$image = isset($_SESSION['image']) ? $_SESSION['image'] : "";
 
 		print('
 		
@@ -73,7 +73,7 @@ function afficherPage() {
 
 			<div class="c-main">
 				
-				<nav class="navbar navbar-expand-lg c-4em c-bg-navbar">
+				<nav class="navbar navbar-expand-lg c-4em bg-dark">
 					<div class="navbar-collapse offcanvas-collapse c-3em">
 						<ul class="c-navbar mb-2 mb-lg-0">
 							<li class="nav-item">
@@ -120,18 +120,21 @@ function afficherPage() {
 									</form>
 								</div>
 
-								<div class="c-div-section">
+								<div class="c-div-section flexC">
 									<h4 class="c-section-h4">Image de profil</h4>
 									<div class="c-1em"></div>
 									<div class="c-div-dragNdrop" onclick="ouvrirFichier()" id="dragNdropDiv">
-										<div class="c-3em"></div>
-										<p class="text-muted centered italic">glisser - déposer</p>
-										<div class="c-3em"></div>
+										<div class="annotation"><p class="nomargin">image carrée préférable</p></div>
+										<div class=" c-1em"></div>
+										<div>
+											<p class="text-muted centered italic nomargin">glisser - déposer</p>
+										</div>
+										<div class="c-1em"></div>
 									</div>
 
-									<button class="btn btn-lg btn-secondary centered mt-4 mb-2" onclick="ouvrirFichier()" id="btnFichier">Ouvrir</button>
-									<form method="POST" action="php/imgDefault.php">
-										<button class="btn btn-lg btn-secondary centered" type="submit" id="imgDefault">Par défaut</button>
+									<button class="btn btn-lg btn-secondary centered mt-3" onclick="ouvrirFichier()" id="btnFichier">Ouvrir</button>
+									<form class="centered mt-3" method="POST" action="php/imgDefault.php">
+										<button class="btn btn-lg btn-secondary" type="submit" id="imgDefault">Par défaut</button>
 									</form>
 								</div>
 							</div>
@@ -152,7 +155,8 @@ function afficherPage() {
 			async function ouvrirFichier() {
 				var dragNdropDiv = document.getElementById("dragNdropDiv");
 				let files = await selectFile("Pictures/*");
-				dragNdropDiv.innerHTML = files.map(file => \'<img src="${URL.createObjectURL(file)}" style="width: 100px; height: auto;">\').join(\'\');
+				console.log(files);
+				dragNdropDiv.innerHTML = \'<img src="${URL.createObjectURL(file)}" style="width: 100px; height: auto;">\' ;
 			}
 
 			function selectFile (contentType) {
@@ -161,9 +165,12 @@ function afficherPage() {
 					input.type = \'file\';
 					input.multiple = false;
 					input.accept = contentType;
-
-					input.onchange = _ => { let files = resolve(files[0]); };
-
+		
+					input.onchange = _ => { 
+						let files = Array.from(input.files);
+						changementImage(files[0]);
+					};
+		
 					input.click();
 				});
 			}
@@ -213,8 +220,11 @@ function afficherPage() {
 				// Empêche le navigateur de faire son comportement par défaut (ouvrir le fichier)
 				event.stopPropagation();
 				event.preventDefault();
-				var image = event.dataTransfer.files[0]; // Récupération de l\'image déposée
+				let image = event.dataTransfer.files[0]; // Récupération de l\'image déposée
+				changementImage(image); // Envoi de l\'image au script PHP
+			});
 
+			function changementImage(image) {
 				// Création d\'un objet FormData pour envoyer l\'image
 				var formData = new FormData();
 				formData.append(\'image\', image);
@@ -232,7 +242,7 @@ function afficherPage() {
 						// L\'image a été enregistrée
 						case \'1\':
 							console.log("Image enregistrée");
-							// script pour changer l\'image dans la base de données et sur la page
+							// script pour changer l\\\'image dans la base de données et sur la page
 							fetch(\'./php/ajax/changeImageUtilisateur.php\', {
 								method: \'POST\',
 								body: dataSave.substring(2)
@@ -245,11 +255,11 @@ function afficherPage() {
 								console.log(data2, dataSave);
 								if(data2 == \'0\') {
 									console.log("après if");
-									location.reload(); // On recharge la page pour mettre à jour l\'image
+									location.reload(true); // On recharge la page pour mettre à jour l\\\'image
 								}
 							})
 							break;
-						// L\'image n\'a pas été enregistrée
+						// L\\\'image n\\\'a pas été enregistrée
 						case \'2\':
 							alert(\'Ce n\\\'est pas une image.\');
 							break;
@@ -259,7 +269,7 @@ function afficherPage() {
 					console.error(error);
 					alert(\'Une erreur est survenue lors de l\\\'enregistrement de l\\\'image.\');
 				});
-			});
+			}
 
 		</script>
 
