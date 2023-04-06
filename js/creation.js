@@ -1,0 +1,442 @@
+// Permet de récupérer les simplemde de l'accueil
+var simplemdeAccueilArticle = [];
+// Permetrat de récupérer les simplemde de compétences
+var simplemdeComp = [];
+// Permetrat de récupérer les simplemde du CV
+var simplemdeCv = [];
+// Permetrat de récupérer les simplemde des projets
+var simplemdeProjet = [];
+
+// Gestion de l'ouverture de fichiers
+async function ouvrirFichier() {
+	var input = document.createElement('input');
+	input.type = 'file';
+	input.accept = 'application/pdf';
+	input.onchange = function() {
+		var file = input.files[0];
+		var fileReader = new FileReader();
+		fileReader.onload = function() {
+		var pdfUrl = fileReader.result;
+		showPdf(pdfUrl);
+		};
+		fileReader.readAsDataURL(file);
+	};
+	input.click();
+}
+
+function showPdf(pdfUrl) {
+	var pdfEmbed = document.getElementById('pdfEmbed');
+	pdfEmbed.src = pdfUrl;
+	pdfEmbed.type = 'application/pdf';
+
+	var dragNdropDiv = document.getElementById("dragNdropDiv");
+	dragNdropDiv.style.display = "none";
+}
+
+function collapseLicence(){
+	console.log(document.getElementById("selectLicense").value);
+	if(document.getElementById("selectLicense").value != "custom"){
+		document.getElementById("div-licence").style.display = "none";
+	}
+	else{
+		document.getElementById("div-licence").style.display = "block";
+	}
+}
+
+function hexToRgb(hex) {
+	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	return result ? {
+		r: parseInt(result[1], 16),
+		g: parseInt(result[2], 16),
+		b: parseInt(result[3], 16)
+	} : null;
+}
+
+function couleurProjet(nb) {
+	var couleur = document.getElementById("couleurProjet" + nb).value;
+	
+	document.getElementById("btnProjet" + nb).style.backgroundColor = couleur;
+	// convertir la couleur de #???? en rgb
+	var rgb = hexToRgb(couleur);
+	// Si le texte est trop sombre par rapport au fond, le mettre en blanc
+	if(rgb.r < 100 && rgb.g < 100 && rgb.b < 100){
+		document.getElementById("btnProjet" + nb).style.color = "white";
+	}
+	else{
+		document.getElementById("btnProjet" + nb).style.color = "black";
+	}
+}
+
+function couleurCompetence(nb) {
+	var couleur = document.getElementById("couleurComp" + nb).value;
+	
+	document.getElementById("btnComp" + nb).style.backgroundColor = couleur;
+
+	// convertir la couleur de #???? en rgb
+	var rgb = hexToRgb(couleur);
+	// Si le texte est trop sombre par rapport au fond, le mettre en blanc
+	if(rgb.r < 100 && rgb.g < 100 && rgb.b < 100){
+		document.getElementById("btnComp" + nb).style.color = "white";
+	}
+	else{
+		document.getElementById("btnComp" + nb).style.color = "black";
+	}
+}
+
+// Supprime le dernier projet ajouté, c'est la div-projet
+function supprimerProjet() {
+	var nbProjet = document.getElementById("accordionProjet").childElementCount;
+	console.log(nbProjet);
+	if(nbProjet >= 0){
+		var divProjet = document.getElementById("accordionProjet");
+		console.log(divProjet);
+		divProjet.removeChild(divProjet.lastChild);
+	}
+}
+
+// Affichage de la partie création du cv
+function creerCV() {
+	document.getElementById("creationCv").style.display = "block";
+	document.getElementById("cv").style.display = "none";
+}
+
+// Affichage de la partie importation du cv
+function retourCV() {
+	document.getElementById("creationCv").style.display = "none";
+	document.getElementById("cv").style.display = "block";
+}
+
+
+// Gestion de la création des compétences
+function creerArticleAccueil() {
+
+	//Creation de card autoincrementé quand on clique sur le bouton ajouterArticleAccueil, id autoincrementé pour la div et le textarea
+	var nbAccueil = document.getElementById("divAccueilArticle").childElementCount;
+
+	var divAccueil = document.getElementById("divAccueilArticle");
+
+	var div = document.createElement("div");
+	div.setAttribute("class", "card col-sm-3 m-2");
+	div.setAttribute("style", "width: 18rem;");
+	div.setAttribute("id", "divArticleAccueil" + nbAccueil);
+
+	var img = document.createElement("img");
+	img.setAttribute("class", "card-img-top");
+	img.setAttribute("src", "./images/minion.png");
+	img.setAttribute("alt", "...");
+
+	var divCardBody = document.createElement("div");
+	divCardBody.setAttribute("class", "card-body");
+
+	var inputTitre = document.createElement("input");
+	inputTitre.setAttribute("type", "card-title");
+	inputTitre.setAttribute("class", "form-control");
+	inputTitre.setAttribute("id", "titreAccueilArticle" + nbAccueil);
+	inputTitre.setAttribute("placeholder", "Titre de l'article");
+	inputTitre.setAttribute("required", "");
+
+	
+
+	var textArea = document.createElement("textarea");
+	textArea.setAttribute("id", "textAccueilArticle" + nbAccueil);
+	textArea.setAttribute("name", "Accueil");
+	textArea.setAttribute("required", "");
+
+	var script = document.createElement("script");
+	script.textContent = "simplemdeAccueilArticle["+nbAccueil+"] = new SimpleMDE({ element: document.getElementById('textAccueilArticle" + nbAccueil + "') });";
+
+	divCardBody.appendChild(inputTitre);
+	divCardBody.appendChild(textArea);
+	divCardBody.appendChild(script);
+
+	div.appendChild(img);
+	div.appendChild(divCardBody);
+
+	divAccueil.appendChild(div);
+}
+
+// Gestion de la création des rubriques de projet
+function creerRubriqueProjet() {
+	var nbProjet = document.getElementById("accordionProjet").childElementCount;
+
+	var accordionProjet = document.getElementById("accordionProjet");
+
+	var div = document.createElement("div");
+	div.setAttribute("class", "accordion-item");
+	div.setAttribute("id", "divProjet");
+
+	var h2 = document.createElement("h2");
+	h2.setAttribute("class", "accordion-header");
+	h2.setAttribute("id", "heading"+nbProjet);
+
+	var button = document.createElement("button");
+	button.setAttribute("id", "btnProjet"+nbProjet);
+	button.setAttribute("class", "accordion-button collapsed");
+	button.setAttribute("type", "button");
+	button.setAttribute("data-bs-toggle", "collapse");
+	button.setAttribute("data-bs-target", "#collapse"+nbProjet);
+	button.setAttribute("aria-expanded", "false");
+	button.setAttribute("aria-controls", "collapse"+nbProjet);
+	button.innerHTML = "Projet n°"+(nbProjet + 1)+" : " + "<input type=\"text\" id=\"titreProjet"+nbProjet+"\" required><input class=\"mx-2\" type=\"color\" id=\"couleurProjet" + nbProjet + "\">";
+
+	var div2 = document.createElement("div");
+	div2.setAttribute("id", "collapse"+nbProjet);
+	div2.setAttribute("class", "accordion-collapse collapse");
+	div2.setAttribute("aria-labelledby", "heading"+nbProjet);
+	div2.setAttribute("data-bs-parent", "#accordionProjet");
+
+	var div3 = document.createElement("div");
+	div3.setAttribute("class", "accordion-body");
+
+	var textArea = document.createElement("textarea");
+	textArea.setAttribute("id", "projet"+nbProjet+"");
+	textArea.setAttribute("name", "projet"+nbProjet+"");
+	textArea.setAttribute("required", "");
+	
+	var script = document.createElement("script");
+	script.innerHTML = "simplemdeProjet["+nbProjet+"] = new SimpleMDE({ element: document.getElementById(\"projet"+nbProjet+"\") });";
+	
+	div3.appendChild(textArea);
+	div3.appendChild(script);
+	div2.appendChild(div3);
+	h2.appendChild(button);
+	div.appendChild(h2);
+	div.appendChild(div2);
+	accordionProjet.appendChild(div);
+
+	// Ajout listener sur l'input couleur qui appelle la fonction couleurProjet
+	document.getElementById("couleurProjet" + nbProjet).addEventListener("change", function() {
+		couleurProjet(nbProjet);
+	});
+}
+
+// Gestion des intéractions avec la navbar
+function clickEvent(element) {
+	if(element == "accueilLink") {
+		updateElementClass("accueilLink");
+	}
+	else if(element == "cvLink") {
+		updateElementClass("cvLink");
+	}
+	else if(element == "competencesLink") {
+		updateElementClass("competencesLink");
+	}
+	else if(element == "projetLink") {
+		updateElementClass("projetLink");
+	}
+	else if(element == "licenseLink") {
+		updateElementClass("licenseLink");
+	}
+	else if(element == "contactLink") {
+		updateElementClass("contactLink");
+	}
+}
+
+// Gestion de l'affichage des sections
+function updateElementClass(element) {
+	// Gestion de la navbar
+	const elementList = ["accueilLink", "cvLink", "competencesLink", "projetLink", "licenseLink", "contactLink"];
+	elementList.forEach((el) => {
+		const elClass = (el === element) ? "c-clicked" : "c-default";
+		document.getElementById(el).setAttribute("class", elClass);
+	});
+	
+	// Gestion des sections
+	const sectionList = ["accueil", "cv", "competences", "projet", "license", "contact", "creationCv"];
+	sectionList.forEach((el) => {
+		if (el === element.replace("Link", "")) {
+			document.getElementById(el).style.display = "block";
+		}
+		else {
+			document.getElementById(el).style.display = "none";
+		}
+	});
+}
+
+// Bouton enregistrer
+function envoieDonner() {
+	const monLien = document.getElementById("enregistrer");
+
+	event.preventDefault();
+
+	// Récupération des données
+
+	// Accueil
+	var textAccueil = simplemdeAccueil.value();
+	console.log(textAccueil);
+
+	// Accueil article
+	var nbAccueilArticle = document.getElementById("divAccueilArticle").childElementCount;
+	var titreAccueilArticle = [];
+	var textAccueilArticle = [];
+	for (var i = 0; i < nbAccueilArticle; i++) {
+		titreAccueilArticle[i] = document.getElementById("titreAccueilArticle"+i).value;
+		console.log("titreAccueilArticle"+i);
+		textAccueilArticle[i] = simplemdeAccueilArticle[i].value();
+		console.log("textAccueilArticle"+i);
+	}
+
+	// CV
+	var cv = [];
+	for (var i = 1; i <= 6; i++) {
+		console.log("textCv"+i);
+		console.log(document.getElementById("textCv"+i).value);
+		cv[i] = document.getElementById("textCv"+i).value;
+	}
+
+	// Compétences
+	var titreCompetence = [];
+	var textCompetence = [];
+	var couleurCompetence = [];
+	for (var i = 1; i <= 6; i++) {
+		console.log("titreCompetence"+i);
+		titreCompetence[i] = document.getElementById("titreCompetence"+i).value;
+		console.log(titreCompetence[i]);
+		console.log("textCompetence"+i);
+		textCompetence[i] = simplemdeComp[i].value();
+		console.log(textCompetence[i]);
+		console.log("couleurComp"+i);
+		couleurCompetence[i] = document.getElementById("couleurComp"+i).value;
+		console.log(couleurCompetence[i]);
+	}
+
+	// Projets
+	var nbProjet = document.getElementById("accordionProjet").childElementCount;
+	var titreProjet = [];
+	var textProjet = [];
+	var couleurProjet = [];
+	for (var i = 0; i < nbProjet; i++) {
+		console.log("titreProjet"+i);
+		titreProjet[i] = document.getElementById("titreProjet"+i).value;
+		console.log(titreProjet[i]);
+		console.log("textProjet"+i);
+		textProjet[i] = simplemdeProjet[i].value();
+		console.log(textProjet[i]);
+		console.log("couleurProjet"+i);
+		couleurProjet[i] = document.getElementById("couleurProjet"+i).value;
+		console.log(couleurProjet[i]);
+	}
+
+	// Licences
+	var select = document.getElementById("selectLicense").value;
+	if (select == "custom") {
+		var license = document.getElementById("textLicense").value;
+	}
+	else {
+		var license = select;
+	}
+	console.log(license);
+
+	// Contact
+	var contact = []
+	var idContact = ["mail", "tel", "linkedin", "github", "twitter", "facebook", "instagram"]
+	for (var i = 0; i < idContact.length; i++) {
+		contact[i] = document.getElementById(idContact[i]).value;
+		console.log(idContact[i] + " : " + contact[i]);
+	}
+
+	/* Résumé des variables récupérées avec leur types (Array, String, Number, etc.)
+     * textAccueil : String
+     * nbAccueilArticle : Number
+     * titreAccueilArticle : Array
+     * textAccueilArticle : Array
+     * cv : Array
+     * titreCompetence : Array
+     * textCompetence : Array
+     * couleurCompetence : Array
+     * nbProjet : Number
+     * titreProjet : Array
+     * textProjet : Array
+     * couleurProjet : Array
+     * license : String
+     * contact : Array
+	 */
+
+	// Concaténation des données en un string pour l'envoyer en POST
+	var string = "";
+
+	// Accueil
+	string == "ACCUEIL\n"
+	string += "&textAccueil=" + textAccueil + "\n";
+	string += "==================\n";
+
+	// Accueil article
+	string += "ACCUEIL ARTICLE\n";
+	for (var i = 0; i < nbAccueilArticle; i++) {
+		string += "&titreAccueilArticle" + i + "=" + titreAccueilArticle[i] + "\n";
+		string += "&textAccueilArticle" + i + "=" + textAccueilArticle[i] + "\n\n";
+	}
+	string += "==================\n";
+
+	// CV
+	string += "CV\n";
+	for (var i = 1; i <= 6; i++) {
+		string += "&textCv" + i + "=" + cv[i] + "\n";
+	}
+	string += "==================\n";
+
+	// Compétences
+	string += "COMPETENCES\n";
+	for (var i = 1; i <= 6; i++) {
+		string += "&titreCompetence" + i + "=" + titreCompetence[i] + "\n";
+		string += "&textCompetence" + i + "=" + textCompetence[i] + "\n";
+		string += "&couleurComp" + i + "=" + couleurCompetence[i] + "\n\n";
+	}
+	string += "==================\n";
+
+	// Projets
+	string += "PROJETS\n";
+	for (var i = 0; i < nbProjet; i++) {
+		string += "&titreProjet" + i + "=" + titreProjet[i] + "\n";
+		string += "&textProjet" + i + "=" + textProjet[i] + "\n";
+		string += "&couleurProjet" + i + "=" + couleurProjet[i] + "\n\n";
+	}
+	string += "==================\n";
+
+	// Licences
+	string += "LICENCES\n";
+	string += "&license=" + license + "\n";
+	string += "==================\n";	
+
+	// Contact
+	string += "CONTACT\n";
+	for (var i = 0; i < idContact.length; i++) {
+		string += "&" + idContact[i] + "=" + contact[i] + "\n";
+	}
+	
+	console.log(string);
+	alert("données dans la console");
+
+	// =================================
+	// @TODO : Envoi des données en POST
+	// =================================
+
+
+	//window.location.href = monLien.href;
+}
+
+// Chargement des events quand la page est chargée
+window.onload = function() {
+	updateElementClass("accueilLink");
+	document.getElementById("accueil").style.display = "block";
+
+	// Pour la licence, ajout d'un listener quand il y a un changement dans le select qui appelle la fonction collapseLicence
+	document.getElementById("selectLicense").addEventListener("change", collapseLicence);
+	document.getElementById("div-licence").style.display = "none";
+
+	// Pour tout les inputs color de classe inputCouleur, ajout d'un listener quand il y a un changement dans le select qui appelle la fonction couleurCompetence
+	document.querySelectorAll(".inputCouleur").forEach(item => {
+		item.addEventListener("change", function(){
+			// récupérer l'id de l'input et retirer couleurCompetence pour avoir l'id de la div
+			var idDiv = item.id.replace("couleurComp", "");
+			console.log(idDiv);
+			couleurCompetence(idDiv);
+		});
+	});
+
+	// Ajout d'un listener sur le bouton enregistrer qui appelle envoieDonner()
+	document.getElementById("enregistrer").addEventListener("click", envoieDonner);
+
+	// Ajout d'un listener sur le bouton ajouterArticleAccueil qui appelle la fonction creerArticleAccueil()
+	document.getElementById("ajouterArticleAccueil").addEventListener("click", creerArticleAccueil);
+}
