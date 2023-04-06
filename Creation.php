@@ -15,7 +15,7 @@
 					<div class="accordion-body">
 						<textarea id="textCompetence'.$numero.'" name="textCompetence'.$numero.'" required></textarea>
 						<script>
-							var simplemde = new SimpleMDE({ element: document.getElementById("textCompetence'.$numero.'") });
+							new SimpleMDE({ element: document.getElementById("textCompetence'.$numero.'") });
 						</script>
 					</div>
 				</div>				
@@ -37,7 +37,7 @@
 					<div class="accordion-body">
 						<textarea id="textCv'.$numero.'" name="textCv" required></textarea>
 						<script>
-							var simplemde = new SimpleMDE({ element: document.getElementById("textCv'.$numero.'") });
+							new SimpleMDE({ element: document.getElementById("textCv'.$numero.'") });
 						</script>
 					</div>
 				</div>
@@ -46,26 +46,7 @@
 		echo $html;
 	}
 
-	function creerRubriqueAccueil($numero) {
-		$html = '
-			<div class="accordion-item">
-				<h3 class="accordion-header" id="hAccueil'.$numero.'">
-					<button class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAccueil" aria-expanded="false" aria-controls="collapseAccueil">
-						Accueil
-					</button>
-				</h3>
-				<div id="collapseAccueil" class="accordion-collapse collapse" data-bs-parent="#accordionAccueil">
-					<div class="accordion-body">
-						<textarea id="textAccueil" name="textAccueil" required></textarea>
-						<script>
-							var simplemde = new SimpleMDE({ element: document.getElementById("textAccueil") });
-						</script>
-					</div>
-				</div>
-			</div>';
 
-		echo $html;
-	}
 ?>
 
 
@@ -145,7 +126,9 @@
 				<div class="c-div-dragNdrop c-large-dragNdrop centerH" onclick="ouvrirFichier()" id="dragNdropDiv">
 					<p class="text-muted centerH italic">glisser - déposer</p>
 				</div>
-				<embed id="pdfEmbed" type="application/pdf" width="100%" height="600" />
+				<div class="embed-responsive embed-responsive-16by9">
+					<embed id="pdfEmbed" type="application/pdf" width="100%" height="100%" />
+				</div>
 
 
 
@@ -296,25 +279,30 @@
 
 		<!-- Accueil -->
 		<section id="accueil" class="position-relative my-5 p-5 border rounded-5">
-			<div">
+			<div>
 				<h3>Accueils</h3>
-				<div class="c-div c-div-login centerH flexC w-50">
-					<label>Jean Magie</label>
-
+				<div class="">
 					<textarea id="textAccueil" name="Accueil" required></textarea>
-
-					<button class="btn btn-lg btn-secondary mx-2" onclick="retourAccueil()" id="btnAccueilSubmit">Submit</button>
-					
+					<script>
+						new SimpleMDE({ element: document.getElementById("textAccueil") });
+					</script>				
 				</div>
 			</div>
-		</section>
-
-		<section id="accueilArticle" class="position-relative my-5 p-5 border rounded-5" >
-			
-			<?php
-
-			?>
-			<button class="btn btn-lg btn-secondary mx-2" onclick="creerAccueil()" id="btnAccueilretour">Retour</button>
+			<div id="divAccueilArticle" class="row">				<!-- 
+				<div class="card" style="width: 18rem;">
+				<img src="./images/minion.png" class="card-img-top" alt="...">
+					<div class="card-body">
+						<h5 class="card-title">Card title</h5>
+							<textarea id="textAccueil" name="Accueil" required></textarea>
+							<script>
+								new SimpleMDE({ element: document.getElementById("textAccueil") });
+							</script>
+					</div>
+				</div> -->
+				
+				<!-- js qui se charge de créer les divs -->
+			</div>
+			<button id="ajouterArticleAccueil" class="btn btn-primary">Ajouter article</button>
 		</section>
 	</div> <!-- Container closure -->
 </div> <!-- Container fluid closure -->
@@ -322,8 +310,6 @@
 
 
 <script>
-
-
 	// Gestion de l'ouverture de fichiers
 	async function ouvrirFichier() {
 		var input = document.createElement('input');
@@ -346,27 +332,9 @@
 		pdfEmbed.src = pdfUrl;
 		pdfEmbed.type = 'application/pdf';
 
-		// supprime la div dragNdrop
-		var divDragNdrop = document.getElementById("divDragNdrop");
-		divDragNdrop.style.display = "none";
+		var dragNdropDiv = document.getElementById("dragNdropDiv");
+		dragNdropDiv.style.display = "none";
 	}
-
-
-/* 	function selectFile (contentType) {
-		return new Promise(resolve => {
-		let input = document.createElement(\'input\');
-			input.type = \'file\';
-			input.multiple = false;
-			input.accept = contentType;
-
-			input.onchange = _ => { 
-				let files = Array.from(input.files);
-				changementImage(files[0]);
-			};
-
-			input.click();
-		});
-	} */
 
 	function collapseLicence(){
 		console.log(document.getElementById("licence-select").value);
@@ -380,7 +348,6 @@
 
 	function hexToRgb(hex) {
 		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-		console.log(result)
 		return result ? {
 			r: parseInt(result[1], 16),
 			g: parseInt(result[2], 16),
@@ -430,7 +397,6 @@
 		}
 	}
 
-
 	// Affichage de la partie création du cv
 	function creerCV() {
 		document.getElementById("creationCv").style.display = "block";
@@ -443,15 +409,54 @@
 		document.getElementById("cv").style.display = "block";
 	}
 
-	function retourAccueil() {
-		document.getElementById("accueil").style.display = "none";
-		document.getElementById("accueilArticle").style.display = "block";
-	}
 
-	function creerAccueil() {
-		document.getElementById("accueil").style.display = "block";
-		document.getElementById("accueilArticle").style.display = "none";
+	// Gestion de la création des compétences
+	function creerArticleAccueil() {
+
+		//Creation de card autoincrementé quand on clique sur le bouton ajouterArticleAccueil, id autoincrementé pour la div et le textarea
+		var nbAccueil = document.getElementById("divAccueilArticle").childElementCount;
+
+		var divAccueil = document.getElementById("divAccueilArticle");
+
+		var div = document.createElement("div");
+		div.setAttribute("class", "card col-sm-3 m-2");
+		div.setAttribute("style", "width: 18rem;");
+		div.setAttribute("id", "divArticleAccueil" + nbAccueil);
+
+		var img = document.createElement("img");
+		img.setAttribute("class", "card-img-top");
+		img.setAttribute("src", "./images/minion.png");
+		img.setAttribute("alt", "...");
+
+		var divCardBody = document.createElement("div");
+		divCardBody.setAttribute("class", "card-body");
+
+		var h5 = document.createElement("h5");
+		h5.setAttribute("class", "card-title");
+		h5.textContent = "Card title";
+
+		var textArea = document.createElement("textarea");
+		textArea.setAttribute("id", "textAccueil" + nbAccueil);
+		textArea.setAttribute("name", "Accueil");
+		textArea.setAttribute("required", "");
+
+		var script = document.createElement("script");
+		script.textContent = "new SimpleMDE({ element: document.getElementById('textAccueil" + nbAccueil + "') });";
+
+		divCardBody.appendChild(h5);
+		divCardBody.appendChild(textArea);
+		divCardBody.appendChild(script);
+
+		div.appendChild(img);
+		div.appendChild(divCardBody);
+
+		console.log(div)
+
+		divAccueil.appendChild(div);
+
 	}
+	
+
 
 	// Gestion de la création des rubriques de projet
 	function creerRubriqueProjet() {
@@ -587,6 +592,8 @@
 		// Ajout d'un listener sur le bouton enregistrer qui appelle envoieDonner()
 		document.getElementById("enregistrer").addEventListener("click", envoieDonner);
 
+		// Ajout d'un listener sur le bouton ajouterArticleAccueil qui appelle la fonction creerArticleAccueil()
+		document.getElementById("ajouterArticleAccueil").addEventListener("click", creerArticleAccueil);
 	}
 
 </script>
