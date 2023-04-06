@@ -7,11 +7,12 @@ if [ $# -eq 0 ]; then
 fi
 
 # Création du dossier
-mkdir -p "../../client/$1/images"
+mkdir -p "../client/$1"
+mkdir -p "../client/$1/images"
 
 # Attribution des permissions
-chmod 777 "../../client/$1"
-chmod 777 "../../client/$1/images"
+chmod 777 "../client/$1"
+chmod 777 "../client/$1/images"
 
 # Affichage du message de confirmation
-echo "Le dossier a été créé avec succès!"
+echo "Les dossiers ont été créés avec succès."

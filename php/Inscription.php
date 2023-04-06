@@ -48,6 +48,20 @@ function verification($nom, $prenom, $email, $password, $passwordC) {
 			$_SESSION['prenom'] = $prenom;
 			$_SESSION['email'] = $email;
 
+			// Création du dossier de destination s'il n'existe pas déjà
+			if (!file_exists('../client/'.$count)) {
+				// Utilise un script shell car sinon la fonction mkdir() 
+				// cree le dossier avec les droits du serveur web et non de l'utilisateur 
+				$output = shell_exec("./creaDossier.sh $count");
+			}
+
+			// Fontion mkdir() normalement utilisée (garder au cas où)
+			//mkdir('./client/'.$id.'/images', 0777, true);
+			//chown('./client/'.$id.'/images', 'bv200989');
+			//supprimer les fichiers dans le dossier
+			//rmdir('./client/4/images');
+			//rmdir('./client/4');
+
 			Header("Location: ../Compte.php");
 
 

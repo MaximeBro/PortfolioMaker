@@ -71,8 +71,10 @@
 		<section class="c-section" id="portfolios">
 			<div style="width: 100%; height: 100%;">
 				<h3>Portfolios</h3>
-				<div class="c-section-content">
-				
+				<button class="btn btn-lg btn-danger absolute right top" onclick="creerPortfolio()">Créer</button>
+				<div class="c-section-content flexC">
+					<div class="c-section-multiple-reverse c-scrollable" id="lstPortfolios">
+					</div>
 				</div>
 			</div>
 		</section>
@@ -126,9 +128,57 @@
 
 
 <script>
+	/* ----------- */
+	/*  PORTFOLIO  */
+	/* ----------- */
+	// Bouton création de portfolios
+	function creerPortfolio() {
+		let portfolio = document.createElement('div');
+		let input = document.createElement('input');
+		let h3 = document.createElement("h3");
+		let btnDel = document.createElement('button');
+		let btnEdit = document.createElement('button');
+		let icon = document.createElement('img');
+
+		portfolio.setAttribute("class", "c-portfolio-div mb-3");
+		portfolio.setAttribute("id", "portfolio'.(getLastPortfolio($email)+1).'");
+
+		input.setAttribute("class", "form-control");
+
+		btnDel.setAttribute("class", "btn btn-lg btn-danger mx-2");
+		let method = "supprimerPortfolio(\'" + portfolio.id + "\')";
+		btnDel.setAttribute("onclick", method);
+		btnDel.innerHTML = "Supprimer";
+
+		let method2 = "modifierPortfolio(\'" + portfolio.id + "\')";
+		btnEdit.setAttribute("onclick", method2);
+		btnEdit.setAttribute("class", "mx-2");
+
+		icon.setAttribute("src", "./images/icons/edit.png");
+		btnEdit.appendChild(icon);
+
+		portfolio.appendChild(btnDel);
+		portfolio.appendChild(input);
+		portfolio.appendChild(btnEdit);
+
+		input.addEventListener("blur", (event) => {
+			h3.innerHTML = input.value;
+			h3.setAttribute("class", "c-event-h3");
+			portfolio.replaceChild(h3, input);
+
+		});
+
+		h3.addEventListener("click", (event) => {
+			input.innerHTML = h3.value;
+			input.setAttribute("class", "form-control");
+			portfolio.replaceChild(input, h3);
+			input.focus();
+		});
+
+		document.getElementById("lstPortfolios").appendChild(portfolio);
+	}
 
 	// Gestion de l'ouverture de fichiers
-
 	async function ouvrirFichier() {
 		var dragNdropDiv = document.getElementById("dragNdropDiv");
 		let files = await selectFile("Pictures/*");
@@ -136,7 +186,7 @@
 		dragNdropDiv.innerHTML = files.map(file => `<img src="${URL.createObjectURL(file)}" style="width: 100px; height: auto;">`).join('');
 	}
 
-	function selectFile (contentType) {
+	function selectFile (contentType) { 
 		return new Promise(resolve => {
 		let input = document.createElement('input');
 			input.type = 'file';
@@ -151,7 +201,10 @@
 			input.click();
 		});
 	}
-	
+
+	let input = docuement.createElement("input");
+	input.addEventListener("", foncton());
+
 	// Gestion des intéractions avec la navbar
 	function clickEvent(element) {
 		if(element == "portfoliosLink") {
@@ -238,7 +291,7 @@
 							console.log("après if");
 							location.reload(true); // On recharge la page pour mettre à jour l\'image
 						}
-					})
+					});
 					break;
 				// L\'image n\'a pas été enregistrée
 				case '2':

@@ -13,21 +13,6 @@
 		$email = $utilisateur->getEmail();
 		$id = getIdByEmail($email); 
 
-		// Création du dossier de destination s'il n'existe pas déjà
-		if (!file_exists('../../client/'.$id)) {
-			// Utilise un script shell car sinon la fonction mkdir() 
-			// cree le dossier avec les droits du serveur web et non de l'utilisateur 
-			$output = shell_exec("./creaDossier.sh $id");
-			echo $output;
-		}
-
-		// Pour les droits
-		//mkdir('../client/'.$id.'/images', 0777, true);
-		//chown('../client/'.$id.'/images', 'bv200989');
-		//supprimer les fichiers dans le dossier
-		//rmdir('../client/4/images');
-		//rmdir('../client/4');
-
 		// Chemin de destination où vous souhaitez enregistrer l'image
 		$destination = '../../client/'.$id.'/images/pdp.png';
 		$destRapportAComptePHP = './client/'.$id.'/images/pdp.png';

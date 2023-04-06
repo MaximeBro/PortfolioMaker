@@ -1,3 +1,6 @@
+.CodeMirror {
+	max-height: 150px;
+}
 
 /* GLOBAL DIVS */
 .c-container {
@@ -395,7 +398,20 @@
 }
 
 
+.c-event-h3 {
+	display: block;
+	position: relative;
+	top: 50%;
+	text-align: center;
 
+	padding: .375rem .75rem;
+	width: 100%;
+	max-width: 100%;
+	font-size: 1.5rem;
+	line-height: 1.5;
+	background-color: rgb(207, 207, 207);
+	border-radius: 5px;
+}
 
 /* Scrollbar Custom */
 

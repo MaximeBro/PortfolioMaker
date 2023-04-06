@@ -8,6 +8,72 @@ include("php/fctAux.inc.php");
 
 afficherPage();
 
+function printPortfolios($email) {
+	
+	$count = 0;
+	$db = DB::getInstance();
+	while($db == null && $count != 100) {
+		$db = DB::getInstance();
+		$count++;
+	}
+	if($count >= 100) { echo("DB unreachable"); }
+	try {
+		$ida = getIdByEmail($email);
+		$portfolios = $db->getPortfolios($ida);
+		$ret = '';
+
+		foreach($portfolios as $portfolio) {
+			if($portfolio != null) {
+				$idp = $portfolio->getIdP();
+				$ret = $ret . '
+				<div class="c-portfolio-div mb-3" id="portfolio-'.$idp.'">
+					<button class="btn btn-lg btn-danger mx-2" onclick="supprimerPortfolio(\'portfolio-'.$idp.'\')">Supprimer</button>
+					<h3 class="c-event-h3" id="onglet-h3-'.$idp.'">'.$portfolio->getTitre().'</h3>
+					<button class="mx-2" onclick="modifierPortfolio(\'portfolio-'.$idp.'\')">
+						<img src="./images/icons/edit.png">
+					</button>
+				</div>
+
+				<script>
+					let portfolio'.$idp.' = document.getElementById("portfolio-'.$idp.'");
+					let h3'.$idp.' = document.getElementById("onglet-h3-'.$idp.'");
+					let input'.$idp.' = document.createElement("input");
+					input'.$idp.'.setAttribute("id", "onglet-input-'.$idp.'");
+
+					input'.$idp.'.addEventListener("blur", (event) => {
+						h3'.$idp.'.setAttribute("class", "c-event-h3");
+						h3'.$idp.'.setAttribute("id", "onglet-h3-'.$idp.'");
+						h3'.$idp.'.innerHTML = input'.$idp.'.value;
+						portfolio'.$idp.'.replaceChild(h3'.$idp.', input'.$idp.');
+
+						let data'.$idp.' = new FormData();
+						data'.$idp.'.append(\'param1\', input'.$idp.'.value);
+						data'.$idp.'.append(\'param2\', input'.$idp.'.id);
+						fetch(\'php/ajax/creationPortfolio.php\', {
+							method: \'POST\',
+							body: data'.$idp.'
+						})
+						.then(response => response.text())
+						.then(data => console.log(data))
+						.catch(error => console.error(error));
+					});
+
+					h3'.$idp.'.addEventListener("click", (event) => {
+						input'.$idp.'.setAttribute("class", "form-control");
+						portfolio'.$idp.'.replaceChild(input'.$idp.', h3'.$idp.');
+						input'.$idp.'.innerHTML = h3'.$idp.'.value;
+						input'.$idp.'.focus();
+					});
+				</script>';
+			}
+		}
+
+		return $ret;
+
+	} catch (Exception $e) { echo $e->getMessage(); }
+}
+
+
 function getPortfolioCount($email) {
 
 	$db = DB::getInstance();
@@ -24,28 +90,11 @@ function getPortfolioCount($email) {
 
 }
 
-function getLastPortfolio($email) {
-
-	$db = DB::getInstance();
-	if ($db == null) {
-		echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
-	} else {
-		try {
-			$id = getIdByEmail($email);
-			$nb = $db->getMaxPortfolio($id);
-
-			return $nb;
-		} catch (Exception $e) { echo $e->getMessage(); }
-	}
-
-}
-
 
 function afficherPage() {
 
 	if(strpos($_SESSION['utilisateur'], "@")) {
 
-		$utilisateur = unserialize($_SESSION['utilisateur']);
 		$nom = isset($_SESSION['nom']) ? $_SESSION['nom'] : "";
 		$prenom = isset($_SESSION['prenom']) ? $_SESSION['prenom'] : "";
 		$email = isset($_SESSION['email']) ? $_SESSION['email'] : "";
@@ -66,6 +115,17 @@ function afficherPage() {
 			<link rel="stylesheet" href="./css/compte.css">
 
 			<title>Votre compte</title>
+
+			<script>
+				// Bouton suppression portfolio
+				function supprimerPortfolio(id) {
+					let element = document.getElementById(id);
+					console.log(element);
+					console.log(id);
+					document.getElementById("lstPortfolios").removeChild(element);
+				}
+			</script>
+
 		</head>
 		<body>
 		
@@ -88,8 +148,8 @@ function afficherPage() {
 					<p class="text-muted">'.$email.'</p>
 
 					<div class="c-3em"></div>
-					<h4 class="c-aside-h4">Projets</h4>
-					<p class="text-muted">'.getPortfolioCount($email).' Portfolios</p>
+					<h4 class="c-aside-h4">Portfolios</h4>
+					<p class="text-muted">'.getPortfolioCount($email).' Portfolio(s)</p>
 				</div>
 
 
@@ -125,9 +185,10 @@ function afficherPage() {
 				<section class="c-section" id="portfolios">
 					<div style="width: 100%; height: 100%;">
 						<h3>Portfolios</h3>
-						<button class="btn btn-lg btn-danger absolute right top" onclick="creerPortfolio()">Créer</button>
+						<button class="btn btn-lg btn-danger absolute right top" onclick="creerPortfolio(\''.(getLastPortfolio()+1).'\', \' \')">Créer</button>
 						<div class="c-section-content flexC">
 							<div class="c-section-multiple-reverse c-scrollable" id="lstPortfolios">
+								'.printPortfolios($email).'
 							</div>
 						</div>
 					</div>
@@ -187,26 +248,31 @@ function afficherPage() {
 
 		<script>
 
+			/* ------------------ */
+			/* ONGLETS PORTFOLIO  */
+			/* ------------------ */
+
 			// Bouton création de portfolios
-			function creerPortfolio() {
+			function creerPortfolio(id, texte) {
 				let portfolio = document.createElement(\'div\');
 				let input = document.createElement(\'input\');
+				let h3 = document.createElement("h3");
 				let btnDel = document.createElement(\'button\');
  				let btnEdit = document.createElement(\'button\');
 				let icon = document.createElement(\'img\');
 
 				portfolio.setAttribute("class", "c-portfolio-div mb-3");
-				portfolio.setAttribute("id", "portfolio'.(getLastPortfolio($email)+1).'");
+				portfolio.setAttribute("id", "portfolio-" + id);
 
 				input.setAttribute("class", "form-control");
+				input.setAttribute("id", "onglet-input-" + id);
 
 				btnDel.setAttribute("class", "btn btn-lg btn-danger mx-2");
-				let method = "supprimerPortfolio(\'" + portfolio.id + "\')";
-				btnDel.setAttribute("onclick", method);
+				btnDel.setAttribute("onclick", "supprimerPortfolio(portfolio.id)");
 				btnDel.innerHTML = "Supprimer";
 
-				let method2 = "modifierPortfolio(\'" + portfolio.id + "\')";
-				btnEdit.setAttribute("onclick", method2);
+
+				btnEdit.setAttribute("onclick", "modifierPortfolio(portfolio.id)");
 				btnEdit.setAttribute("class", "mx-2");
 
 				icon.setAttribute("src", "./images/icons/edit.png");
@@ -215,44 +281,58 @@ function afficherPage() {
 				portfolio.appendChild(btnDel);
 				portfolio.appendChild(input);
 				portfolio.appendChild(btnEdit);
+
+				input.addEventListener("blur", (event) => {
+					h3.innerHTML = input.value;
+					h3.setAttribute("class", "c-event-h3");
+					portfolio.replaceChild(h3, input);
+
+					let data = new FormData();
+					data.append(\'param1\', input.value);
+					data.append(\'param2\', input.id);
+					fetch(\'php/ajax/creationPortfolio.php\', {
+						method: \'POST\',
+							body: data
+					})
+					.then(response => response.text())
+					.then(data => {
+					console.log(data);
+					})
+					.catch(error => console.error(error));
+
+					// location.reload();
+				});
+
+				h3.addEventListener("click", (event) => {
+					input.innerHTML = h3.value;
+					input.setAttribute("class", "form-control");
+					portfolio.replaceChild(input, h3);
+					input.focus();
+				});
+
+				btnDel.addEventListener("click", (event) => {
+					const data = { param: input.id };
+					fetch(\'php/ajax/supprimerPortfolio.php\', {
+						method: \'POST\',
+						headers: { 
+							\'Content-Type\': \'application/json\' 
+						},
+						body: JSON.stringify(data)
+					})
+					.then(data => {
+						console.log(data);
+					});
+
+				});
+
 				document.getElementById("lstPortfolios").appendChild(portfolio);
 			}
 
 
-			// Bouton suppression portfolio
-			function supprimerPortfolio(id) {
-				document.getElementById("lstPortfolios").removeChild(document.getElementById(id));
-			}
 
-
-
-
-			// Gestion de l\'ouverture de fichiers
-
-			async function ouvrirFichier() {
-				var dragNdropDiv = document.getElementById("dragNdropDiv");
-				let files = await selectFile("Pictures/*");
-				console.log(files);
-				dragNdropDiv.innerHTML = \'<img src="${URL.createObjectURL(file)}" style="width: 100px; height: auto;">\' ;
-			}
-
-			function selectFile (contentType) {
-				return new Promise(resolve => {
-				let input = document.createElement(\'input\');
-					input.type = \'file\';
-					input.multiple = false;
-					input.accept = contentType;
-		
-					input.onchange = _ => { 
-						let files = Array.from(input.files);
-						changementImage(files[0]);
-					};
-		
-					input.click();
-				});
-			}
-
-
+			/* --------- */
+			/*  NAV BAR  */
+			/* --------- */
 			// Gestion des intéractions avec la navbar
 			function clickEvent(element) {
 				if(element == "portfoliosLink") {
@@ -272,15 +352,35 @@ function afficherPage() {
 				}
 			}
 
-			// Chargement des events quand la page est chargée
-			window.onload = function() {
-				document.getElementById("portfoliosLink").setAttribute("class", "c-clicked");
-				document.getElementById("compteLink").setAttribute("class", "c-default");
+			
 
-				document.getElementById("portfolios").setAttribute("class", "c-expand");
-				document.getElementById("compte").setAttribute("class", "c-none");
+			/* --------------- */
+			/*  IMAGE PROFILE  */
+			/* --------------- */
+			// Gestion de l\'ouverture de fichiers
+			async function ouvrirFichier() {
+				var dragNdropDiv = document.getElementById("dragNdropDiv");
+				let files = await selectFile("Pictures/*");
+				console.log(files);
+				dragNdropDiv.innerHTML = \'<img src="${URL.createObjectURL(file)}" style="width: 100px; height: auto;">\' ;
 			}
 
+			// Sélectionne un fichier et appelle la fonction de traitement
+			function selectFile (contentType) {
+				return new Promise(resolve => {
+				let input = document.createElement(\'input\');
+					input.type = \'file\';
+					input.multiple = false;
+					input.accept = contentType;
+		
+					input.onchange = _ => { 
+						let files = Array.from(input.files);
+						changementImage(files[0]);
+					};
+		
+					input.click();
+				});
+			}
 
 			// Gestion du dragover pour indiquer que l\'on peut drop
 			dragNdropDiv.addEventListener(\'dragover\', (event) => {
@@ -290,7 +390,6 @@ function afficherPage() {
 				// Permet de montrer que l\'on peut drop dans la zone
 				event.dataTransfer.dropEffect = \'copy\';
 			});
-
 
 			// Gestion du drop de l\'image
 			dragNdropDiv.addEventListener(\'drop\', (event) => {
@@ -327,11 +426,7 @@ function afficherPage() {
 							.then(response => response.text())
 							.then(data => {
 								let data2 = data;
-								console.log(data2, typeof data2);
-								console.log(data2 == \'0\');
-								console.log(data2, dataSave);
 								if(data2 == \'0\') {
-									console.log("après if");
 									location.reload(true); // On recharge la page pour mettre à jour l\\\'image
 								}
 							})
@@ -346,6 +441,19 @@ function afficherPage() {
 					console.error(error);
 					alert(\'Une erreur est survenue lors de l\\\'enregistrement de l\\\'image.\');
 				});
+			}
+
+
+			/* --------------- */
+			/*  WINDOW ONLOAD  */
+			/* --------------- */
+			// Chargement des events quand la page est chargée
+			window.onload = function() {
+				document.getElementById("portfoliosLink").setAttribute("class", "c-clicked");
+				document.getElementById("compteLink").setAttribute("class", "c-default");
+
+				document.getElementById("portfolios").setAttribute("class", "c-expand");
+				document.getElementById("compte").setAttribute("class", "c-none");
 			}
 
 		</script>

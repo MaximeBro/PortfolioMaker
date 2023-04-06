@@ -15,7 +15,7 @@
 					<div class="accordion-body">
 						<textarea id="textCompetence'.$numero.'" name="textCompetence'.$numero.'" required></textarea>
 						<script>
-							new SimpleMDE({ element: document.getElementById("textCompetence'.$numero.'") });
+							var simplemde'.$numero.' = new SimpleMDE({ element: document.getElementById("textCompetence'.$numero.'") });
 						</script>
 					</div>
 				</div>				
@@ -35,7 +35,7 @@
 				</h3>
 				<div id="collapseCv'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionCreaCv">
 					<div class="accordion-body">
-						<textarea id="textCv'.$numero.'" name="textCv" required></textarea>
+						<textarea id="textCv'.$numero.'" name="textCv'.$numero.'" required></textarea>
 						<script>
 							new SimpleMDE({ element: document.getElementById("textCv'.$numero.'") });
 						</script>
@@ -284,30 +284,17 @@
 				<div class="">
 					<textarea id="textAccueil" name="Accueil" required></textarea>
 					<script>
-						new SimpleMDE({ element: document.getElementById("textAccueil") });
+						var simplemdeAccueil = new SimpleMDE({ element: document.getElementById("textAccueil") });
 					</script>				
 				</div>
 			</div>
-			<div id="divAccueilArticle" class="row">				<!-- 
-				<div class="card" style="width: 18rem;">
-				<img src="./images/minion.png" class="card-img-top" alt="...">
-					<div class="card-body">
-						<h5 class="card-title">Card title</h5>
-							<textarea id="textAccueil" name="Accueil" required></textarea>
-							<script>
-								new SimpleMDE({ element: document.getElementById("textAccueil") });
-							</script>
-					</div>
-				</div> -->
-				
+			<div id="divAccueilArticle" class="row">				
 				<!-- js qui se charge de créer les divs -->
 			</div>
 			<button id="ajouterArticleAccueil" class="btn btn-primary">Ajouter article</button>
 		</section>
 	</div> <!-- Container closure -->
 </div> <!-- Container fluid closure -->
-
-
 
 <script>
 	// Gestion de l'ouverture de fichiers
@@ -436,12 +423,12 @@
 		h5.textContent = "Card title";
 
 		var textArea = document.createElement("textarea");
-		textArea.setAttribute("id", "textAccueil" + nbAccueil);
+		textArea.setAttribute("id", "textAccueilArticle" + nbAccueil);
 		textArea.setAttribute("name", "Accueil");
 		textArea.setAttribute("required", "");
 
 		var script = document.createElement("script");
-		script.textContent = "new SimpleMDE({ element: document.getElementById('textAccueil" + nbAccueil + "') });";
+		script.textContent = "new SimpleMDE({ element: document.getElementById('textAccueilArticle" + nbAccueil + "') });";
 
 		divCardBody.appendChild(h5);
 		divCardBody.appendChild(textArea);
@@ -562,9 +549,45 @@
 		event.preventDefault();
 
 		// Récupération des données
+		// Accueil
+		var textAccueil = simplemdeAccueil.value();
+		console.log(textAccueil);
 
-		
-		alert("Données envoyées");
+		// récupérer le nombre de textAccueilArticle
+		var nbAccueilArticle = document.getElementById("divAccueilArticle").childElementCount;
+		var titreAccueilArticle = [];
+		var textAccueilArticle = [];
+		for (var i = 0; i < nbAccueilArticle; i++) {
+			titreAccueilArticle[i] = document.getElementById("titreAccueilArticle"+i).value;
+			console.log("titreAccueilArticle"+i);
+		}
+
+		// CV
+		var cv = [];
+		for (var i = 1; i <= 6; i++) {
+			console.log("textCv"+i);
+			console.log(document.getElementById("textCv"+i).value);
+			cv[i] = document.getElementById("textCv"+i).value;
+		}
+
+		// Compétences
+		var titreCompetence = [];
+		var textCompetence = [];
+		var couleurCompetence = [];
+		for (var i = 1; i <= 6; i++) {
+			console.log("titreCompetence"+i);
+			console.log(document.getElementById("titreCompetence"+i).value);
+			console.log("textCompetence"+i);
+			console.log(document.getElementById("textCompetence"+i).value);
+			console.log("couleurCompetence"+i);
+			console.log(document.getElementById("couleurComp"+i).value);
+			titreCompetence[i] = document.getElementById("titreCompetence"+i).value;
+			textCompetence[i] = document.getElementById("textCompetence"+i).value;
+			couleurCompetence[i] = document.getElementById("couleurComp"+i).value;
+		}
+
+		let string = "textAccueil="+textAccueil+"&nbAccueilArticle="+nbAccueilArticle+"&titreAccueilArticle="+titreAccueilArticle+"&textAccueilArticle="+textAccueilArticle+"&cv="+cv+"&titreCompetence="+titreCompetence+"&textCompetence="+textCompetence+"&couleurCompetence="+couleurCompetence;
+		alert(string);
 
 		window.location.href = monLien.href;
 

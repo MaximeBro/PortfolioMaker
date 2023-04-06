@@ -33,7 +33,6 @@ class Auteur {
 		$res = $res ."email:".$this->email."\n";
 		$res = $res ."mdp:".$this->mdp."\n";
 		$res = $res ."pdp:".$this->pdp."\n";
-		$res = $res ."<br/>";
 		return $res;
 
 	}

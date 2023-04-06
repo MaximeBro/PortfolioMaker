@@ -76,7 +76,4 @@ function verification($emailSession, $nom, $prenom, $email, $mdpOld, $mdp, $mdpC
 	} catch (Exception $e) { echo $e->getMessage(); }
 
 }
-
-
-
 ?>

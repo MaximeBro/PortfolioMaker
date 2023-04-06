@@ -1,6 +1,7 @@
 <?php
 
 require 'Auteur.inc.php';
+require 'Portfolio.inc.php';
 
 class DB {
 	private static $instance = null; //mémorisation de l'instance de DB pour appliquer le pattern Singleton
@@ -74,27 +75,9 @@ class DB {
 	/************************************************************************/
 	private function execQuery($requete,$tparam,$nomClasse) {
 		//on prépare la requête
-
 		try {
 			$stmt = $this->connect->prepare($requete);
 		} catch(Exception $e) { echo $e->getMessage(); }
-		
-
-		if(strpos($requete, "email =") !== false) {
-			$stmt->execute($tparam);
-			return $stmt->fetchColumn();
-		}
-
-		if(strpos($requete, "count(*)") !== false || strpos($requete, "max(") !== false && strpos($requete, "idauteur =") !== false) {
-			$stmt->execute($tparam);
-			return $stmt->fetchColumn();
-		}
-
-		// Si la requête est un count, on renvoie le résultat sous forme de String
-		if(strpos($requete, "count(*)") !== false || strpos($requete, "max(") !== false) {
-			$stmt->execute();
-			return $stmt->fetchColumn();
-		}
 		
 		//on indique que l'on va récupére les tuples sous forme d'objets instance de Auteur
 		$stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, $nomClasse);
@@ -120,6 +103,27 @@ class DB {
 		return $tab;
 	}
 
+
+	private function execQueryNoObject($requete, $tparam) {
+		
+		try {
+			$stmt = $this->connect->prepare($requete);
+		} catch(Exception $e) { echo $e->getMessage(); }
+		
+		$stmt->execute($tparam);
+		return $stmt->fetchColumn();
+	}
+
+	private function execQueryNoParam($requete) {
+		
+		try {
+			$stmt = $this->connect->prepare($requete);
+		} catch(Exception $e) { echo $e->getMessage(); }
+		
+		$stmt->execute();
+		return $stmt->fetchColumn();
+	}
+
 	/************************************************************************/
 	//	Methode utilisable uniquement dans les méthodes de la classe DB
 	//	permettant d'exécuter n'importe quel ordre SQL (update, delete ou insert)
@@ -136,13 +140,15 @@ class DB {
 		return $stmt->rowCount();
 	}
 
+
+
 	/*************************************************************************
 	 * Fonctions qui peuvent être utilisées dans les scripts PHP             *
 	 *************************************************************************/
 
 	public function getImage($email) {
 		$requete = 'select cheminphoto from Auteur where email = ?';
-		return $this->execQuery($requete, array($email), 'Auteur');
+		return $this->execQueryNoObject($requete, array($email));
 	}
 
 	public function getAuteur($id) {
@@ -152,13 +158,12 @@ class DB {
 
 	public function getId($email) {
 		$requete = 'select idauteur from Auteur where email = ?';
-		$tparam = array($email);
-		return $this->execQuery($requete, $tparam, 'Auteur');
+		return $this->execQueryNoObject($requete, array($email));
 	}
 
 	public function getMaxAuteurs() {
 		$requete = 'select max(idauteur) from Auteur';
-		$res = $this->execQuery($requete, null, 'Auteur');
+		$res = $this->execQueryNoParam($requete);
 		
 		if(!isset($res) || is_null($res)) { $res = 0; }
 		return $res;
@@ -170,17 +175,12 @@ class DB {
 	}
 
 	public function insertAuteur($idA, $nom, $prenom, $email, $mdp, $image) {
-		
 		$requete = 'insert into auteur values(?,?,?,?,?,?)';
 		$tparam = array($idA, $nom, $prenom, $email, md5($mdp), $image);
 		return $this->execMaj($requete, $tparam);
 	}
 
 	public function updateAuteur($idAuteur, $nom, $prenom, $email, $mdp, $image) {
-		// $stmt = $this->connect->prepare('UPDATE Auteur SET nom = :nom, prenom = :prenom, email = :email, mdp = :mdp WHERE idauteur = :id');
-		// $stmt->execute(array('nom' => $nom, 'prenom' => $prenom, 'email' => $email, 'mdp' => $mdp, 'id' => $idAuteur));
-		// return $stmt->rowCount();
-
 		$requete = 'update auteur set nom = ? , prenom = ? , email = ? , mdp = ? , cheminphoto = ? where idauteur = ?';
 		$tparam = array($nom, $prenom, $email, $mdp, $image, $idAuteur);
 		return $this->execMaj($requete, $tparam);
@@ -200,72 +200,39 @@ class DB {
 
 	public function getPorfolioCountWithId($id) {
 		$requete = 'select count(*) from portfolio where idauteur = ?';
-		return $this->execQuery($requete, array($id), 'Auteur');
+		return $this->execQueryNoObject($requete, array($id));
 	}
 
-	public function getMaxPortfolio($id) {
-		$requete = 'select max(idportfolio) from Portfolio where idauteur = ?';
-		$res = $this->execQuery($requete, array($id), 'Portfolio');
+	public function getMaxPortfolio() {
+		$requete = 'select max(idportfolio) from Portfolio';
+		$res = $this->execQueryNoObject($requete, array());
 		
 		if(!isset($res) || is_null($res)) { $res = 0; }
 		return $res;
 	}
 
-
-	/*
-
-	public function getClientsAdr($adr) {
-		$requete = 'select * from client where ville = ?';
-		return $this->execQuery($requete,array($adr),'Client');
+	public function getPortfolios($ida) {
+		$requete = 'select * from portfolio where idauteur = ? order by idportfolio';
+		return $this->execQuery($requete, array($ida), 'Portfolio');
 	}
 
-	public function getClient($idcli) {
-		$requete = 'select * from client where ncli = ?';
-		return $this->execQuery($requete,array($idcli),'Client');
+	public function insertPortfolio($idp, $ida, $titre,$chemina, $chemins) {
+		$requete = 'insert into portfolio values(?,?,?,?,?)';
+		$tparam = array($idp, $ida, $titre, $chemina, $chemins);
+		return $this->execQuery($requete, $tparam, 'Portfolio');
 	}
 
-	public function insertClient($idcli,$nom,$adr) {
-		$requete = 'insert into client values(?,?,?)';
-		$tparam = array($idcli,$nom,$adr);
-		return $this->execMaj($requete,$tparam);
+	public function updatePortfolio($idp, $ida, $titre, $chemina, $chemins) {
+		$requete = 'update portfolio set titrep = ? , cheminauteur = ? , cheminspec = ? where idportfolio = ?';
+		$tparam = array($titre, $chemina, $chemins, $idp);
+		return $this->execMaj($requete, $tparam);
 	}
 
-	public function updateClient($idcli,$nom,$adr) {
-		$requete = 'update client set nom = ? , ville = ? where ncli = ?';
-		$tparam = array($nom,$adr,$idcli);
-		return $this->execMaj($requete,$tparam);
+	public function deletePortfolio($idp, $ida) {
+		$requete = 'delete from portfolio where idportfolio = ? and idauteur = ?';
+		$tparam = array($idp, $ida);
+		return $this->execMaj($requete, $tparam);
 	}
-
-	public function updateAdrClient($idcli,$adr) {
-		$requete = 'update client set ville = ? where ncli = ?';
-		$tparam = array($adr,$idcli);
-		return $this->execMaj($requete,$tparam);
-	}
-
-	public function deleteClient($idcli) {
-		$requete = 'delete from client where ncli = ?';
-		$tparam = array($idcli);
-		return $this->execMaj($requete,$tparam);
-	}
-
-
-	public function deleteProduit($np) {
-		$requete = 'delete from produit where np = ?';
-		$tparam = array($np);
-		return $this->execMaj($requete,$tparam);
-	}
-
-	public function insertProduit($np,$lib,$coul,$qs) {
-		$requete = 'insert into produit values(?,?,?,?)';
-		$tparam = array($np,$lib,$coul,$qs);
-		return $this->execMaj($requete,$tparam);
-	}
-
-	public function updateProduit($np,$lib,$couleur,$qs) {
-		$requete = 'update produit set lib = ? , coul = ? , qs = ? where np = ?';
-		$tparam = array($lib,$couleur,$qs,$np);
-		return $this->execMaj($requete,$tparam);
-	}*/
 
 } //fin classe DB
 

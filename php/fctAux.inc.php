@@ -54,4 +54,41 @@ function getImageByEmail($email) {
 }
 
 
+function portfolioExist($id) {
+
+	$db = DB::getInstance();
+	if ($db == null) {
+		echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+	} else {
+		try {
+			$portfolios = $db->getPortfolios($id);
+			
+			foreach($portfolios as $portfolio) {
+				$idP = $portfolio->getIdP();
+				if($idP == $id) {
+					return 0;
+				}
+			}
+
+			return 1;
+		} catch (Exception $e) { echo $e->getMessage(); }
+	}
+}
+
+
+function getLastPortfolio() {
+
+	$db = DB::getInstance();
+	if ($db == null) {
+		echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+	} else {
+		try {
+			$nb = $db->getMaxPortfolio();
+
+			return $nb;
+		} catch (Exception $e) { echo $e->getMessage(); }
+	}
+}
+
+
 ?>
