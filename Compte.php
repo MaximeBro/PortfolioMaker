@@ -19,7 +19,7 @@ function printPortfolios($email) {
 	if($count >= 100) { echo("DB unreachable"); }
 	try {
 		$ida = getIdByEmail($email);
-		$portfolios = $db->getPortfolios($ida);
+		$portfolios = $db->getPortfoliosById($ida);
 		$ret = '';
 
 		foreach($portfolios as $portfolio) {
@@ -27,9 +27,9 @@ function printPortfolios($email) {
 				$idp = $portfolio->getIdP();
 				$ret = $ret . '
 				<div class="c-portfolio-div mb-3" id="portfolio-'.$idp.'">
-					<button class="btn btn-lg btn-danger mx-2" onclick="supprimerPortfolio(\'portfolio-'.$idp.'\')">Supprimer</button>
+					<button class="btn btn-lg btn-danger mx-2" id="btnDel-'.$idp.'" onclick="supprimerPortfolio(\'portfolio-'.$idp.'\')">Supprimer</button>
 					<h3 class="c-event-h3" id="onglet-h3-'.$idp.'">'.$portfolio->getTitre().'</h3>
-					<button class="mx-2" onclick="modifierPortfolio(\'portfolio-'.$idp.'\')">
+					<button class="mx-2" onclick="modifierPortfolio(\'portfolio-'.$idp.'\')" type="submit">
 						<img src="./images/icons/edit.png">
 					</button>
 				</div>
@@ -56,6 +56,8 @@ function printPortfolios($email) {
 						.then(response => response.text())
 						.then(data => console.log(data))
 						.catch(error => console.error(error));
+
+						location.reload();
 					});
 
 					h3'.$idp.'.addEventListener("click", (event) => {
@@ -64,6 +66,25 @@ function printPortfolios($email) {
 						input'.$idp.'.innerHTML = h3'.$idp.'.value;
 						input'.$idp.'.focus();
 					});
+
+					let onglet'.$idp.' = document.getElementById("btnDel-'.$idp.'");
+					onglet'.$idp.'.addEventListener("click", (event) => {
+						let data'.$idp.' = new FormData();
+						data'.$idp.'.append("param", "onglet-input-'.$idp.'");
+						fetch(\'php/ajax/supprimerPortfolio.php\', {
+							method: \'POST\',
+								body: data'.$idp.'
+						})
+						.then(response => response.text())
+						.then(data => {
+							console.log(data);
+							if(data == \'0\') {
+								location.reload(true); // On recharge la page pour mettre à jour
+							}
+						})
+						.catch(error => console.error(error));
+					});
+					
 				</script>';
 			}
 		}
@@ -123,6 +144,26 @@ function afficherPage() {
 					console.log(element);
 					console.log(id);
 					document.getElementById("lstPortfolios").removeChild(element);
+				}
+
+				
+				// Bouton modifier (icône)
+				function modifierPortfolio(id) {
+					
+					let data = new FormData();
+					data.append("idP", id);
+					fetch(\'php/redirectCreation.php\', {
+						method: \'POST\',
+							body: data
+					})
+					.then(response => response.text())
+					.then(data => { 
+						console.log(data); 
+						if(data == \'1\') { // L\'id est set dans $_SESSION
+							window.location.href = "Creation.php";
+						}
+					})
+					.catch(error => console.error(error));					
 				}
 			</script>
 
@@ -264,23 +305,17 @@ function afficherPage() {
 				portfolio.setAttribute("class", "c-portfolio-div mb-3");
 				portfolio.setAttribute("id", "portfolio-" + id);
 
-				input.setAttribute("class", "form-control");
 				input.setAttribute("id", "onglet-input-" + id);
-
+				input.setAttribute("class", "form-control");
 				btnDel.setAttribute("class", "btn btn-lg btn-danger mx-2");
 				btnDel.setAttribute("onclick", "supprimerPortfolio(portfolio.id)");
 				btnDel.innerHTML = "Supprimer";
-
 
 				btnEdit.setAttribute("onclick", "modifierPortfolio(portfolio.id)");
 				btnEdit.setAttribute("class", "mx-2");
 
 				icon.setAttribute("src", "./images/icons/edit.png");
 				btnEdit.appendChild(icon);
-
-				portfolio.appendChild(btnDel);
-				portfolio.appendChild(input);
-				portfolio.appendChild(btnEdit);
 
 				input.addEventListener("blur", (event) => {
 					h3.innerHTML = input.value;
@@ -290,17 +325,19 @@ function afficherPage() {
 					let data = new FormData();
 					data.append(\'param1\', input.value);
 					data.append(\'param2\', input.id);
+					console.log(input.id + "|");
 					fetch(\'php/ajax/creationPortfolio.php\', {
 						method: \'POST\',
 							body: data
 					})
 					.then(response => response.text())
 					.then(data => {
-					console.log(data);
+						console.log(data);
+						if(data == \'0\') {
+							location.reload(true); // On recharge la page pour mettre à jour
+						}
 					})
 					.catch(error => console.error(error));
-
-					// location.reload();
 				});
 
 				h3.addEventListener("click", (event) => {
@@ -311,20 +348,24 @@ function afficherPage() {
 				});
 
 				btnDel.addEventListener("click", (event) => {
-					const data = { param: input.id };
+					data = new FormData();
+					data.append(\'param1\', input.id);
 					fetch(\'php/ajax/supprimerPortfolio.php\', {
 						method: \'POST\',
-						headers: { 
-							\'Content-Type\': \'application/json\' 
-						},
-						body: JSON.stringify(data)
+						body: data
 					})
-					.then(data => {
-						console.log(data);
-					});
-
+					.then(data => { 
+						console.log(data); 
+						if(data == \'0\') {
+							location.reload(true); // On recharge la page pour mettre à jour
+						}
+					})
+					.catch(error => console.error(error));
 				});
 
+				portfolio.appendChild(btnDel);
+				portfolio.appendChild(input);
+				portfolio.appendChild(btnEdit);
 				document.getElementById("lstPortfolios").appendChild(portfolio);
 			}
 

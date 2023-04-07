@@ -9,9 +9,7 @@
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			// Récupération de la chaîne envoyée dans Compte.php
-			$idp = json_decode(file_get_contents("php://input"), true);
-			$idp = $idp['param'];
-			$idp = str_replace("onglet-input-", "", $idp);
+			$idp = (int) str_replace("onglet-input-", "", $_POST['param']);
 
 			$count = 0;
 			$db = DB::getInstance();
@@ -22,13 +20,13 @@
 			if($count >= 100) { echo("DB unreachable"); }
 
 			try {
-				$ida = getIdByEmail($_SESSION['email']);
-				$existe = portfolioExist($id);
+				$existe = portfolioExist($idp);
 
 				if($existe == 0) {
-					$db->deletePortfolio($idp, $ida);
+					$db->deletePortfolio($idp);
 				}
 
+				echo 0;
 			} catch(Exception $e) { $e->getMessage(); }
 
 		}

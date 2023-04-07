@@ -27,12 +27,6 @@ function connexionE($msg) {
 					<input type="email" class="form-control mb-3" id="floatingInput" placeholder="Email" name="emailInput">
 					<input type="password" class="form-control" id="floatingPassword" placeholder="Mot de passe" name="passwordInput">
 
-					<div class="checkbox my-3">
-						<label>
-							<input type="checkbox" value="remember-me"> Se souvenir de moi
-						</label>
-					</div>
-
 					<p id="erreur" class="erreur">'.$msg.'</p>
 
 					<button class="btn btn-lg btn-primary mt-3" type="submit">Se connecter</button>

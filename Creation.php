@@ -1,4 +1,22 @@
 <?php
+	include("php/fctAux.inc.php");
+
+	validerModif();
+	if(!isset($_SESSION['idP'])) {
+		Header("Location: Compte.php");
+		exit();
+	}
+
+	$idp = $_SESSION['idP'];
+	$nom = $_SESSION['nom'];
+	$prenom = $_SESSION['prenom'];
+	$pdp = $_SESSION['image'];
+
+
+
+
+
+
 	// Fonction qui permet de créer les rubriques des compétences
 	function creerRubriqueCompetence($numero) {
 		$html = '
@@ -7,7 +25,7 @@
 					<button id="btnComp'.$numero.'" class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComp'.$numero.'" 
 							aria-expanded="false" aria-controls="collapseComp'.$numero.'">
 						Compétence n°'.$numero.' :  
-						<input type="text" class="mx-2" id="titreCompetence'.$numero.'" placeholder="Nom de la compétence '.$numero.'" required>
+						<input type="text" class="form-control w-25 mx-2" id="titreCompetence'.$numero.'" placeholder="Nom de la compétence '.$numero.'" required>
 						<input class="inputCouleur mx-2" type="color" id="couleurComp'.$numero.'">
 					</button>
 				</h3>
@@ -18,7 +36,7 @@
 							simplemdeComp['.$numero.'] = new SimpleMDE({ element: document.getElementById("textCompetence'.$numero.'") });
 						</script>
 					</div>
-				</div>				
+				</div>
 			</div>
 		';
 		echo $html;
@@ -72,11 +90,14 @@
 <body>
 	
 <!-- Contenu principal, regroupe toute la page -->
-<div class="container-fluid px-0">	
+<div class="container-fluid px-0">
 	<!-- Barre de navigation -->
 	<nav class="navbar navbar-expand-lg bg-dark">
 		<div class="navbar-collapse offcanvas-collapse py-2 justify-content-center">
 			<ul class="nav mb-2 mb-lg-0 align-items-center">
+
+				<!-- Retour -->
+				<a class="static left top c-back" href="Compte.php">←</a>
 
 				<!-- Accueil-->
 				<li class="nav-item mx-5 fs-5">
@@ -95,12 +116,12 @@
 
 				<!-- Projet -->
 				<li class="nav-item mx-5 fs-5">
-					<a id="projetLink" href="#" onclick="clickEvent('projetLink')">Projet</a>
+					<a id="projetLink" href="#" onclick="clickEvent('projetLink')">Projets</a>
 				</li>
 
-				<!-- License -->
+				<!-- Licence -->
 				<li class="nav-item mx-5 fs-5">
-					<a id="licenseLink" href="#" onclick="clickEvent('licenseLink')">License</a>
+					<a id="licenceLink" href="#" onclick="clickEvent('licenceLink')">Licence</a>
 				</li>
 
 				<!-- Contact -->
@@ -130,13 +151,12 @@
 					<embed id="pdfEmbed" type="application/pdf" width="100%" height="100%" />
 				</div>
 
-
-
 				<div class="c-section-btn-box centerH my-4">
 					<div></div>
-					<button class="btn btn-lg btn-secondary" onclick="creerCV()" id="btnCreation">Création</button>
+					<button class="btn btn-lg btn-secondary" onclick="creerCV()" id="btnCreationCv">Création</button>
 					<div></div>
 					<button class="btn btn-lg btn-secondary" onclick="ouvrirFichier()" id="btnFichier">Importer</button>
+					<button class="btn btn-lg btn-secondary" onclick="supprimerCV()" id="btnRetirerCv">Retirer CV</button>
 					<div></div>
 				</div>
 			</div>
@@ -182,21 +202,20 @@
 				<div class="accordion" id="accordionProjet">
 				</div>
 				<div class="c-section-btn-box centerH my-4">
-					<button class="btn btn-lg btn-secondary mx-2" onclick="creerRubriqueProjet()" id="btnCreation">Création</button>
+					<button class="btn btn-lg btn-secondary mx-2" onclick="creerRubriqueProjet()" id="btnCreationProjet">Créer</button>
 					<button class="btn btn-lg btn-secondary mx-2" onclick="supprimerProjet()" id="btnSupprimer">Supprimer</button>
 				</div>
 			</div>
 		</section>
 
-		<!-- License -->
-		<section id="license" class="position-relative my-5 p-5 border rounded-5">
+		<!-- Licence -->
+		<section id="licence" class="position-relative my-5 p-5 border rounded-5">
 			<div>
 				<h3>
-					License
-					<select name="Licences" id="selectLicense" class="form-select my-2">
-						<option value="">--Sélectionner une option--</option>
-						<option value="custom">Custom</option>
+					Licence
+					<select name="Licences" id="selectLicence" class="form-select my-2">
 						<option value="allRightReserved">All rights reserved</option>
+						<option value="custom">Custom</option>
 						<option value="cc">CC</option>
 						<option value="gnu">GNU</option>
 						<option value="mit">MIT</option>
@@ -280,7 +299,7 @@
 		<!-- Accueil -->
 		<section id="accueil" class="position-relative my-5 p-5 border rounded-5">
 			<div>
-				<h3>Accueils</h3>
+				<h3>Accueil</h3>
 				<div class="">
 					<textarea id="textAccueil" name="Accueil" required></textarea>
 					<script>
@@ -288,10 +307,11 @@
 					</script>				
 				</div>
 			</div>
-			<div id="divAccueilArticle" class="row">				
-				<!-- js qui se charge de créer les divs -->
+			<!--
+			<div id="divAccueilArticle" class="row">
 			</div>
 			<button id="ajouterArticleAccueil" class="btn btn-primary">Ajouter article</button>
+			-->
 		</section>
 	</div> <!-- Container closure -->
 </div> <!-- Container fluid closure -->

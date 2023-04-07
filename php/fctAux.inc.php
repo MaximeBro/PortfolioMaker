@@ -2,9 +2,13 @@
 
 session_start();
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+
 function validerSession() {
 
-	if(isset($_SESSION['utilisateur'])) {
+	if(isset($_SESSION['email'])) {
 		Header("Location: ../Compte.php");
 	} else {
 		Header ("Location: ../Connexion.html");
@@ -12,10 +16,9 @@ function validerSession() {
 }
 
 function validerModif() {
-	if(!isset($_SESSION['utilisateur'])) {
-		Header("Location: ../Connexion.html");
-	}
-
+	if(!isset($_SESSION['email'])) {
+		Header("Location: ./Connexion.html");
+	} 
 }
 
 function getIdByEmail($email) {
@@ -61,7 +64,7 @@ function portfolioExist($id) {
 		echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
 	} else {
 		try {
-			$portfolios = $db->getPortfolios($id);
+			$portfolios = $db->getPortfolios();
 			
 			foreach($portfolios as $portfolio) {
 				$idP = $portfolio->getIdP();

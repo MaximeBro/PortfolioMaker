@@ -179,6 +179,8 @@
 	padding: 5 15 5 15;
 	line-height: 1.2em;
 	color:white;
+	font-weight: bold;
+	text-decoration: none;
 }
 
 .c-back:hover {
@@ -403,6 +405,8 @@
 	position: relative;
 	top: 50%;
 	text-align: center;
+
+	margin: 0;
 
 	padding: .375rem .75rem;
 	width: 100%;

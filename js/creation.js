@@ -1,11 +1,13 @@
 // Permet de récupérer les simplemde de l'accueil
-var simplemdeAccueilArticle = [];
+// var simplemdeAccueilArticle = [];
 // Permetrat de récupérer les simplemde de compétences
 var simplemdeComp = [];
 // Permetrat de récupérer les simplemde du CV
 var simplemdeCv = [];
 // Permetrat de récupérer les simplemde des projets
 var simplemdeProjet = [];
+
+
 
 // Gestion de l'ouverture de fichiers
 async function ouvrirFichier() {
@@ -14,12 +16,27 @@ async function ouvrirFichier() {
 	input.accept = 'application/pdf';
 	input.onchange = function() {
 		var file = input.files[0];
+		// Affiche les infos et l'URL
+		console.log(file + " " + file.name + " ");
 		var fileReader = new FileReader();
 		fileReader.onload = function() {
-		var pdfUrl = fileReader.result;
-		showPdf(pdfUrl);
+			var pdfUrl = fileReader.result;
+			showPdf(pdfUrl);
 		};
 		fileReader.readAsDataURL(file);
+
+		// Envoie le fichier au serveur
+		fetch('./php/ajax/cvImport.php', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/pdf'
+			},
+			body: new Blob([file], { type: 'application/pdf' })
+		})
+		.then(response => response.text())
+		.then(data => {
+			console.log(data);
+		})
 	};
 	input.click();
 }
@@ -31,11 +48,52 @@ function showPdf(pdfUrl) {
 
 	var dragNdropDiv = document.getElementById("dragNdropDiv");
 	dragNdropDiv.style.display = "none";
+
+	var btnFichier = document.getElementById("btnFichier");
+	btnFichier.style.display = "none";
+	var btnRetirerCv = document.getElementById("btnRetirerCv");
+	btnRetirerCv.style.display = "block";
+}
+
+// Affichage de la partie création du cv
+function creerCV() {
+	document.getElementById("creationCv").style.display = "block";
+	document.getElementById("cv").style.display = "none";
+}
+
+// Retirer le pdf de l'embed
+function supprimerCV() {
+	var pdfEmbed = document.getElementById('pdfEmbed');
+	pdfEmbed.src = "";
+
+	var dragNdropDiv = document.getElementById("dragNdropDiv");
+	dragNdropDiv.style.display = "block";
+
+	var btnFichier = document.getElementById("btnFichier");
+	btnFichier.style.display = "block";
+	var btnRetirerCv = document.getElementById("btnRetirerCv");
+	btnRetirerCv.style.display = "none";
+
+	// Supprime le fichier du serveur
+	fetch('./php/ajax/cvSuppr.php', {
+		method: 'POST'
+	})
+	.then(response => response.text())
+	.then(data => {
+		console.log(data);
+	})
+	.catch(error => console.log(error));
+}
+
+// Affichage de la partie importation du cv
+function retourCV() {
+	document.getElementById("creationCv").style.display = "none";
+	document.getElementById("cv").style.display = "block";
 }
 
 function collapseLicence(){
-	console.log(document.getElementById("selectLicense").value);
-	if(document.getElementById("selectLicense").value != "custom"){
+	console.log(document.getElementById("selectLicence").value);
+	if(document.getElementById("selectLicence").value != "custom"){
 		document.getElementById("div-licence").style.display = "none";
 	}
 	else{
@@ -94,17 +152,6 @@ function supprimerProjet() {
 	}
 }
 
-// Affichage de la partie création du cv
-function creerCV() {
-	document.getElementById("creationCv").style.display = "block";
-	document.getElementById("cv").style.display = "none";
-}
-
-// Affichage de la partie importation du cv
-function retourCV() {
-	document.getElementById("creationCv").style.display = "none";
-	document.getElementById("cv").style.display = "block";
-}
 
 
 // Gestion de la création des compétences
@@ -171,13 +218,13 @@ function creerRubriqueProjet() {
 
 	var button = document.createElement("button");
 	button.setAttribute("id", "btnProjet"+nbProjet);
-	button.setAttribute("class", "accordion-button collapsed");
+	button.setAttribute("class", "accordion-button collapsed fs-5");
 	button.setAttribute("type", "button");
 	button.setAttribute("data-bs-toggle", "collapse");
 	button.setAttribute("data-bs-target", "#collapse"+nbProjet);
 	button.setAttribute("aria-expanded", "false");
 	button.setAttribute("aria-controls", "collapse"+nbProjet);
-	button.innerHTML = "Projet n°"+(nbProjet + 1)+" : " + "<input type=\"text\" id=\"titreProjet"+nbProjet+"\" required><input class=\"mx-2\" type=\"color\" id=\"couleurProjet" + nbProjet + "\">";
+	button.innerHTML = "Projet n°"+(nbProjet + 1)+" : " + "<input class=\"mx-2\" type=\"text\" id=\"titreProjet"+nbProjet+"\" required><input class=\"mx-2\" type=\"color\" id=\"couleurProjet" + nbProjet + "\">";
 
 	var div2 = document.createElement("div");
 	div2.setAttribute("id", "collapse"+nbProjet);
@@ -224,8 +271,8 @@ function clickEvent(element) {
 	else if(element == "projetLink") {
 		updateElementClass("projetLink");
 	}
-	else if(element == "licenseLink") {
-		updateElementClass("licenseLink");
+	else if(element == "licenceLink") {
+		updateElementClass("licenceLink");
 	}
 	else if(element == "contactLink") {
 		updateElementClass("contactLink");
@@ -235,14 +282,14 @@ function clickEvent(element) {
 // Gestion de l'affichage des sections
 function updateElementClass(element) {
 	// Gestion de la navbar
-	const elementList = ["accueilLink", "cvLink", "competencesLink", "projetLink", "licenseLink", "contactLink"];
+	const elementList = ["accueilLink", "cvLink", "competencesLink", "projetLink", "licenceLink", "contactLink"];
 	elementList.forEach((el) => {
 		const elClass = (el === element) ? "c-clicked" : "c-default";
 		document.getElementById(el).setAttribute("class", elClass);
 	});
 	
 	// Gestion des sections
-	const sectionList = ["accueil", "cv", "competences", "projet", "license", "contact", "creationCv"];
+	const sectionList = ["accueil", "cv", "competences", "projet", "licence", "contact", "creationCv"];
 	sectionList.forEach((el) => {
 		if (el === element.replace("Link", "")) {
 			document.getElementById(el).style.display = "block";
@@ -262,26 +309,21 @@ function envoieDonner() {
 	// Récupération des données
 
 	// Accueil
-	var textAccueil = simplemdeAccueil.value();
-	console.log(textAccueil);
+	var texteAccueil = simplemdeAccueil.value();
 
 	// Accueil article
-	var nbAccueilArticle = document.getElementById("divAccueilArticle").childElementCount;
+/* 	var nbAccueilArticle = document.getElementById("divAccueilArticle").childElementCount;
 	var titreAccueilArticle = [];
 	var textAccueilArticle = [];
 	for (var i = 0; i < nbAccueilArticle; i++) {
 		titreAccueilArticle[i] = document.getElementById("titreAccueilArticle"+i).value;
-		console.log("titreAccueilArticle"+i);
 		textAccueilArticle[i] = simplemdeAccueilArticle[i].value();
-		console.log("textAccueilArticle"+i);
-	}
+	} */
 
 	// CV
 	var cv = [];
 	for (var i = 1; i <= 6; i++) {
-		console.log("textCv"+i);
-		console.log(document.getElementById("textCv"+i).value);
-		cv[i] = document.getElementById("textCv"+i).value;
+		cv[i] = simplemdeCv[i].value();
 	}
 
 	// Compétences
@@ -289,15 +331,9 @@ function envoieDonner() {
 	var textCompetence = [];
 	var couleurCompetence = [];
 	for (var i = 1; i <= 6; i++) {
-		console.log("titreCompetence"+i);
 		titreCompetence[i] = document.getElementById("titreCompetence"+i).value;
-		console.log(titreCompetence[i]);
-		console.log("textCompetence"+i);
 		textCompetence[i] = simplemdeComp[i].value();
-		console.log(textCompetence[i]);
-		console.log("couleurComp"+i);
 		couleurCompetence[i] = document.getElementById("couleurComp"+i).value;
-		console.log(couleurCompetence[i]);
 	}
 
 	// Projets
@@ -306,49 +342,37 @@ function envoieDonner() {
 	var textProjet = [];
 	var couleurProjet = [];
 	for (var i = 0; i < nbProjet; i++) {
-		console.log("titreProjet"+i);
 		titreProjet[i] = document.getElementById("titreProjet"+i).value;
-		console.log(titreProjet[i]);
-		console.log("textProjet"+i);
 		textProjet[i] = simplemdeProjet[i].value();
-		console.log(textProjet[i]);
-		console.log("couleurProjet"+i);
 		couleurProjet[i] = document.getElementById("couleurProjet"+i).value;
-		console.log(couleurProjet[i]);
 	}
 
 	// Licences
-	var select = document.getElementById("selectLicense").value;
+	var select = document.getElementById("selectLicence").value;
 	if (select == "custom") {
-		var license = document.getElementById("textLicense").value;
+		var licence = document.getElementById("textLicence").value;
 	}
 	else {
-		var license = select;
+		var licence = select;
 	}
-	console.log(license);
 
 	// Contact
 	var contact = []
 	var idContact = ["mail", "tel", "linkedin", "github", "twitter", "facebook", "instagram"]
 	for (var i = 0; i < idContact.length; i++) {
 		contact[i] = document.getElementById(idContact[i]).value;
-		console.log(idContact[i] + " : " + contact[i]);
 	}
 
 	/* Résumé des variables récupérées avec leur types (Array, String, Number, etc.)
      * textAccueil : String
-     * nbAccueilArticle : Number
-     * titreAccueilArticle : Array
-     * textAccueilArticle : Array
      * cv : Array
      * titreCompetence : Array
      * textCompetence : Array
      * couleurCompetence : Array
-     * nbProjet : Number
      * titreProjet : Array
-     * textProjet : Array
+     * texteProjet : Array
      * couleurProjet : Array
-     * license : String
+     * licence : String
      * contact : Array
 	 */
 
@@ -359,14 +383,15 @@ function envoieDonner() {
 	string == "ACCUEIL\n"
 	string += "&textAccueil=" + textAccueil + "\n";
 	string += "==================\n";
-
+	
+	/* 
 	// Accueil article
 	string += "ACCUEIL ARTICLE\n";
 	for (var i = 0; i < nbAccueilArticle; i++) {
 		string += "&titreAccueilArticle" + i + "=" + titreAccueilArticle[i] + "\n";
 		string += "&textAccueilArticle" + i + "=" + textAccueilArticle[i] + "\n\n";
 	}
-	string += "==================\n";
+	string += "==================\n"; */
 
 	// CV
 	string += "CV\n";
@@ -395,7 +420,7 @@ function envoieDonner() {
 
 	// Licences
 	string += "LICENCES\n";
-	string += "&license=" + license + "\n";
+	string += "&licence=" + licence + "\n";
 	string += "==================\n";	
 
 	// Contact
@@ -405,12 +430,100 @@ function envoieDonner() {
 	}
 	
 	console.log(string);
-	alert("données dans la console");
 
-	// =================================
-	// @TODO : Envoi des données en POST
-	// =================================
+	var tableauAccueil = new FormData();
+	tableauAccueil.append("texteAccueil", texteAccueil);
+	//tableauAccueil.append("titreAccueilArticle", titreAccueilArticle);
+	//tableauAccueil.append("textAccueilArticle", textAccueilArticle);
+	
+	var tableauCv = new FormData();
+	tableauCv.append("textCv", cv);
+	
+	var tableauCompetence = new FormData();
+	tableauCompetence.append("titreCompetence", titreCompetence);
+	tableauCompetence.append("texteCompetence", textCompetence);
+	tableauCompetence.append("couleurCompetence", couleurCompetence);
+	
+	var tableauProjet = new FormData();
+	tableauProjet.append("titreProjet", titreProjet);
+	tableauProjet.append("texteProjet", textProjet);
+	tableauProjet.append("couleurProjet", couleurProjet);
+	
+	var tableauLicence = new FormData();
+	tableauLicence.append("licence", licence);
+	
+	var tableauContact = new FormData();
+	tableauContact.append("contact", contact);
 
+	// Accueil
+	fetch("php/ajax/accueil.php", {
+		method: "POST",
+		body: tableauAccueil
+		
+	})
+	.then(response => response.text())
+	.then(data => { 
+		console.log(data);
+	})
+	.catch(error => console.error(error));
+
+	// CV
+	fetch("php/ajax/cvCreer.php", {
+		method: "POST",
+		body: tableauCv
+	})
+	.then(response => response.text())
+	.then(data => {
+		console.log(data);
+	})
+	.catch(error => console.error(error));
+
+	// Compétences
+	fetch("php/ajax/competence.php", {
+		method: "POST",
+		body: tableauCompetence
+	})
+	.then(response => response.text())
+	.then(data => {
+		console.log(data);
+	})
+	.catch(error => console.error(error));
+
+	// Projets
+	fetch("php/ajax/projet.php", {
+		method: "POST",
+		body: tableauProjet
+	})
+	.then(response => response.text())
+	.then(data => {
+		console.log(data);
+	})
+	.catch(error => console.error(error));
+
+	// Licence
+	fetch("php/ajax/licence.php", {
+		method: "POST",
+		body: tableauLicence
+	})
+	.then(response => response.text())
+	.then(data => {
+		console.log(data);
+	})
+	.catch(error => console.error(error));
+
+	// Contact
+	fetch("php/ajax/contact.php", {
+		method: "POST",
+		body: tableauContact
+	})
+	.then(response => response.text())
+	.then(data => {
+		console.log(data);
+	})
+	.catch(error => console.error(error));
+
+	
+			
 
 	//window.location.href = monLien.href;
 }
@@ -421,7 +534,7 @@ window.onload = function() {
 	document.getElementById("accueil").style.display = "block";
 
 	// Pour la licence, ajout d'un listener quand il y a un changement dans le select qui appelle la fonction collapseLicence
-	document.getElementById("selectLicense").addEventListener("change", collapseLicence);
+	document.getElementById("selectLicence").addEventListener("change", collapseLicence);
 	document.getElementById("div-licence").style.display = "none";
 
 	// Pour tout les inputs color de classe inputCouleur, ajout d'un listener quand il y a un changement dans le select qui appelle la fonction couleurCompetence
@@ -429,7 +542,6 @@ window.onload = function() {
 		item.addEventListener("change", function(){
 			// récupérer l'id de l'input et retirer couleurCompetence pour avoir l'id de la div
 			var idDiv = item.id.replace("couleurComp", "");
-			console.log(idDiv);
 			couleurCompetence(idDiv);
 		});
 	});
@@ -438,5 +550,8 @@ window.onload = function() {
 	document.getElementById("enregistrer").addEventListener("click", envoieDonner);
 
 	// Ajout d'un listener sur le bouton ajouterArticleAccueil qui appelle la fonction creerArticleAccueil()
-	document.getElementById("ajouterArticleAccueil").addEventListener("click", creerArticleAccueil);
+	//document.getElementById("ajouterArticleAccueil").addEventListener("click", creerArticleAccueil);
+
+	// Btn btnRetirerCv invisible
+	document.getElementById("btnRetirerCv").style.display = "none";
 }

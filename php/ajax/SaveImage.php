@@ -25,7 +25,7 @@
 			echo "1:".$destRapportAComptePHP;
 		} else {
 			// Le fichier n'est pas une image
-			echo "2";
+			echo "0:Le fichier n'est pas une image";
 		}
 
 	}

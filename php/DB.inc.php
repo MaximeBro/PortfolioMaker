@@ -2,6 +2,12 @@
 
 require 'Auteur.inc.php';
 require 'Portfolio.inc.php';
+require 'Accueil.inc.php';
+require 'CV.inc.php';
+require 'Competence.inc.php';
+require 'Projet.inc.php';
+require 'Licence.inc.php';
+require 'Contact.inc.php';
 
 class DB {
 	private static $instance = null; //mémorisation de l'instance de DB pour appliquer le pattern Singleton
@@ -211,12 +217,17 @@ class DB {
 		return $res;
 	}
 
-	public function getPortfolios($ida) {
+	public function getPortfolios() {
+		$requete = 'select * from portfolio order by idportfolio';
+		return $this->execQuery($requete, null, 'Portfolio');
+	}
+
+	public function getPortfoliosById($ida) {
 		$requete = 'select * from portfolio where idauteur = ? order by idportfolio';
 		return $this->execQuery($requete, array($ida), 'Portfolio');
 	}
 
-	public function insertPortfolio($idp, $ida, $titre,$chemina, $chemins) {
+	public function insertPortfolio($idp, $ida, $titre, $chemina, $chemins) {
 		$requete = 'insert into portfolio values(?,?,?,?,?)';
 		$tparam = array($idp, $ida, $titre, $chemina, $chemins);
 		return $this->execQuery($requete, $tparam, 'Portfolio');
@@ -228,11 +239,223 @@ class DB {
 		return $this->execMaj($requete, $tparam);
 	}
 
-	public function deletePortfolio($idp, $ida) {
-		$requete = 'delete from portfolio where idportfolio = ? and idauteur = ?';
-		$tparam = array($idp, $ida);
+	public function deletePortfolio($idp) {
+		$requete = 'delete from portfolio where idportfolio = ?';
+		return $this->execMaj($requete, array($idp));
+	}
+
+
+
+	// -------- //
+	// CREATION //
+	// -------- //
+
+	//Accueil
+	public function getAccueils() {
+		$requete = 'select * from accueil order by idaccueil';
+		return $this->execQuery($requete, null, 'Accueil');
+	}
+
+	public function getMaxAccueil() {
+		$requete = 'select max(idaccueil) from Accueil';
+		$res = $this->execQueryNoObject($requete, array());
+		
+		if(!isset($res) || is_null($res)) { $res = 0; }
+		return $res;
+	}
+
+	public function getAccueilById($ida, $idp) {
+		$requete = 'select * from accueil where idauteur = ? and idportfolio = ? order by idaccueil';
+		return $this->execQuery($requete, array($ida, $idp), 'Accueil');
+	}
+
+	public function insertAccueil($id, $idp, $ida, $texte) {
+		$requete = 'insert into accueil values(?,?,?,?)';
+		$tparam = array($id, $idp, $ida, $texte);
 		return $this->execMaj($requete, $tparam);
 	}
+
+	public function updateAccueil($id, $idp, $ida, $texte) {
+		$requete = 'update accueil set idportfolio = ? , idauteur = ? , texteacc = ? where idaccueil = ?';
+		$tparam = array($idp, $ida, $texte, $id);
+		return $this->execMaj($requete, $tparam);
+	}
+
+	public function deleteAccueil($id) {
+		$requete = 'delete from accueil where idaccueil = ?';
+		return $this->execMaj($requete, array($id));
+	}
+
+
+
+	// CV
+	public function getCVs() {
+		$requete = 'select * from cv order by idcv';
+		return $this->execQuery($requete, null, 'CV');
+	}
+
+	public function getCVById($ida, $idp) {
+		$requete = 'select * from CV where idauteur = ? and idportfolio = ? order by idcv';
+		return $this->execQuery($requete, array($ida, $idp), 'CV');
+	}
+
+	public function getMaxCV() {
+		$requete = 'select max(idcv) from CV';
+		$res = $this->execQueryNoObject($requete, array());
+		
+		if(!isset($res) || is_null($res)) { $res = 0; }
+		return $res;
+	}
+
+	public function insertCV($id, $idp, $ida, $chemincv, $imagecv, $textecv) {
+		$requete = 'insert into cv values(?,?,?,?,?,?)';
+		$tparam = array($id, $idp, $ida, $chemincv, $imagecv, $textecv);
+		return $this->execMaj($requete, $tparam);
+	}
+
+	public function updateCV($id, $idp, $ida, $chemincv, $imagecv, $textecv) {
+		$requete = 'update cv set chemincv = ? , imagecv = ? , textecv = ? where idcv = ? and idportfolio = ? and idauteur = ?';
+		$tparam = array($chemincv, $imagecv, $textecv, $id, $idp, $ida);
+		return $this->execMaj($requete, $tparam);
+	}
+
+
+	// Compétence
+	public function getCompetences() {
+		$requete = 'select * from competence order by idcomp';
+		return $this->execQuery($requete, null, 'Competence');
+	}
+
+	public function getCompetenceById($ida, $idp) {
+		$requete = 'select * from Competence where idauteur = ? and idportfolio = ? order by idcv';
+		return $this->execQuery($requete, array($ida, $idp), 'Competence');
+	}
+
+	public function getMaxCompetence() {
+		$requete = 'select max(idcomp) from Competence';
+		$res = $this->execQueryNoObject($requete, array());
+		
+		if(!isset($res) || is_null($res)) { $res = 0; }
+		return $res;
+	}
+
+	public function insertCompetence($idcomp, $idp, $ida, $titre, $texte, $couleur) {
+		$requete = 'insert into competence values(?,?,?,?,?,?)';
+		$tparam = array($idcomp, $idp, $ida, $titre, $texte, $couleur);
+		return $this->execMaj($requete, $tparam);
+	}
+
+	public function updateCompetence($idcomp, $idp, $ida, $titre, $texte, $couleur) {
+		$requete = 'update competence set titre = ? , texte = ? , couleur = ? where idcomp = ? and idportfolio = ? and idauteur = ?';
+		$tparam = array($titre, $texte, $couleur, $idcomp, $idp, $ida);
+		return $this->execMaj($requete, $tparam);
+
+	}
+
+
+
+	// Projet
+	public function getProjets() {
+		$requete = 'select * from projet order by idprojet';
+		return $this->execQuery($requete, null, 'Projet');
+	}
+
+	public function getProjetById($ida, $idp) {
+		$requete = 'select * from Projet where idauteur = ? and idportfolio = ? order by idprojet';
+		return $this->execQuery($requete, array($ida, $idp), 'Projet');
+	}
+
+	public function getMaxProjet($idp) {
+		$requete = 'select max(idprojet) from Projet where idportfolio = ?';
+		$res = $this->execQueryNoObject($requete, array($idp));
+		
+		if(!isset($res) || is_null($res)) { $res = 0; }
+		return $res;
+	}
+
+	public function insertProjet($idprojet, $idp, $ida, $titrep, $descp, $couleur) {
+		$requete = 'insert into projet values(?,?,?,?,?,?)';
+		$tparam = array($idprojet, $idp, $ida, $titrep, $descp, $couleur);
+		return $this->execMaj($requete, $tparam);
+	}
+
+	public function updateProjet($idprojet, $idp, $ida, $titrep, $descp, $couleur) {
+		$requete = 'update projet set titrep = ? , descriptionp = ? , couleur = ? where idprojet = ? and idportfolio = ? and idauteur = ?';
+		$tparam = array($titrep, $descp, $couleur, $idprojet, $idp, $ida);
+		return $this->execMaj($requete, $tparam);
+	}
+
+	public function deleteAllProjets($idp, $ida) {
+		$requete = 'delete from projet * where idportfolio = ? and idauteur = ?';
+		return $this->execMaj($requete, array($idp, $ida));
+	}
+
+
+	// Licence
+	public function getLicences() {
+		$requete = 'select * from licence order by idlicence';
+		return $this->execQuery($requete, null, 'Licence');
+	}
+
+	public function getLicenceById($ida, $idp) {
+		$requete = 'select * from licence where idauteur = ? and idportfolio = ? order by idlicence';
+		return $this->execQuery($requete, array($ida, $idp), 'Licence');
+	}
+
+	public function getMaxLicence() {
+		$requete = 'select max(idlicence) from licence';
+		$res = $this->execQueryNoObject($requete, array());
+		
+		if(!isset($res) || is_null($res)) { $res = 0; }
+		return $res;
+	}
+
+	public function insertLicence($idlicence, $idp, $ida, $titrel, $textel) {
+		$requete = 'insert into licence values(?,?,?,?,?,?)';
+		$tparam = array($idlicence, $idp, $ida, $titrel, $textel);
+		return $this->execMaj($requete, $tparam);
+	}
+
+	public function updateLicence($idlicence, $idp, $ida, $titrel, $textel) {
+		$requete = 'update licence set titrel = ? , textel = ? where idprojet = ? and idportfolio = ? and idauteur = ?';
+		$tparam = array($titrel, $textel, $idlicence, $idp, $ida);
+		return $this->execMaj($requete, $tparam);
+
+	}
+
+
+	// Contact
+	public function getContacts() {
+		$requete = 'select * from contact order by idcontact';
+		return $this->execQuery($requete, null, 'Contact');
+	}
+
+	public function getContactById($ida, $idp) {
+		$requete = 'select * from Contact where idauteur = ? and idportfolio = ? order by idlicence';
+		return $this->execQuery($requete, array($ida, $idp), 'Contact');
+	}
+
+	public function getMaxContact() {
+		$requete = 'select max(idcontact) from Contact';
+		$res = $this->execQueryNoObject($requete, array());
+		
+		if(!isset($res) || is_null($res)) { $res = 0; }
+		return $res;
+	}
+
+	public function insertContact($idcontact, $idp, $ida, $emailc, $numtel, $github, $instagram, $facebook, $twitter, $linkedin) {
+		$requete = 'insert into licence values(?,?,?,?,?,?,?,?,?,?)';
+		$tparam = array($idcontact, $idp, $ida, $emailc, $numtel, $github, $instagram, $facebook, $twitter, $linkedin);
+		return $this->execMaj($requete, $tparam);
+	}
+
+	public function updateContact($idcontact, $idp, $ida, $emailc, $numtel, $github, $instagram, $facebook, $twitter, $linkedin) {
+		$requete = 'update contact set emailc = ? , numtel = ? , github = ? , instagram = ? , facebook = ? , twitter = ? ,
+					linkedin = ? where idcontact = ? and idportfolio = ? and idauteur = ?';
+		$tparam = array($emailc, $numtel, $github, $instagram, $facebook, $twitter, $linkedin, $idcontact, $idp, $ida);
+		return $this->execMaj($requete, $tparam);
+	}
+
 
 } //fin classe DB
 

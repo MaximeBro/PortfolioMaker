@@ -62,6 +62,20 @@
 			</ul>
 		</div>
 	</nav>
+
+	<section id="accueil" class="position-relative my-5 p-5 border rounded-5">
+			<div>
+				<h3>Accueil</h3>
+				<div class="">
+
+				</div>
+			</div>
+			<!--
+			<div id="divAccueilArticle" class="row">
+			</div>
+			<button id="ajouterArticleAccueil" class="btn btn-primary">Ajouter article</button>
+			-->
+	</section>
 </div>
 <script>
 	// Gestion des intéractions avec la navbar

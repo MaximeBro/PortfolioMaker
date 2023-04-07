@@ -5,6 +5,7 @@
 drop table if exists Auteur cascade;
 drop table if exists Portfolio cascade;
 drop table if exists Image cascade;
+drop table if exists Accueil cascade;
 drop table if exists Licence cascade;
 drop table if exists Contact cascade;
 drop table if exists Projet cascade;
@@ -49,6 +50,21 @@ CREATE TABLE Portfolio (
 	unique(idportfolio)
 );
 
+/* Table Accueil
+		- idAccueil   : identifiant de l'accueil
+		- idPortfolio : identifiant du portfolio
+		- idAuteur    : identifiant de l'auteur
+		- texteAcc	  : texte de l'accueil
+*/
+CREATE TABLE Accueil (
+	idaccueil serial NOT NULL,
+	idportfolio serial references Portfolio(idportfolio) NOT NULL,
+	idauteur 	integer references Auteur(idauteur) NOT NULL,
+
+	texteacc text NOT NULL,
+
+	primary key(idaccueil, idportfolio, idauteur)
+);
 
 /* Table Image
 		- idImage   : identifiant de l'image
@@ -74,6 +90,7 @@ CREATE TABLE Licence (
 	idportfolio serial references Portfolio(idportfolio) NOT NULL,
 	idauteur 	integer references Auteur(idauteur) NOT NULL,
 	titrel VARCHAR(255) NOT NULL,
+	texteL text NOT NULL,
 
 	primary key(idlicence, idportfolio, idauteur)
 );
@@ -91,10 +108,11 @@ CREATE TABLE Licence (
 		- linkedin    : lien linkedin
 */
 CREATE TABLE Contact (
-	emailc VARCHAR(50) NOT NULL,
+	idcontact serial NOT NULL,
 	idportfolio serial references Portfolio(idportfolio) NOT NULL,
 	idauteur 	integer references Auteur(idauteur) NOT NULL,
 
+	emailc VARCHAR(50) NOT NULL,
 	numtel VARCHAR(50),
 	github text,
 	instagram VARCHAR(50),
@@ -102,7 +120,7 @@ CREATE TABLE Contact (
 	twitter VARCHAR(50),
 	linkedin text,
 
-	primary key(emailc, idportfolio, idauteur)
+	primary key(idcontact, idportfolio, idauteur)
 );
 
 
@@ -118,12 +136,11 @@ CREATE TABLE Contact (
 CREATE TABLE Projet (
 	idprojet serial NOT NULL,
 	idportfolio serial references Portfolio(idportfolio) NOT NULL,
-	idauteur 	integer references Auteur(idauteur) NOT NULL,
+	idauteur integer references Auteur(idauteur) NOT NULL,
 
 	titrep text NOT NULL,
 	descriptionp text NOT NULL,
-	datep VARCHAR(255) NOT NULL,
-	lienp text NOT NULL,
+	couleur VARCHAR(50) NOT NULL,
 
 	primary key(idprojet, idportfolio, idauteur)
 );

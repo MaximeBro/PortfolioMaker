@@ -23,18 +23,17 @@
 			try {
 				$ida = getIdByEmail($_SESSION['email']);
 				$existe = 0;
-				$existe = portfolioExist($idp); // A VERIFIER DE FOU EN PREMIER 
+				$existe = portfolioExist($idp); 
 
-
-			if($existe == 0) { // MARCHE SI EXISTE PAS LA 
-					echo $db->updatePortfolio($idp, $ida, $titre, './client/'.$ida, './general/public/'.$ida);
+				if($existe == 0) {
+					$db->updatePortfolio($idp, $ida, $titre, './client/'.$ida, './general/public/'.$ida);
 				}
 				else {
 					if($idp != 0)
 						$db->insertPortfolio($idp, $ida, $titre, './client/'.$ida, './general/public/'.$ida);
 				}
-
-				$db->close();
+				
+				echo 0;
 			} catch(Exception $e) { $e->getMessage(); }
 
 		}
