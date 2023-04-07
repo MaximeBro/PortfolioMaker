@@ -8,7 +8,6 @@ var simplemdeCv = [];
 var simplemdeProjet = [];
 
 
-
 // Gestion de l'ouverture de fichiers
 async function ouvrirFichier() {
 	var input = document.createElement('input');
@@ -17,7 +16,7 @@ async function ouvrirFichier() {
 	input.onchange = function() {
 		var file = input.files[0];
 		// Affiche les infos et l'URL
-		console.log(file + " " + file.name + " ");
+		//console.log(file + " " + file.name + " ");
 		var fileReader = new FileReader();
 		fileReader.onload = function() {
 			var pdfUrl = fileReader.result;
@@ -544,6 +543,50 @@ window.onload = function() {
 			var idDiv = item.id.replace("couleurComp", "");
 			couleurCompetence(idDiv);
 		});
+	});
+
+	// Pour le drag and drop de CV
+	var dropZone = document.getElementById('dragNdropDiv');
+	// Gestion du dragover pour indiquer que l\'on peut drop
+	dropZone.addEventListener('dragover', (event) => {
+		// Empêche le navigateur de faire son comportement par défaut (ouvrir le fichier)
+		event.stopPropagation();
+		event.preventDefault(); 
+		// Permet de montrer que l\'on peut drop dans la zone
+		event.dataTransfer.dropEffect = 'copy';
+	});
+
+	// Gestion du drop de l\'image
+	dropZone.addEventListener('drop', (event) => {
+		// Empêche le navigateur de faire son comportement par défaut (ouvrir le fichier)
+		event.stopPropagation();
+		event.preventDefault();
+		let fichier = event.dataTransfer.files[0]; // Récupération du PDF
+		console.log(fichier);
+		// On vérifie que le fichier est bien un PDF
+		if (fichier.type == "application/pdf") {
+			var reader = new FileReader();
+			reader.onload = function(event) {
+				// On récupère le fichier
+				var url = event.target.result;
+				// On envoie le fichier au serveur
+				showPdf(url);
+			}
+			reader.readAsDataURL(fichier);
+		}
+
+		// Envoie le fichier au serveur
+		fetch('./php/ajax/cvImport.php', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/pdf'
+			},
+			body: new Blob([fichier], { type: 'application/pdf' })
+		})
+		.then(response => response.text())
+		.then(data => {
+			console.log(data);
+		})
 	});
 
 	// Ajout d'un listener sur le bouton enregistrer qui appelle envoieDonner()
