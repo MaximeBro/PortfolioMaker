@@ -5,29 +5,62 @@
 	require '../DB.inc.php';
 	include("../fctAux.inc.php");
 
-	// Récupération des données venant de creation.js par la méthode POST, c'est un json
 
-	$licence = $_POST['licence'];
-
-	/* TRAITEMENT BD A FAIRE*/
-	function licenceExist($idport) {
+	function licenceExist($id, $idport) {
 		
 		$db = DB::getInstance();
 		if ($db == null) {
 			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
 		} else {
 			try {
-				$licence = $db->getLicence();
-				if ($licence == null) {
-					return 0;
-				} else {
-					return 1;
+				$licences = $db->getLicences();
+
+				foreach($licences as $licence) {
+					$idl = $licence->getId();
+					$idp = $licence->getIdP();
+					if($idp == $idport && $idl == $id) {
+						return 0;
+					}
 				}
 
 				return 1;
 			} catch (Exception $e) { echo $e->getMessage(); }
 		}
 	}
-
 	
+	if(isset($_SESSION['email'])) {
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+			// Récupération des données venant de creation.js par la méthode POST
+			$licence = $_POST['licence'];
+			$licenceText = $_POST['licenceText'];
+
+			$count = 0;
+			$db = DB::getInstance();
+			while($db == null && $count != 100) {
+				$db = DB::getInstance();
+				$count++;
+			}
+			if($count >= 100) { echo("DB unreachable"); }
+
+			try {
+
+				$ida = getIdByEmail($_SESSION['email']);
+				$idp = $_SESSION['idP'];
+
+				$existe = licenceExist(1, $idp);
+				
+				if($existe != 0)
+					$db->insertLicence(1, $idp, $ida, $licence, $licenceText);
+				else
+					$db->updateLicence(1, $idp, $ida, $licence, $licenceText);
+
+				echo 0;
+			} catch(Exception $e) { $e->getMessage(); }
+
+		}
+	}
+	else { exit(); }
+
+
 ?>

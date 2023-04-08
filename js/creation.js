@@ -349,15 +349,17 @@ function envoieDonner() {
 	// Licences
 	var select = document.getElementById("selectLicence").value;
 	if (select == "custom") {
-		var licence = document.getElementById("textLicence").value;
+		var licence = "custom";
+		var licenceText = document.getElementById("textLicence").value;
 	}
 	else {
 		var licence = select;
+		var licenceText = "";
 	}
 
 	// Contact
 	var contact = []
-	var idContact = ["mail", "tel", "linkedin", "github", "twitter", "facebook", "instagram"]
+	var idContact = ["mail", "tel", "github", "instagram", "facebook", "twitter", "linkedin"]
 	for (var i = 0; i < idContact.length; i++) {
 		contact[i] = document.getElementById(idContact[i]).value;
 	}
@@ -450,6 +452,7 @@ function envoieDonner() {
 	
 	var tableauLicence = new FormData();
 	tableauLicence.append("licence", licence);
+	tableauLicence.append("licenceText", licenceText);
 	
 	var tableauContact = new FormData();
 	tableauContact.append("contact", contact);

@@ -4,7 +4,6 @@
 -- drop toute les tables si elles existent
 drop table if exists Auteur cascade;
 drop table if exists Portfolio cascade;
-drop table if exists Image cascade;
 drop table if exists Accueil cascade;
 drop table if exists Licence cascade;
 drop table if exists Contact cascade;
@@ -66,18 +65,6 @@ CREATE TABLE Accueil (
 	primary key(idaccueil, idportfolio, idauteur)
 );
 
-/* Table Image
-		- idImage   : identifiant de l'image
-		- titreI    : titre de l'image
-		- cheminI   : chemin de l'image
-*/
-CREATE TABLE Image (
-	idimage serial primary key NOT NULL,
-	titrei text NOT NULL,
-	chemini text NOT NULL
-);
-
-
 /* Table Licence
 		- idLicence   : identifiant de la licence
 		- idPortfolio : identifiant du portfolio
@@ -90,7 +77,7 @@ CREATE TABLE Licence (
 	idportfolio serial references Portfolio(idportfolio) NOT NULL,
 	idauteur 	integer references Auteur(idauteur) NOT NULL,
 	titrel VARCHAR(255) NOT NULL,
-	texteL text NOT NULL,
+	textel text NOT NULL,
 
 	primary key(idlicence, idportfolio, idauteur)
 );
