@@ -101,6 +101,11 @@
 	flex: 3;
 }
 
+.flex4 {
+	display: block;
+	flex: 4;
+}
+
 .nomargin {
 	margin: 0 0 0 0;
 }

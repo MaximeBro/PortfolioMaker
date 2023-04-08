@@ -481,6 +481,40 @@ class DB {
 		return $this->execMaj($requete, $tparam);
 	}
 
+	public function getEmailC($idport) {
+		$requete = 'select emailc from contact where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idport));
+	}
+
+	public function getNumTel($idport) {
+		$requete = 'select numtel from contact where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idport));
+	}
+
+	public function getGithub($idport) {
+		$requete = 'select github from contact where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idport));
+	}
+
+	public function getInsta($idport) {
+		$requete = 'select instagram from contact where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idport));
+	}
+
+	public function getFB($idport) {
+		$requete = 'select facebook from contact where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idport));
+	}
+
+	public function getTwitter($idport) {
+		$requete = 'select twitter from contact where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idport));
+	}
+
+	public function getLinkedin($idport) {
+		$requete = 'select linkedin from contact where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idport));
+	}
 
 } //fin classe DB
 

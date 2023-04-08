@@ -83,6 +83,10 @@
 	width: 70%;
 }
 
+.inner-padding {
+	padding: 15 35 15 35;
+}
+
 .icone {
 	display: inline-block;
 	width: auto;

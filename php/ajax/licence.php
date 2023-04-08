@@ -49,6 +49,9 @@
 				$idp = $_SESSION['idP'];
 
 				switch($licence) {
+					case "Custom":
+						break;
+
 					case "GNU":
 						$licenceText = 'https://www.gnu.org/licenses/gpl-3.0.html';
 						break;

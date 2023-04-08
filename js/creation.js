@@ -345,15 +345,18 @@ function envoieDonner() {
 		couleurProjet[i] = document.getElementById("couleurProjet"+i).value;
 	}
 
+	var licence = "";
+	var licenceText = "";
 	// Licences
 	var select = document.getElementById("selectLicence").value;
-	if (select == "custom") {
-		var licence = "custom";
-		var licenceText = simplemdeLicence.value();
+	if (select == "Custom") {
+		licence = "Custom";
+		console.log("TEXTE LICENCE CUSTOM :"+licenceText);
+		licenceText = ""+simplemdeLicence.value();
 	}
 	else {
-		var licence = select;
-		var licenceText = "";
+		licence = select;
+		licenceText = "";
 	}
 
 	// Contact
