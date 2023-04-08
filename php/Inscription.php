@@ -21,7 +21,6 @@ function verification($nom, $prenom, $email, $password, $passwordC) {
 	if($password != $passwordC) { erreur("Les mots de passe ne correspondent pas !"); }
 
 	// Vérification de l'adresse email dans la base, si elle est déjà renseignée on envoie une erreur !
-
 	$db = DB::getInstance();
 	if ($db == null) {
 		erreur ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
@@ -39,7 +38,7 @@ function verification($nom, $prenom, $email, $password, $passwordC) {
 			// Après validation de toutes les étapes de vérification
 
 			$count = (int) $db->getMaxAuteurs(); // Enregistrement du dernier id libre (max id enregistré + 1)
-			$count = $count + 1;
+			$count = (int) $count + 1;
 
 			$db->insertAuteur($count, $nom, $prenom, $email, $password, "./images/user.png");
 			$_SESSION['utilisateur'] = serialize(new Auteur($count, $nom, $prenom, $email, $password, "./images/user.png"));
@@ -52,8 +51,12 @@ function verification($nom, $prenom, $email, $password, $passwordC) {
 			if (!file_exists('../client/'.$count)) {
 				// Utilise un script shell car sinon la fonction mkdir() 
 				// cree le dossier avec les droits du serveur web et non de l'utilisateur 
-				$output = shell_exec("./creaDossier.sh $count");
+				$output = exec("./creaDossier.sh $count 2>&1");
+				echo $output;
 			}
+
+			//rmdir('../client/8/images');
+			//rmdir('../client/8');
 
 			// Fontion mkdir() normalement utilisée (garder au cas où)
 			//mkdir('./client/'.$id.'/images', 0777, true);

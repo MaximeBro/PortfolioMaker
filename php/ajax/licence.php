@@ -48,6 +48,24 @@
 				$ida = getIdByEmail($_SESSION['email']);
 				$idp = $_SESSION['idP'];
 
+				switch($licence) {
+					case "GNU":
+						$licenceText = 'https://www.gnu.org/licenses/gpl-3.0.html';
+						break;
+
+					case "MIT":
+						$licenceText = 'https://mit-license.org/';
+						break;
+				
+					case "CC":
+						$licenceText = 'https://creativecommons.org/';
+						break;
+
+					case "All Rights Reserved":
+						$licenceText = 'All Rights Reserved unless otherwise explicitly stated.';
+						break;
+				}
+
 				$existe = licenceExist(1, $idp);
 				
 				if($existe != 0)

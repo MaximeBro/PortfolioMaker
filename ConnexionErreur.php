@@ -39,7 +39,7 @@ function connexionE($msg) {
 				</form>
 			</div>
 
-			<a href="Consultation.html">
+			<a href="Consultation.php">
 					<button class="c-btn c-btn-bluep fixed top right mt-3 mx-5">Invité</button>
 			</a>
 

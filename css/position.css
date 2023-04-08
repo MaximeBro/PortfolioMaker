@@ -39,7 +39,7 @@
 	display: block;
 	position: relative;
 	left: 50%;
-	transform: translate(-50%);
+	transform: translate(-50%, 0);
 	text-align: center;
 }
 
@@ -59,7 +59,21 @@
 	text-align: center;
 	position: relative;
 	left: 50%;
-	transform: translate(-50%);
+	transform: translate(-50%, 0);
+}
+
+.centerV {
+	text-align: center;
+	position: relative;
+	top: 50%;
+	transform: translate(0, -50%);
+}
+
+.centerHV {
+	position: relative;
+	left: 50%; top: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
 }
 
 .flexC {
@@ -75,6 +89,16 @@
 .flex1 {
 	display: block;
 	flex: 1;
+}
+
+.flex2 {
+	display: block;
+	flex: 2;
+}
+
+.flex3 {
+	display: block;
+	flex: 3;
 }
 
 .nomargin {
@@ -97,4 +121,10 @@
 .show {
 	display: block;
 	visibility: visible;
+}
+
+.block {
+	display: block;
+	width: auto;
+	height: auto;
 }

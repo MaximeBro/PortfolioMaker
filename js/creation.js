@@ -7,7 +7,6 @@ var simplemdeCv = [];
 // Permetrat de récupérer les simplemde des projets
 var simplemdeProjet = [];
 
-
 // Gestion de l'ouverture de fichiers
 async function ouvrirFichier() {
 	var input = document.createElement('input');
@@ -92,7 +91,7 @@ function retourCV() {
 
 function collapseLicence(){
 	console.log(document.getElementById("selectLicence").value);
-	if(document.getElementById("selectLicence").value != "custom"){
+	if(document.getElementById("selectLicence").value != "Custom"){
 		document.getElementById("div-licence").style.display = "none";
 	}
 	else{
@@ -350,7 +349,7 @@ function envoieDonner() {
 	var select = document.getElementById("selectLicence").value;
 	if (select == "custom") {
 		var licence = "custom";
-		var licenceText = document.getElementById("textLicence").value;
+		var licenceText = simplemdeLicence.value();
 	}
 	else {
 		var licence = select;
@@ -422,7 +421,8 @@ function envoieDonner() {
 	// Licences
 	string += "LICENCES\n";
 	string += "&licence=" + licence + "\n";
-	string += "==================\n";	
+	string += "&licenceText=" + licenceText + "\n";
+ 	string += "==================\n";	
 
 	// Contact
 	string += "CONTACT\n";
@@ -434,8 +434,6 @@ function envoieDonner() {
 
 	var tableauAccueil = new FormData();
 	tableauAccueil.append("texteAccueil", texteAccueil);
-	//tableauAccueil.append("titreAccueilArticle", titreAccueilArticle);
-	//tableauAccueil.append("textAccueilArticle", textAccueilArticle);
 	
 	var tableauCv = new FormData();
 	tableauCv.append("textCv", cv);
@@ -465,7 +463,7 @@ function envoieDonner() {
 	})
 	.then(response => response.text())
 	.then(data => { 
-		console.log(data);
+		console.log( "accueil.php : \n" + data);
 	})
 	.catch(error => console.error(error));
 
@@ -476,7 +474,7 @@ function envoieDonner() {
 	})
 	.then(response => response.text())
 	.then(data => {
-		console.log(data);
+		console.log( "cvCreer.php : \n" + data);
 	})
 	.catch(error => console.error(error));
 
@@ -487,7 +485,7 @@ function envoieDonner() {
 	})
 	.then(response => response.text())
 	.then(data => {
-		console.log(data);
+		console.log( "competence.php : \n" + data);
 	})
 	.catch(error => console.error(error));
 
@@ -498,7 +496,7 @@ function envoieDonner() {
 	})
 	.then(response => response.text())
 	.then(data => {
-		console.log(data);
+		console.log( "projet.php : \n" + data);
 	})
 	.catch(error => console.error(error));
 
@@ -509,7 +507,7 @@ function envoieDonner() {
 	})
 	.then(response => response.text())
 	.then(data => {
-		console.log(data);
+		console.log( "licence.php : \n" + data);
 	})
 	.catch(error => console.error(error));
 
@@ -520,12 +518,9 @@ function envoieDonner() {
 	})
 	.then(response => response.text())
 	.then(data => {
-		console.log(data);
+		console.log( "contact.php : \n" + data);
 	})
 	.catch(error => console.error(error));
-
-	
-			
 
 	//window.location.href = monLien.href;
 }

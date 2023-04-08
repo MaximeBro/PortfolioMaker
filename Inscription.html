@@ -15,11 +15,11 @@
 <script type="text/javascript">
 
 	function verifEmail() {
-		let regex = /[A-Za-z]+@[A-Za-z]+\.[A-Za-z]+/i;
+		let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 		let input = document.getElementById("emailInput").value;
 		if(!regex.test(input)) {
 			document.getElementById("erreur").innerHTML = 'Format email invalide !';
-			Console.log($input.value);
+			console.log(input);
 		} else {
 			document.getElementById("erreur").innerHTML = '';
 		}
@@ -79,7 +79,7 @@
 		</form>
 	</div>
 
-	<a href="Consultation.html">
+	<a href="Consultation.php">
 		<button class="c-btn c-btn-bluep fixed top right mt-3 mx-5">Invité</button>
 	</a>
 	
