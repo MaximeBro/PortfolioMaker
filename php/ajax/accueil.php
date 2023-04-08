@@ -56,7 +56,6 @@
 				else
 					$db->updateAccueil(1, $idp, $ida, $texteAccueil);
 
-
 				echo 0;
 			} catch(Exception $e) { $e->getMessage(); }
 

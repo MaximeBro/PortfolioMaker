@@ -21,6 +21,12 @@ function validerModif() {
 	} 
 }
 
+function validerVisu() {
+	if(!isset($_SESSION['visu-idP'])) {
+		Header("Location: ./Visualisation.php");
+	}
+}
+
 function getIdByEmail($email) {
 
 	$db = DB::getInstance();

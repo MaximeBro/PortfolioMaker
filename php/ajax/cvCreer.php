@@ -53,7 +53,7 @@
 
 				$texte = "";
 				for($i = 1; $i <= 6; $i++) {
-					$texte = $texte .",". $textCv[$i];
+					$texte = $texte .";sepRubrique;". $textCv[$i];
 				}
 
 				$existe = cvExist(1, $idp);

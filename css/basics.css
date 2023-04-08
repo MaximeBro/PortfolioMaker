@@ -1,5 +1,5 @@
 .CodeMirror {
-	max-height: 150px;
+	height: 150px;
 }
 
 /* GLOBAL DIVS */
@@ -12,6 +12,16 @@
 	background-color: rgb(241, 241, 241);
 	border: solid rgb(179, 179, 179) 1px;
 	border-radius: 5px;
+}
+
+.c-pdp {
+	position: relative;
+	top: 50%; left: 50%;
+	transform: translate(-50%, -50%);
+	display: block;
+	max-width: 80%;
+	max-height: 80%;
+	border-radius: 50%;
 }
 
 .c-scrollable {
@@ -316,6 +326,15 @@
 	position: relative;
 	left: 20%; top: 45%;
 	transform: translate(-20%, -45%);
+}
+
+.c-section-content-accueil {
+	border-left: solid rgb(40, 40, 40) 2px;
+	position: relative;
+	left: 50%; top: 50%;
+	transform: translate(-50%, -50%);
+	height: 80%;
+	margin-left: 2em;
 }
 
 .c-section-multiple {

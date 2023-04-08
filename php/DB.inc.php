@@ -157,6 +157,12 @@ class DB {
 		return $this->execQueryNoObject($requete, array($email));
 	}
 
+	public function getImageById($ida) {
+		$requete = 'select cheminphoto from Auteur where idauteur = ?';
+		return $this->execQueryNoObject($requete, array($ida));
+	}
+
+
 	public function getAuteur($id) {
 		$requete = 'select * from auteur where idauteur = ?';
 		return $this->execQuery($requete, array($id), 'Auteur');
@@ -171,7 +177,7 @@ class DB {
 		$requete = 'select max(idauteur) from Auteur';
 		$res = $this->execQueryNoParam($requete);
 		
-		if(!isset($res) || is_null($res)) { $res = 0; }
+		if(!isset($res) || is_null($res) || !is_int($res)) { $res = 0; }
 		return $res;
 	}
 
@@ -222,6 +228,11 @@ class DB {
 		return $this->execQuery($requete, null, 'Portfolio');
 	}
 
+	public function getAuteurOf($idp) {
+		$requete = 'select idauteur from portfolio where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idp));
+	}
+
 	public function getPortfoliosById($ida) {
 		$requete = 'select * from portfolio where idauteur = ? order by idportfolio';
 		return $this->execQuery($requete, array($ida), 'Portfolio');
@@ -264,6 +275,11 @@ class DB {
 		return $res;
 	}
 
+	public function getTexteAccueil($idp) {
+		$requete = 'select texteacc from accueil where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idp));
+	}
+
 	public function getAccueilById($ida, $idp) {
 		$requete = 'select * from accueil where idauteur = ? and idportfolio = ? order by idaccueil';
 		return $this->execQuery($requete, array($ida, $idp), 'Accueil');
@@ -276,8 +292,8 @@ class DB {
 	}
 
 	public function updateAccueil($id, $idp, $ida, $texte) {
-		$requete = 'update accueil set idportfolio = ? , idauteur = ? , texteacc = ? where idaccueil = ?';
-		$tparam = array($idp, $ida, $texte, $id);
+		$requete = 'update accueil set texteacc = ? where idaccueil = ? and idportfolio = ? and idauteur = ?';
+		$tparam = array($texte, $id, $idp, $ida);
 		return $this->execMaj($requete, $tparam);
 	}
 
@@ -397,6 +413,16 @@ class DB {
 		return $this->execQuery($requete, null, 'Licence');
 	}
 
+	public function getLicenceTitre($idp) {
+		$requete = 'select titrel from licence where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idp));
+	}
+
+	public function getLicenceTexte($idp) {
+		$requete = 'select textel from licence where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idp));
+	}
+
 	public function getLicenceById($ida, $idp) {
 		$requete = 'select * from licence where idauteur = ? and idportfolio = ? order by idlicence';
 		return $this->execQuery($requete, array($ida, $idp), 'Licence');
@@ -411,16 +437,15 @@ class DB {
 	}
 
 	public function insertLicence($idlicence, $idp, $ida, $titrel, $textel) {
-		$requete = 'insert into licence values(?,?,?,?,?,?)';
+		$requete = 'insert into licence values(?,?,?,?,?)';
 		$tparam = array($idlicence, $idp, $ida, $titrel, $textel);
 		return $this->execMaj($requete, $tparam);
 	}
 
 	public function updateLicence($idlicence, $idp, $ida, $titrel, $textel) {
-		$requete = 'update licence set titrel = ? , textel = ? where idprojet = ? and idportfolio = ? and idauteur = ?';
+		$requete = 'update licence set titrel = ? , textel = ? where idlicence = ? and idportfolio = ? and idauteur = ?';
 		$tparam = array($titrel, $textel, $idlicence, $idp, $ida);
 		return $this->execMaj($requete, $tparam);
-
 	}
 
 
@@ -444,7 +469,7 @@ class DB {
 	}
 
 	public function insertContact($idcontact, $idp, $ida, $emailc, $numtel, $github, $instagram, $facebook, $twitter, $linkedin) {
-		$requete = 'insert into licence values(?,?,?,?,?,?,?,?,?,?)';
+		$requete = 'insert into contact values(?,?,?,?,?,?,?,?,?,?)';
 		$tparam = array($idcontact, $idp, $ida, $emailc, $numtel, $github, $instagram, $facebook, $twitter, $linkedin);
 		return $this->execMaj($requete, $tparam);
 	}

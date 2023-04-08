@@ -29,7 +29,7 @@ function printPortfolios($email) {
 				<div class="c-portfolio-div mb-3" id="portfolio-'.$idp.'">
 					<button class="btn btn-lg btn-danger mx-2" id="btnDel-'.$idp.'" onclick="supprimerPortfolio(\'portfolio-'.$idp.'\')">Supprimer</button>
 					<h3 class="c-event-h3" id="onglet-h3-'.$idp.'">'.$portfolio->getTitre().'</h3>
-					<button class="mx-2" onclick="modifierPortfolio(\'portfolio-'.$idp.'\')" type="submit">
+					<button class="mx-2" onclick="modifierPortfolio(\'portfolio-'.$idp.'\')" >
 						<img src="./images/icons/edit.png">
 					</button>
 				</div>
@@ -158,12 +158,12 @@ function afficherPage() {
 					})
 					.then(response => response.text())
 					.then(data => { 
-						console.log(data); 
+						console.log(data);
 						if(data == \'1\') { // L\'id est set dans $_SESSION
 							window.location.href = "Creation.php";
 						}
 					})
-					.catch(error => console.error(error));					
+					.catch(error => console.error(error));
 				}
 			</script>
 

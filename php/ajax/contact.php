@@ -33,6 +33,7 @@
 
 			// Récupération des données venant de creation.js par la méthode POST
 			$contacts = $_POST['contact'];
+			$contacts = explode(",", $contacts);
 			$emailc = is_null($contacts[0]) ? "" : $contacts[0];
 			$numtel = is_null($contacts[1]) ? "" : $contacts[1];
 			$github = is_null($contacts[2]) ? "" : $contacts[2];

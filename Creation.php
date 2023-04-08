@@ -13,10 +13,6 @@
 	$pdp = $_SESSION['image'];
 
 
-
-
-
-
 	// Fonction qui permet de créer les rubriques des compétences
 	function creerRubriqueCompetence($numero) {
 		$html = '
@@ -76,11 +72,11 @@
 
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" 
 		rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 	<link rel="stylesheet" href="css/basics.css">
 	<link rel="stylesheet" href="css/position.css">
 	<link rel="stylesheet" href="css/compte.css">
 
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 	<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
@@ -214,18 +210,18 @@
 				<h3>
 					Licence
 					<select name="Licences" id="selectLicence" class="form-select my-2">
-						<option value="allRightReserved">All rights reserved</option>
-						<option value="custom">Custom</option>
-						<option value="cc">CC</option>
-						<option value="gnu">GNU</option>
-						<option value="mit">MIT</option>
+						<option value="All Rights Reserved">All rights reserved</option>
+						<option value="Custom">Custom</option>
+						<option value="CC">CC</option>
+						<option value="GNU">GNU</option>
+						<option value="MIT">MIT</option>
 					</select>
 				</h3>
 				
 				<div id="div-licence">
 					<textarea id="textLicence" name="textLicence"></textarea>
 					<script>
-						var simplemde = new SimpleMDE({ element: document.getElementById("textLicence") });
+						var simplemdeLicence = new SimpleMDE({ element: document.getElementById("textLicence") });
 					</script>
 				</div>
 			</div>
