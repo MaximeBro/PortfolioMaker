@@ -23,6 +23,7 @@
 		} catch (Exception $e) { echo $e->getMessage(); }
 	}
 
+	// Accueil
 	function getTexteAccueil($idport) {
 		$db = DB::getInstance();
 		if ($db == null) {
@@ -43,35 +44,268 @@
 		}
 	}
 
-	function getCV () {
-		
-	}
+	// CV
+	function getCV ($ida, $idp, $nom, $prenom, $image) {
+		$html = "";
 
-	function creerCompetence($numero) {
-		
-		$html = '
-			<div class="accordion-item">
-				<h3 class="accordion-header" id="hComp'.$numero.'">
-					<button id="btnComp'.$numero.'" class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComp'.$numero.'" 
-							aria-expanded="false" aria-controls="collapseComp'.$numero.'">
-						Compétence n°'.$numero.' :
-					</button>
-				</h3>
-				<div id="collapseComp'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionCompetences">
-					<div class="accordion-body">
-						<textarea id="textCompetence'.$numero.'" name="textCompetence'.$numero.'"></textarea>
-						<script>
-							var simplemdeComp'.$numero.' = new SimpleMDE({ element: document.getElementById("textCompetence'.$numero.'"), spellChecker: false, toolbar: false, status: false });
-							simplemdeComp'.$numero.'.togglePreview(true);
-							simplemdeComp'.$numero.'.codemirror.options.readOnly = true;
-						</script>
-					</div>
-				</div>
-			</div>
-		';
+		// Verifier si il existe un CV importer
+		if (file_exists('client/'.$ida.'/cv.pdf')) {
+			//Afficher le CV dans un embed(iframe)
+			$html = '
+			<div class="embed-responsive embed-responsive-16by9">
+				<embed id="pdfEmbed" type="application/pdf" width="100%" height="100%" src="client/'.$ida.'/cv.pdf"/>
+			</div>';
+			
+		} else {
+			//Afficher les infos du CV creer
+			$db = DB::getInstance();
+			if ($db == null) {
+				echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+			} 
+			else {
+				try {
+					$cv = $db->getCVById($ida, $idp);
+					if(!isset($cv[0])) { return ""; }
+
+					$texte = $cv[0]->getTexte();
+
+					$texte = strtr($texte, array(
+								"\r\n" => '\n',
+								"\r" => '\n',
+								"\n" => '\n',
+								"\t" => '	',
+								"'" => "\'"));
+
+					$texte = explode(';sepRubrique;', $texte);
+					
+					$html = '<div class="container-fluid px-0">
+						<div class="row">
+							<div class="col-12">
+								<div class="card">
+									<div class="card-header bg-primary text-white">
+										<div class="row">
+											<div class="col-2">
+												<img class="img-fluid" src="'.$image.'" alt="">
+											</div>
+											<div class="col-6">
+												<h1>CV de '.$prenom.' '.$nom.'</h1>
+												<textarea id="acc"></textarea>
+											</div>
+											<div class="col-4">
+												<h3>Centres d\'intérêts</h3>
+												<textarea id="centr"></textarea>
+											</div>
+										</div>
+									</div>
+									<div class="card-body">
+										<div class="row">
+											<div class="col-6">
+												<h3>Formations</h3>
+												<textarea id="form"></textarea>
+											</div>
+											<div class="col-6">
+												<h3>Compétences</h3>
+												<textarea id="comp"></textarea>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-6">
+												<h3>Projet</h3>
+												<textarea id="proj"></textarea>
+											</div>
+											<div class="col-6">
+												<h3>Expériences</h3>
+												<textarea id="exp"></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>';
+
+					$html .= '<script>
+						console.log("'.$texte[0].'");
+						var simplemdeacc = new SimpleMDE({ element: document.getElementById("acc"), spellChecker: false, status: false, toolbar: false, placeholder: "Aucune description" });
+						simplemdeacc.value("'.$texte[0].'");
+						simplemdeacc.togglePreview();
+						simplemdeacc.codemirror.options.readOnly = true;
+
+						var simplemdecentr = new SimpleMDE({ element: document.getElementById("centr"), spellChecker: false, status: false, toolbar: false, placeholder: "Aucune description" });
+						simplemdecentr.value("'.$texte[1].'");
+						simplemdecentr.togglePreview();
+						simplemdecentr.codemirror.options.readOnly = true;
+
+						var simplemdeform = new SimpleMDE({ element: document.getElementById("form"), spellChecker: false, status: false, toolbar: false, placeholder: "Aucune description" });
+						simplemdeform.value("'.$texte[2].'");
+						simplemdeform.togglePreview();
+						simplemdeform.codemirror.options.readOnly = true;
+
+						var simplemdecomp = new SimpleMDE({ element: document.getElementById("comp"), spellChecker: false, status: false, toolbar: false, placeholder: "Aucune description" });
+						simplemdecomp.value("'.$texte[3].'");
+						simplemdecomp.togglePreview();
+						simplemdecomp.codemirror.options.readOnly = true;
+
+						var simplemdeproj = new SimpleMDE({ element: document.getElementById("proj"), spellChecker: false, status: false, toolbar: false, placeholder: "Aucune description" });
+						simplemdeproj.value("'.$texte[4].'");
+						simplemdeproj.togglePreview();
+						simplemdeproj.codemirror.options.readOnly = true;
+					
+						var simplemdeexp = new SimpleMDE({ element: document.getElementById("exp"), spellChecker: false, status: false, toolbar: false, placeholder: "Aucune description" });
+						simplemdeexp.value("'.$texte[5].'");
+						simplemdeexp.togglePreview();
+						simplemdeexp.codemirror.options.readOnly = true;
+					</script>';
+
+									
+				} catch (Exception $e) { echo $e->getMessage(); }
+			}
+		}
 		return $html;
 	}
+	
+	// Competence
+	function creerCompetence($numero, $ida, $idp) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} 
+		else {
+			try {
+				$competence = $db->getCompetenceByIdComp($numero, $ida, $idp);
+				if(!isset($competence[0])) { return ""; }
 
+				$titre = $competence[0]->getTitre();
+				$texte = $competence[0]->getTexte();
+				$couleurFond = $competence[0]->getCouleur();
+
+				$texte = strtr($texte, array(
+							"\r\n" => '\n',
+							"\r" => '\n',
+							"\n" => '\n',
+							"\t" => '	',
+							"'" => "\'"));
+
+				// Convertir la couleur de fond en un tableau de valeurs RGB
+				$rgb = sscanf($couleurFond, "#%02x%02x%02x");
+
+				// Calculer la luminance de la couleur de fond
+				$luminance = (0.2126 * $rgb[0] + 0.7152 * $rgb[1] + 0.0722 * $rgb[2]) / 255;
+
+				// Affecter la couleur du texte en fonction de la luminance en utilisant une fonction lambda
+				$couleurTexte = ($luminance > 0.5) ? "#000000" : "#FFFFFF";
+				
+				$html = '
+				<div class="accordion-item">
+					<h3 class="accordion-header" id="hComp'.$numero.'">
+						<button id="btnComp'.$numero.'" class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComp'.$numero.'" 
+								aria-expanded="false" aria-controls="collapseComp'.$numero.'" style="background-color: '.$couleurFond.'; color: '.$couleurTexte.'">
+							Compétence n°'.$numero.' : '.$titre.'
+						</button>
+					</h3>
+					<div id="collapseComp'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionCompetences">
+						<div class="accordion-body">
+							<textarea id="textCompetence'.$numero.'" name="textCompetence'.$numero.'"></textarea>
+							<script>
+								var simplemdeComp'.$numero.' = new SimpleMDE({ element: document.getElementById("textCompetence'.$numero.'"), spellChecker: false, toolbar: false, status: false });
+								simplemdeComp'.$numero.'.value("'.$texte.'");
+								simplemdeComp'.$numero.'.togglePreview(true);
+								simplemdeComp'.$numero.'.codemirror.options.readOnly = true;
+							</script>
+						</div>
+					</div>
+				</div>
+			';
+			return $html;
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+		
+	}
+
+	// Projets
+	function afficherProjets($idport) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} 
+		else {
+			try {
+				$ida = $db->getAuteurOf($idport);
+				$nbProjet = $db->getNbProjet($idport);
+				$ret = "";
+
+				if($nbProjet == 0) { return ""; }
+
+				for($i = 1; $i <= $nbProjet; $i++) {
+					$projet = $db->getProjetById($i, $ida, $idport);
+					$titre = $projet[0]->getTitre();
+					$texte = $projet[0]->getDesc();
+					$couleur = $projet[0]->getCouleur();
+
+					$ret = $ret . creerProjet($i, $titre, $texte, $couleur) . ' ';
+				}
+
+
+				return $ret;
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function creerProjet($numero, $titre, $texte, $couleurFond) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} 
+		else {
+			try {
+				$texte = strtr($texte, array(
+							"\r\n" => '\n',
+							"\r" => '\n',
+							"\n" => '\n',
+							"\t" => '	',
+							"'" => "\'"));
+
+				// Convertir la couleur de fond en un tableau de valeurs RGB
+				$rgb = sscanf($couleurFond, "#%02x%02x%02x");
+
+				if(!isset($rgb[0])) { $rgb[0] = 0; }
+				if(!isset($rgb[1])) { $rgb[1] = 0; }
+				if(!isset($rgb[2])) { $rgb[2] = 0; }
+
+				// Calculer la luminance de la couleur de fond
+				$luminance = (0.2126 * $rgb[0] + 0.7152 * $rgb[1] + 0.0722 * $rgb[2]) / 255;
+
+				// Affecter la couleur du texte en fonction de la luminance en utilisant une fonction lambda
+				$couleurTexte = ($luminance > 0.5) ? "#000000" : "#FFFFFF";
+
+				$html = '
+				<div class="accordion-item">
+					<h3 class="accordion-header" id="hProjet'.$numero.'">
+						<button id="btnProjet'.$numero.'" class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.$numero.'" 
+								aria-expanded="false" aria-controls="collapse'.$numero.'" style="background-color: '.$couleurFond.'; color: '.$couleurTexte.'">
+							Projet n°'.$numero.' : '.$titre.'
+						</button>
+					</h3>
+					<div id="collapse'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionProjet">
+						<div class="accordion-body">
+							<textarea id="textProjet'.$numero.'" name="textProjet'.$numero.'"></textarea>
+							<script>
+								var simplemdeProjet'.$numero.' = new SimpleMDE({ element: document.getElementById("textProjet'.$numero.'"), spellChecker: false, toolbar: false, status: false });
+								simplemdeProjet'.$numero.'.value("'.$texte.'");
+								simplemdeProjet'.$numero.'.togglePreview(true);
+								simplemdeProjet'.$numero.'.codemirror.options.readOnly = true;
+							</script>
+						</div>
+					</div>
+				</div>';
+
+			return $html;
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+		
+	}
+
+	// Licence
 	function getLicenceTitre($idport) {
 		$db = DB::getInstance();
 		if ($db == null) {
@@ -91,7 +325,7 @@
 		$db = DB::getInstance();
 		if ($db == null) {
 			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
-		} else { 
+		} else {
 			try {
 				$lien = $db->getLicenceTexte($idport);
 				$licenceTexte = "";
@@ -107,10 +341,10 @@
 						$licenceTexte = 
 						'<script>
 							var simplemdeLicence = new SimpleMDE({ element: document.getElementById("textLicence"), spellChecker: false, toolbar: false, status: false });
-							simplemdeLicence.value("'."".$lien.'");
+							simplemdeLicence.style.display = "block";
 							simplemdeLicence.togglePreview(true);
 							simplemdeLicence.codemirror.options.readOnly = true;
-							simplemdeLicence.setAttribute("class", "show");
+							simplemdeLicence.value("'."".$lien.'");
 						</script>';
 						break;
 
@@ -120,7 +354,7 @@
 							'.$lien.'<br>
 							<span style="font-style: italic;">Pour toute question veuillez me contacter <a href="#">ici.</a></span>
 						</p>
-						<script>document.getElementById("textLicence").setAttribute("class", "hide"); </script>';
+						<script>document.getElementById("textLicence").style.display = "none"; </script>';
 						break;
 
 					default: 
@@ -129,7 +363,7 @@
 							Vous pouvez trouver toutes les informations concernant cette licence ici : 
 							<a href="'.$lien.'"  target="_blank">Lien vers un site externe</a>
 						<p>
-						<script>document.getElementById("textLicence").setAttribute("class", "hide"); </script>';
+						<script>document.getElementById("textLicence").style.display = "none"; </script>';
 						break;
 				}
 
@@ -138,6 +372,7 @@
 		}
 	}
 
+	// Contact
 	function getEmailC($idport) {
 		
 		$db = DB::getInstance();
@@ -323,6 +558,7 @@
 		}
 	}
 
+
 print('
 <html lang="fr">
 <head>
@@ -388,13 +624,6 @@ print('
 				<li class="nav-item mx-5 fs-5">
 					<a id="contactLink" href="#" onclick="clickEvent(\'contactLink\')">Contact</a>
 				</li>
-
-				<!-- Bouton visualisation -->
-				<li class="nav-item mx-5 fs-5">
-					<a href="Compte.php" id="enregistrer">
-						<button class="btn btn-primary">Enregistrer</button>
-					</a>
-				</li>
 			</ul>
 		</div>
 	</nav>
@@ -403,34 +632,22 @@ print('
 		<!-- CV -->
 		<section id="cv" class="position-relative my-5 p-5 border rounded-5">
 			<div>
-				<h3 class="c-section-h4">CV</h3>
-				
-			</div>
-		</section>
-
-		<!-- Création CV -->
-		<section id="creationCv" class="position-relative my-5 p-5 border rounded-5">
-			<div>
+				'.getCV($ida, $idp, $nom, $prenom, $image).'
 				<div class="accordion" id="accordionCreaCv">
 				</div>
-				<div class="c-section-btn-box centerH my-4">
-					<div></div>
-					<button class="btn btn-lg btn-secondary" onclick="retourCV()" id="btnCv">Retour</button>
-					<div></div>
-				</div>
 			</div>
-		</section>		
+		</section>
 
 		<!-- Compétences -->
 		<section id="competences" class="position-relative my-5 p-5 border rounded-5">
 		<div class="accordion" id="accordionCompetences">
 			'.
-			creerCompetence(1).''.
-			creerCompetence(2).''.
-			creerCompetence(3).''.
-			creerCompetence(4).''.
-			creerCompetence(5).''.
-			creerCompetence(6).''.
+			creerCompetence(1, $ida, $idp).''.
+			creerCompetence(2, $ida, $idp).''.
+			creerCompetence(3, $ida, $idp).''.
+			creerCompetence(4, $ida, $idp).''.
+			creerCompetence(5, $ida, $idp).''.
+			creerCompetence(6, $ida, $idp).''.
 			'
 		</div>
 		</section>
@@ -439,6 +656,7 @@ print('
 		<section id="projet" class="position-relative my-5 p-5 border rounded-5">
 			<div>
 				<div class="accordion" id="accordionProjet">
+					'.afficherProjets($idp).'
 				</div>
 			</div>
 		</section>

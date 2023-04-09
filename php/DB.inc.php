@@ -343,8 +343,13 @@ class DB {
 	}
 
 	public function getCompetenceById($ida, $idp) {
-		$requete = 'select * from Competence where idauteur = ? and idportfolio = ? order by idcv';
+		$requete = 'select * from Competence where idauteur = ? and idportfolio = ? order by idcomp';
 		return $this->execQuery($requete, array($ida, $idp), 'Competence');
+	}
+
+	public function getCompetenceByIdComp($idcomp, $ida, $idp) {
+		$requete = 'select * from Competence where idcomp = ? and idauteur = ? and idportfolio = ? order by idcomp';
+		return $this->execQuery($requete, array($idcomp, $ida, $idp), 'Competence');
 	}
 
 	public function getMaxCompetence() {
@@ -376,9 +381,34 @@ class DB {
 		return $this->execQuery($requete, null, 'Projet');
 	}
 
-	public function getProjetById($ida, $idp) {
-		$requete = 'select * from Projet where idauteur = ? and idportfolio = ? order by idprojet';
+	public function getProjetsId($ida, $idp) {
+		$requete = 'select * from projet where idauteur = ? and idportfolio = ? order by idprojet';
 		return $this->execQuery($requete, array($ida, $idp), 'Projet');
+	}
+
+	public function getProjetById($idprojet, $ida, $idp) {
+		$requete = 'select * from projet where idprojet = ? and idauteur = ? and idportfolio = ?';
+		return $this->execQuery($requete, array($idprojet, $ida, $idp), 'Projet');
+	}
+
+	public function getTitreProjet($idp) {
+		$requete = 'select titrep from projet where idprojet = ?';
+		return $this->execQueryNoObject($requete, array($idp));
+	}
+
+	public function getTexteProjet($idp) {
+		$requete = 'select descriptionp from projet where idprojet = ?';
+		return $this->execQueryNoObject($requete, array($idp));
+	}
+
+	public function getCouleurProjet($idp) {
+		$requete = 'select couleur from projet where idprojet = ?';
+		return $this->execQueryNoObject($requete, array($idp));
+	}
+
+	public function getNbProjet($idp) {
+		$requete = 'select count(*) from projet where idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idp));
 	}
 
 	public function getMaxProjet($idp) {
@@ -406,8 +436,9 @@ class DB {
 		return $this->execMaj($requete, array($idp, $ida));
 	}
 
-
+	// =======
 	// Licence
+	// =======
 	public function getLicences() {
 		$requete = 'select * from licence order by idlicence';
 		return $this->execQuery($requete, null, 'Licence');

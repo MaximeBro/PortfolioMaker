@@ -51,8 +51,8 @@
 				$chemin = '../../client/'.$ida.'/cv.pdf';
 
 
-				$texte = "";
-				for($i = 1; $i <= 6; $i++) {
+				$texte = $textCv[1];
+				for($i = 2; $i <= 6; $i++) {
 					$texte = $texte .";sepRubrique;". $textCv[$i];
 				}
 

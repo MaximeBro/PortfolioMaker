@@ -30,7 +30,7 @@ elementList.forEach((el) => {
 });
 
 // Gestion des sections
-const sectionList = ["accueil", "cv", "competences", "projet", "licence", "contact", "creationCv"];
+const sectionList = ["accueil", "cv", "competences", "projet", "licence", "contact"];
 sectionList.forEach((el) => {
 	if (el === element.replace("Link", "")) {
 		document.getElementById(el).style.display = "block";

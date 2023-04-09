@@ -59,9 +59,15 @@
 				for ($i = 0; $i < $nb; $i++) {
 					$ind = $i + 1;
 
-					$titre = is_null($titres[$i]) ? "" : $titres[$i];
-					$texte = is_null($textes[$i]) ? "" : $textes[$i];
-					$couleur = is_null($couleurs[$i]) ? "" : $couleurs[$i];
+					$titre = $titres[$i];
+					$texte = $textes[$i];
+					$couleur = $couleurs[$i];
+
+					if($titre == "" && $texte == "" && $couleur == "") { exit(); }
+
+					$titre = is_null($titres[$i]) ? exit() : $titres[$i];
+					$texte = is_null($textes[$i]) ? exit() : $textes[$i];
+					$couleur = is_null($couleurs[$i]) ? exit() : $couleurs[$i];
 
 					echo $titre .'  '.$texte.'  '.$couleur."\n";
 					echo $ind .'  '.$idp.'  ';

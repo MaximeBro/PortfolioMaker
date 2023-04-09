@@ -1,4 +1,5 @@
 <?php
+	require 'php/DB.inc.php';
 	include("php/fctAux.inc.php");
 
 	validerModif();
@@ -12,30 +13,171 @@
 	$prenom = $_SESSION['prenom'];
 	$pdp = $_SESSION['image'];
 
+	function getTexteAccueil($idport) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else {
+			try {
+				$texte = $db->getTexteAccueil($idport);
+				$texte = strtr($texte, array(
+							"\r\n" => '\n',
+							"\r" => '\n',
+							"\n" => '\n',
+							"\t" => '	',
+							"'" => "\'"));
+
+				return $texte;
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function getTitreLicence($idport) {
+	
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else {
+			try {
+				$licenceTitre = $db->getLicenceTitre($idport);
+				if(!isset($licenceTitre) || is_null($licenceTitre) || $licenceTitre == "") { return "All Rights Reserved"; }
+
+				return $licenceTitre;
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function getTexteLicence($idport) {
+		$select = getTitreLicence($idport);
+
+		if($select == "Custom") {
+			$db = DB::getInstance();
+			if ($db == null) {
+				echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+			} else {
+				try {
+					$texteLicence = $db->getLicenceTexte($idport);
+
+					$texteLicence = strtr($texteLicence, array(
+							"\r\n" => '\n',
+							"\r" => '\n',
+							"\n" => '\n',
+							"\t" => '	',
+							"'" => "\'"));
+
+					return $texteLicence;
+				} catch (Exception $e) { echo $e->getMessage(); }
+			}
+		}
+
+		return "";
+	}
+
+	function isLicenceCustom($idport) {
+		if(getTitreLicence($idport) == "Custom") {
+			return "block";
+		}
+
+		return "none";
+	}
+
+	function getCompTexte($idport, $numero) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else {
+			try {
+				$ida = $db->getAuteurOf($idport);
+				$competence = $db->getCompetenceByIdComp($numero, $ida, $idport);
+
+				if(isset($competence) && !is_null($competence)) {
+					$texteC = $competence[0]->getTexte();
+					$texteC = strtr($texteC, array(
+						"\r\n" => '\n',
+						"\r" => '\n',
+						"\n" => '\n',
+						"\t" => '	',
+						"'" => "\'"));
+
+					return $texteC;
+				} else { return ""; }
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
 
 	// Fonction qui permet de créer les rubriques des compétences
-	function creerRubriqueCompetence($numero) {
-		$html = '
-			<div class="accordion-item">
-				<h3 class="accordion-header" id="hComp'.$numero.'">
-					<button id="btnComp'.$numero.'" class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComp'.$numero.'" 
-							aria-expanded="false" aria-controls="collapseComp'.$numero.'">
-						Compétence n°'.$numero.' :  
-						<input type="text" class="form-control w-25 mx-2" id="titreCompetence'.$numero.'" placeholder="Nom de la compétence '.$numero.'" required>
-						<input class="inputCouleur mx-2" type="color" id="couleurComp'.$numero.'">
-					</button>
-				</h3>
-				<div id="collapseComp'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionCompetences">
-					<div class="accordion-body">
-						<textarea id="textCompetence'.$numero.'" name="textCompetence'.$numero.'" required></textarea>
-						<script>
-							simplemdeComp['.$numero.'] = new SimpleMDE({ element: document.getElementById("textCompetence'.$numero.'") });
-						</script>
-					</div>
-				</div>
-			</div>
-		';
-		echo $html;
+	function creerRubriqueCompetence($idport, $numero) {
+		
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else {
+			try {
+				$ida = $db->getAuteurOf($idport);
+				$competence = $db->getCompetenceByIdComp($numero, $ida, $idport);
+
+				if(isset($competence[0]) && !is_null($competence[0])) {
+					$titreC = $competence[0]->getTitre();
+					$texteC = $competence[0]->getTexte();
+					$couleurC = $competence[0]->getCouleur();
+					$couleurC = $couleurC == "" ? "#000000" : $couleurC;
+					$texteC = strtr($texteC, array(
+						"\r\n" => '\n',
+						"\r" => '\n',
+						"\n" => '\n',
+						"\t" => '	',
+						"'" => "\'"));
+
+					$html = '
+					<div class="accordion-item">
+						<h3 class="accordion-header" id="hComp'.$numero.'">
+							<button id="btnComp'.$numero.'" class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComp'.$numero.'" 
+									aria-expanded="false" aria-controls="collapseComp'.$numero.'">
+								Compétence n°'.$numero.' :
+								<input type="text" class="form-control w-25 mx-2" id="titreCompetence'.$numero.'" placeholder="Nom de la compétence '.$numero.'" required>
+								<input class="inputCouleur mx-2" type="color" id="couleurComp'.$numero.'" value="'.$couleurC.'">
+							</button>
+						</h3>
+						<div id="collapseComp'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionCompetences">
+							<div class="accordion-body">
+								<textarea id="textCompetence'.$numero.'" name="textCompetence'.$numero.'" required></textarea>
+								<script>
+									couleurCompetence('.$numero.');
+									simplemdeComp['.$numero.'] = new SimpleMDE({ element: document.getElementById("textCompetence'.$numero.'") });
+									simplemdeComp['.$numero.'].codemirror.setValue("'.$texteC.'");
+									simplemdeComp['.$numero.'].codemirror.refresh();
+									document.getElementById("titreCompetence'.$numero.'").value = "'.$titreC.'";
+								</script>
+							</div>
+						</div>
+					</div>';
+					return $html;
+
+				} else {
+					$html = '
+					<div class="accordion-item">
+						<h3 class="accordion-header" id="hComp'.$numero.'">
+							<button id="btnComp'.$numero.'" class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComp'.$numero.'" 
+									aria-expanded="false" aria-controls="collapseComp'.$numero.'">
+								Compétence n°'.$numero.' :
+								<input type="text" class="form-control w-25 mx-2" id="titreCompetence'.$numero.'" placeholder="Nom de la compétence '.$numero.'" required>
+								<input class="inputCouleur mx-2" type="color" id="couleurComp'.$numero.'" value="#ffffff">
+							
+							</button>
+						</h3>
+						<div id="collapseComp'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionCompetences">
+							<div class="accordion-body">
+								<textarea id="textCompetence'.$numero.'" name="textCompetence'.$numero.'" required></textarea>
+								<script>
+									simplemdeComp['.$numero.'] = new SimpleMDE({ element: document.getElementById("textCompetence'.$numero.'") });
+								</script>
+							</div>
+						</div>
+					</div>';
+					return $html;
+				}
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
 	}
 
 	// Fonction qui permet de créer les rubriques du CV
@@ -57,11 +199,176 @@
 				</div>
 			</div>';
 
-		echo $html;
+		return $html;
 	}
 
+	function getEmailC($idport) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else { 
+			try {
+				$email = $db->getEmailC($idport);
 
-?>
+				return $email !== "" ? $email : "";
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function getNumTel($idport) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else { 
+			try {
+				$tel = $db->getNumTel($idport);
+
+				return $tel !== "" ? $tel : "";
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function getGithub($idport) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else { 
+			try {
+				$git = $db->getGithub($idport);
+
+				return $git !== "" ? $git : "";
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function getLinkedin($idport) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else { 
+			try {
+				$linkedin = $db->getLinkedin($idport);
+
+				return $linkedin !== "" ? $linkedin : "";
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function getTwitter($idport) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else { 
+			try {
+				$twitter = $db->getTwitter($idport);
+
+				return $twitter !== "" ? $twitter : "";
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function getFB($idport) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else { 
+			try {
+				$fb = $db->getFB($idport);
+
+				return $fb !== "" ? $fb : "";
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function getInsta($idport) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} else { 
+			try {
+				$insta = $db->getInsta($idport);
+
+				return $insta !== "" ? $insta : "";
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function afficherProjets($idport) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} 
+		else {
+			try {
+				$ida = $db->getAuteurOf($idport);
+				$nbProjet = $db->getNbProjet($idport);
+				$ret = "";
+
+				if($nbProjet == 0) { return ""; }
+
+				for($i = 1; $i <= $nbProjet; $i++) {
+					$projet = $db->getProjetById($i, $ida, $idport);
+					$titre = $projet[0]->getTitre();
+					$texte = $projet[0]->getDesc();
+					$couleur = $projet[0]->getCouleur();
+
+					$ret = $ret . creerProjet($i, $titre, $texte, $couleur) . ' ';
+				}
+
+
+				return $ret;
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+	}
+
+	function creerProjet($numero, $titre, $texte, $couleurFond) {
+		$db = DB::getInstance();
+		if ($db == null) {
+			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
+		} 
+		else {
+			try {
+				$texte = strtr($texte, array(
+							"\r\n" => '\n',
+							"\r" => '\n',
+							"\n" => '\n',
+							"\t" => '	',
+							"'" => "\'"));
+
+				$couleurFond = $couleurFond == "" ? "#000000" : $couleurFond;
+
+				$rgb = sscanf($couleurFond, "#%02x%02x%02x");
+				$luminance = (0.2126 * $rgb[0] + 0.7152 * $rgb[1] + 0.0722 * $rgb[2]) / 255;
+				$couleurTexte = ($luminance > 0.5) ? "#000000" : "#FFFFFF";
+
+				$html = '
+				<div class="accordion-item">
+					<h3 class="accordion-header" id="hProjet'.$numero.'">
+						<button id="btnProjet'.$numero.'" class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.$numero.'" 
+								aria-expanded="false" aria-controls="collapse'.$numero.'" style="background-color: '.$couleurFond.'; color: '.$couleurTexte.';">
+							Projet n°'.$numero.' : <input class="mx-2" type="text" id="titreProjet'.$numero.'" required><input class="mx-2" type="color" id="couleurProjet'.$numero.'" value="'.$couleurFond.'">
+						</button>
+					</h3>
+					<div id="collapse'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionProjet">
+						<div class="accordion-body">
+							<textarea id="textProjet'.$numero.'" name="textProjet'.$numero.'"></textarea>
+							<script>
+								simplemdeProjet['.$numero.'] = new SimpleMDE({ element: document.getElementById("textProjet'.$numero.'") });
+								simplemdeProjet['.$numero.'].value("'.$texte.'");
+								couleurProjet("'.$numero.'");
+								document.getElementById("titreProjet'.$numero.'").value = "'.$titre.'";
+							</script>
+						</div>
+					</div>
+				</div>';
+
+			return $html;
+			} catch (Exception $e) { echo $e->getMessage(); }
+		}
+		
+	}
+
+print('
 
 <html lang="fr">
 <head>
@@ -97,32 +404,32 @@
 
 				<!-- Accueil-->
 				<li class="nav-item mx-5 fs-5">
-					<a id="accueilLink" href="#" onclick="clickEvent('accueilLink')">Accueil</a>
+					<a id="accueilLink" href="#" onclick="clickEvent(\'accueilLink\')">Accueil</a>
 				</li>
 
 				<!-- CV -->
 				<li class="nav-item mx-5 fs-5">
-					<a id="cvLink" href="#" onclick="clickEvent('cvLink')">CV</a>
+					<a id="cvLink" href="#" onclick="clickEvent(\'cvLink\')">CV</a>
 				</li>
 
 				<!-- Compétences -->
 				<li class="nav-item mx-5 fs-5">
-					<a id="competencesLink" href="#" onclick="clickEvent('competencesLink')">Compétences</a>
+					<a id="competencesLink" href="#" onclick="clickEvent(\'competencesLink\')">Compétences</a>
 				</li>
 
 				<!-- Projet -->
 				<li class="nav-item mx-5 fs-5">
-					<a id="projetLink" href="#" onclick="clickEvent('projetLink')">Projets</a>
+					<a id="projetLink" href="#" onclick="clickEvent(\'projetLink\')">Projets</a>
 				</li>
 
 				<!-- Licence -->
 				<li class="nav-item mx-5 fs-5">
-					<a id="licenceLink" href="#" onclick="clickEvent('licenceLink')">Licence</a>
+					<a id="licenceLink" href="#" onclick="clickEvent(\'licenceLink\')">Licence</a>
 				</li>
 
 				<!-- Contact -->
 				<li class="nav-item mx-5 fs-5">
-					<a id="contactLink" href="#" onclick="clickEvent('contactLink')">Contact</a>
+					<a id="contactLink" href="#" onclick="clickEvent(\'contactLink\')">Contact</a>
 				</li>
 
 				<!-- Bouton visualisation -->
@@ -162,14 +469,14 @@
 		<section id="creationCv" class="position-relative my-5 p-5 border rounded-5">
 			<div>
 				<div class="accordion" id="accordionCreaCv">
-					<?php 
-						creerRubriqueCV("Titre et Bio", 1);
-						creerRubriqueCV("Compétences", 2);
-						creerRubriqueCV("Projets", 3);
-						creerRubriqueCV("Expériences", 4);
-						creerRubriqueCV("Formations", 5);
-						creerRubriqueCV("Loisirs", 6);
-					?>
+					'.
+					creerRubriqueCV("Titre et Bio", 1).''.
+					creerRubriqueCV("Compétences", 2) .''.
+					creerRubriqueCV("Projets", 3)     .''.
+					creerRubriqueCV("Expériences", 4) .''.
+					creerRubriqueCV("Formations", 5)  .''.
+					creerRubriqueCV("Centres d'intérêts", 6)     .''.
+					'
 				</div>
 				<div class="c-section-btn-box centerH my-4">
 					<div></div>
@@ -177,25 +484,26 @@
 					<div></div>
 				</div>
 			</div>
-		</section>		
+		</section>
 
 		<!-- Compétences -->
 		<section id="competences" class="position-relative my-5 p-5 border rounded-5">
 		<div class="accordion" id="accordionCompetences">
-			<?php
-				creerRubriqueCompetence(1);
-				creerRubriqueCompetence(2);
-				creerRubriqueCompetence(3);
-				creerRubriqueCompetence(4);
-				creerRubriqueCompetence(5);
-				creerRubriqueCompetence(6);
-			?>
+			'.
+			creerRubriqueCompetence($idp, 1) .''.
+			creerRubriqueCompetence($idp, 2) .''.
+			creerRubriqueCompetence($idp, 3) .''.
+			creerRubriqueCompetence($idp, 4) .''.
+			creerRubriqueCompetence($idp, 5) .''.
+			creerRubriqueCompetence($idp, 6) .''.
+			'
 		</section>
 
 		<!-- Projet -->
 		<section id="projet" class="position-relative my-5 p-5 border rounded-5">
 			<div>
 				<div class="accordion" id="accordionProjet">
+					'.afficherProjets($idp).'
 				</div>
 				<div class="c-section-btn-box centerH my-4">
 					<button class="btn btn-lg btn-secondary mx-2" onclick="creerRubriqueProjet()" id="btnCreationProjet">Créer</button>
@@ -221,7 +529,10 @@
 				<div id="div-licence">
 					<textarea id="textLicence" name="textLicence"></textarea>
 					<script>
+						document.getElementById("selectLicence").value = "'.getTitreLicence($idp).'";
 						var simplemdeLicence = new SimpleMDE({ element: document.getElementById("textLicence") });
+						simplemdeLicence.value("'.getTexteLicence($idp).'");
+						document.getElementById("div-licence").style.display = "'.isLicenceCustom($idp).'";
 					</script>
 				</div>
 			</div>
@@ -237,7 +548,7 @@
 						<path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
 						</svg>
 					</label> 
-					<input type="email" class="form-control text-center" name="mail" id="mail" placeholder="exemple@gmail.com" >
+					<input type="email" class="form-control text-center" name="mail" id="mail" placeholder="exemple@gmail.com">
 
 					<label class="text-muted">
 						Numéro de téléphone 
@@ -288,6 +599,16 @@
 					</label>
 					<input type="url" class="form-control text-center" name="instagram" id="instagram" placeholder="instagram.com/xxx">
 					
+					<script>
+						document.getElementById("mail").value = "'.getEmailC($idp).'";
+						document.getElementById("tel").value = "'.getNumTel($idp).'";
+						document.getElementById("github").value = "'.getGithub($idp).'";
+						document.getElementById("instagram").value = "'.getInsta($idp).'";
+						document.getElementById("facebook").value = "'.getFB($idp).'";
+						document.getElementById("twitter").value = "'.getTwitter($idp).'";
+						document.getElementById("linkedin").value = "'.getLinkedin($idp).'";
+					</script>
+
 				</div>
 			</div>
 		</section>
@@ -300,6 +621,7 @@
 					<textarea id="textAccueil" name="Accueil" required></textarea>
 					<script>
 						var simplemdeAccueil = new SimpleMDE({ element: document.getElementById("textAccueil") });
+						simplemdeAccueil.value("'.getTexteAccueil($idp).'");
 					</script>				
 				</div>
 			</div>
@@ -317,3 +639,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 </body>
 </html>
+
+');
+
+?>

@@ -55,7 +55,7 @@
 					$texte = is_null($textes[$i]) ? "" : $textes[$i];
 					$couleur = is_null($couleurs[$i]) ? "" : $couleurs[$i];
 
-					$ind = $i + 1;
+					$ind = $i;
 					$existe = competenceExist($ind, $idp);
 
 					if($existe != 0)

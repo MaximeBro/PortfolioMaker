@@ -1,10 +1,10 @@
 // Permet de récupérer les simplemde de l'accueil
 // var simplemdeAccueilArticle = [];
-// Permetrat de récupérer les simplemde de compétences
+// Permettra de récupérer les simplemde de compétences
 var simplemdeComp = [];
-// Permetrat de récupérer les simplemde du CV
+// Permettra de récupérer les simplemde du CV
 var simplemdeCv = [];
-// Permetrat de récupérer les simplemde des projets
+// Permettra de récupérer les simplemde des projets
 var simplemdeProjet = [];
 
 // Gestion de l'ouverture de fichiers
@@ -222,7 +222,7 @@ function creerRubriqueProjet() {
 	button.setAttribute("data-bs-target", "#collapse"+nbProjet);
 	button.setAttribute("aria-expanded", "false");
 	button.setAttribute("aria-controls", "collapse"+nbProjet);
-	button.innerHTML = "Projet n°"+(nbProjet + 1)+" : " + "<input class=\"mx-2\" type=\"text\" id=\"titreProjet"+nbProjet+"\" required><input class=\"mx-2\" type=\"color\" id=\"couleurProjet" + nbProjet + "\">";
+	button.innerHTML = "Projet n°"+(nbProjet + 1)+" : " + "<input class=\"mx-2\" type=\"text\" id=\"titreProjet"+nbProjet+"\" required><input class=\"mx-2\" type=\"color\" id=\"couleurProjet" + nbProjet + "\" value=\"#ffffff\">";
 
 	var div2 = document.createElement("div");
 	div2.setAttribute("id", "collapse"+nbProjet);
@@ -309,18 +309,9 @@ function envoieDonner() {
 	// Accueil
 	var texteAccueil = simplemdeAccueil.value();
 
-	// Accueil article
-/* 	var nbAccueilArticle = document.getElementById("divAccueilArticle").childElementCount;
-	var titreAccueilArticle = [];
-	var textAccueilArticle = [];
-	for (var i = 0; i < nbAccueilArticle; i++) {
-		titreAccueilArticle[i] = document.getElementById("titreAccueilArticle"+i).value;
-		textAccueilArticle[i] = simplemdeAccueilArticle[i].value();
-	} */
-
 	// CV
 	var cv = [];
-	for (var i = 1; i <= 6; i++) {
+	for (let i = 1; i <= 6; i++) {
 		cv[i] = simplemdeCv[i].value();
 	}
 
@@ -328,7 +319,7 @@ function envoieDonner() {
 	var titreCompetence = [];
 	var textCompetence = [];
 	var couleurCompetence = [];
-	for (var i = 1; i <= 6; i++) {
+	for (let i = 1; i <= 6; i++) {
 		titreCompetence[i] = document.getElementById("titreCompetence"+i).value;
 		textCompetence[i] = simplemdeComp[i].value();
 		couleurCompetence[i] = document.getElementById("couleurComp"+i).value;
@@ -339,10 +330,10 @@ function envoieDonner() {
 	var titreProjet = [];
 	var textProjet = [];
 	var couleurProjet = [];
-	for (var i = 0; i < nbProjet; i++) {
-		titreProjet[i] = document.getElementById("titreProjet"+i).value;
-		textProjet[i] = simplemdeProjet[i].value();
-		couleurProjet[i] = document.getElementById("couleurProjet"+i).value;
+	for (let i = 0; i < nbProjet; i++) {
+		titreProjet[i] = document.getElementById("titreProjet"+(i+1)).value;
+		textProjet[i] = simplemdeProjet[i+1].value();
+		couleurProjet[i] = document.getElementById("couleurProjet"+(i+1)).value;
 	}
 
 	var licence = "";
@@ -360,9 +351,9 @@ function envoieDonner() {
 	}
 
 	// Contact
-	var contact = []
-	var idContact = ["mail", "tel", "github", "instagram", "facebook", "twitter", "linkedin"]
-	for (var i = 0; i < idContact.length; i++) {
+	var contact = [];
+	var idContact = ["mail", "tel", "github", "instagram", "facebook", "twitter", "linkedin"];
+	for (let i = 0; i < idContact.length; i++) {
 		contact[i] = document.getElementById(idContact[i]).value;
 	}
 
@@ -386,26 +377,17 @@ function envoieDonner() {
 	string == "ACCUEIL\n"
 	string += "&textAccueil=" + textAccueil + "\n";
 	string += "==================\n";
-	
-	/* 
-	// Accueil article
-	string += "ACCUEIL ARTICLE\n";
-	for (var i = 0; i < nbAccueilArticle; i++) {
-		string += "&titreAccueilArticle" + i + "=" + titreAccueilArticle[i] + "\n";
-		string += "&textAccueilArticle" + i + "=" + textAccueilArticle[i] + "\n\n";
-	}
-	string += "==================\n"; */
 
 	// CV
 	string += "CV\n";
-	for (var i = 1; i <= 6; i++) {
+	for (let i = 1; i <= 6; i++) {
 		string += "&textCv" + i + "=" + cv[i] + "\n";
 	}
 	string += "==================\n";
 
 	// Compétences
 	string += "COMPETENCES\n";
-	for (var i = 1; i <= 6; i++) {
+	for (let i = 1; i <= 6; i++) {
 		string += "&titreCompetence" + i + "=" + titreCompetence[i] + "\n";
 		string += "&textCompetence" + i + "=" + textCompetence[i] + "\n";
 		string += "&couleurComp" + i + "=" + couleurCompetence[i] + "\n\n";
@@ -414,7 +396,7 @@ function envoieDonner() {
 
 	// Projets
 	string += "PROJETS\n";
-	for (var i = 0; i < nbProjet; i++) {
+	for (let i = 0; i < nbProjet; i++) {
 		string += "&titreProjet" + i + "=" + titreProjet[i] + "\n";
 		string += "&textProjet" + i + "=" + textProjet[i] + "\n";
 		string += "&couleurProjet" + i + "=" + couleurProjet[i] + "\n\n";
@@ -429,7 +411,7 @@ function envoieDonner() {
 
 	// Contact
 	string += "CONTACT\n";
-	for (var i = 0; i < idContact.length; i++) {
+	for (let i = 0; i < idContact.length; i++) {
 		string += "&" + idContact[i] + "=" + contact[i] + "\n";
 	}
 	
@@ -535,7 +517,8 @@ window.onload = function() {
 
 	// Pour la licence, ajout d'un listener quand il y a un changement dans le select qui appelle la fonction collapseLicence
 	document.getElementById("selectLicence").addEventListener("change", collapseLicence);
-	document.getElementById("div-licence").style.display = "none";
+	let selectLicence = document.getElementById("selectLicence");
+	document.getElementById("div-licence").style.display = selectLicence.value == "Custom" ? "block" : "none";
 
 	// Pour tout les inputs color de classe inputCouleur, ajout d'un listener quand il y a un changement dans le select qui appelle la fonction couleurCompetence
 	document.querySelectorAll(".inputCouleur").forEach(item => {

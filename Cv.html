@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<title>CV Test</title>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" 
+		rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+	<script src='main.js'></script>
+	<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+	<style>
+	</style>
+</head>
+<body>
+<!--Faire un cv avec un bandeau principale coloré tout en haut, il contiendrat le nom, prenom en gros, la photo de profil à gauche
+en dessous un titre et une bio
+On sort du bandeau,
+On fait 6 rubriques à la suite avec un simplemde dans chacune en mode visualisation (pas de toolbar, pas d'édition)-->
+	<div class="container-fluid px-0">
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header bg-primary text-white">
+						<div class="row">
+							<div class="col-2">
+								<img class="img-fluid" src="https://via.placeholder.com/150" alt="">
+							</div>
+							<div class="col-6">
+								<h1>CV de John Doe</h1>
+								<h2>Web Developer</h2>
+								<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, unde?</p>
+							</div>
+							<div class="col-4">
+								<h3>Centres d'intérêts</h3>
+								<textarea id="lang"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-6">
+								<h3>Formations</h3>
+								<textarea id="comp"></textarea>
+							</div>
+							<div class="col-6">
+								<h3>Compétences</h3>
+								<textarea id="form"></textarea>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<h3>Projet</h3>
+								<textarea id="inter"></textarea>
+							</div>
+							<div class="col-6">
+								<h3>Expériences</h3>
+								<textarea id="exp"></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		var simplemdeexp   = new SimpleMDE({ element: document.getElementById("exp"), toolbar: false, spellChecker: false, status: false  });
+		simplemdeexp.value("Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, unde?");
+		simplemdeexp.togglePreview(true);
+		simplemdeexp.codemirror.options.readOnly = true;
+
+		var simplemdecomp  = new SimpleMDE({ element: document.getElementById("comp"), toolbar: false, spellChecker: false, status: false  });
+		simplemdecomp.value("Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, unde?");
+		simplemdecomp.togglePreview(true);
+		simplemdecomp.codemirror.options.readOnly = true;
+
+		var simplemdeform  = new SimpleMDE({ element: document.getElementById("form"), toolbar: false, spellChecker: false, status: false  });
+		simplemdeform.value("Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, unde?");
+		simplemdeform.togglePreview(true);
+		simplemdeform.codemirror.options.readOnly = true;
+
+		var simplemdeinter = new SimpleMDE({ element: document.getElementById("inter"), toolbar: false, spellChecker: false, status: false  });
+		simplemdeinter.value("Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, unde?");
+		simplemdeinter.togglePreview(true);
+		simplemdeinter.codemirror.options.readOnly = true;
+
+		var simplemdelang  = new SimpleMDE({ element: document.getElementById("lang"), toolbar: false, spellChecker: false, status: false  });
+		simplemdelang.value("Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, unde?");
+		simplemdelang.togglePreview(true);
+		simplemdelang.codemirror.options.readOnly = true;
+
+		var simplemdelois  = new SimpleMDE({ element: document.getElementById("lois"), toolbar: false, spellChecker: false, status: false  });
+		simplemdelois.value("Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, unde?");
+		simplemdelois.togglePreview(true);
+		simplemdelois.codemirror.options.readOnly = true;
+	</script>
+</body>
+</html>
