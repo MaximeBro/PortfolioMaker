@@ -147,7 +147,7 @@ CREATE TABLE Competence (
 	idauteur 	integer references Auteur(idauteur) NOT NULL,
 
 	titre VARCHAR(255) NOT NULL,
-	texte VARCHAR(255) NOT NULL,
+	texte text NOT NULL,
 	couleur VARCHAR(255) NOT NULL,
 
 	primary key(idcomp, idportfolio, idauteur)
