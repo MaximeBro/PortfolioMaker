@@ -283,7 +283,7 @@
 				$couleurTexte = ($luminance > 0.5) ? "#000000" : "#FFFFFF";
 
 				$html = '
-				<div class="accordion-item">
+				<div class="accordion-item" c-h-100>
 					<h3 class="accordion-header" id="hProjet'.$numero.'">
 						<button id="btnProjet'.$numero.'" class="accordion-button collapsed fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.$numero.'" 
 								aria-expanded="false" aria-controls="collapse'.$numero.'" style="background-color: '.$couleurFond.'; color: '.$couleurTexte.'">
@@ -291,7 +291,7 @@
 						</button>
 					</h3>
 					<div id="collapse'.$numero.'" class="accordion-collapse collapse" data-bs-parent="#accordionProjet">
-						<div class="accordion-body">
+						<div class="accordion-body c-h-100">
 							<textarea id="textProjet'.$numero.'" name="textProjet'.$numero.'"></textarea>
 							<script>
 								var simplemdeProjet'.$numero.' = new SimpleMDE({ element: document.getElementById("textProjet'.$numero.'"), spellChecker: false, toolbar: false, status: false });
