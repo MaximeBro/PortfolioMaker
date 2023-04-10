@@ -65,7 +65,7 @@
 			else {
 				try {
 					$cv = $db->getCVById($ida, $idp);
-					if(!isset($cv[0])) { return ""; }
+					if(!isset($cv[0]) || is_null($cv[0])) { return ""; }
 
 					$texte = $cv[0]->getTexte();
 
@@ -165,25 +165,25 @@
 	}
 	
 	// Competence
-	function creerCompetence($numero, $ida, $idp) {
+	function creerCompetence($numero, $ida, $idport) {
 		$db = DB::getInstance();
 		if ($db == null) {
 			echo ("Impossible de se connecter &agrave; la base de donn&eacute;es !");
 		} 
 		else {
 			try {
-				$competence = $db->getCompetenceByIdComp($numero, $ida, $idp);
-				if(!isset($competence[0])) { return ""; }
+				$titre = $db->getCompTitre($numero, $idport);
+				$texte = $db->getCompTexte($numero, $idport);
+				$couleurFond = $db->getCompCouleur($numero, $idport);
 
-				$titre = $competence[0]->getTitre();
-				$texte = $competence[0]->getTexte();
-				$couleurFond = $competence[0]->getCouleur();
+				$couleurFond = $couleurFond == "" ? "#FFFFFF" : $couleurFond;
 
 				$texte = strtr($texte, array(
 							"\r\n" => '\n',
 							"\r" => '\n',
 							"\n" => '\n',
 							"\t" => '	',
+							'"' => '\"',
 							"'" => "\'"));
 
 				// Convertir la couleur de fond en un tableau de valeurs RGB
@@ -231,20 +231,24 @@
 		else {
 			try {
 				$ida = $db->getAuteurOf($idport);
-				$nbProjet = $db->getNbProjet($idport);
+				$nbProjet = $db->getNbProjet($idport, $ida);
 				$ret = "";
 
 				if($nbProjet == 0) { return ""; }
 
-				for($i = 1; $i <= $nbProjet; $i++) {
-					$projet = $db->getProjetById($i, $ida, $idport);
-					$titre = $projet[0]->getTitre();
-					$texte = $projet[0]->getDesc();
-					$couleur = $projet[0]->getCouleur();
+				$projets = $db->getProjets();
 
-					$ret = $ret . creerProjet($i, $titre, $texte, $couleur) . ' ';
+				foreach($projets as $projet) {
+					$tempId = $projet->getId();
+					$tempIdp = $projet->getIdP();
+					if($tempIdp == $idport) {
+						$titre = $db->getTitreProjet($tempId, $idport);
+						$texte = $db->getTexteProjet($tempId, $idport);
+						$couleur = $db->getCouleurProjet($tempId, $idport);
+
+						$ret = $ret . creerProjet($tempId, $titre, $texte, $couleur) . ' ';
+					}
 				}
-
 
 				return $ret;
 			} catch (Exception $e) { echo $e->getMessage(); }

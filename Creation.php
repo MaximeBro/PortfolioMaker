@@ -120,7 +120,8 @@
 					$titreC = $competence[0]->getTitre();
 					$texteC = $competence[0]->getTexte();
 					$couleurC = $competence[0]->getCouleur();
-					$couleurC = $couleurC == "" ? "#000000" : $couleurC;
+					$couleurC = $couleurC == "" ? "#ffffff" : $couleurC;
+
 					$texteC = strtr($texteC, array(
 						"\r\n" => '\n',
 						"\r" => '\n',
@@ -301,18 +302,25 @@
 		else {
 			try {
 				$ida = $db->getAuteurOf($idport);
-				$nbProjet = $db->getNbProjet($idport);
+				$nbProjet = $db->getNbProjet($idport, $ida);
 				$ret = "";
 
 				if($nbProjet == 0) { return ""; }
 
-				for($i = 1; $i <= $nbProjet; $i++) {
-					$projet = $db->getProjetById($i, $ida, $idport);
-					$titre = $projet[0]->getTitre();
-					$texte = $projet[0]->getDesc();
-					$couleur = $projet[0]->getCouleur();
+				$projets = $db->getProjets();
 
-					$ret = $ret . creerProjet($i, $titre, $texte, $couleur) . ' ';
+				$count = 1;
+				foreach($projets as $projet) {
+					$tempId = $projet->getId();
+					$tempIdp = $projet->getIdP();
+					if($tempIdp == $idport) {
+						$titre = $db->getTitreProjet($tempId, $idport);
+						$texte = $db->getTexteProjet($tempId, $idport);
+						$couleur = $db->getCouleurProjet($tempId, $idport);
+
+						$ret = $ret . creerProjet($count, $titre, $texte, $couleur) . ' ';
+						$count = $count + 1;
+					}
 				}
 
 

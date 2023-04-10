@@ -302,6 +302,11 @@ class DB {
 		return $this->execMaj($requete, array($id));
 	}
 
+	public function deleteAccueilWithIdp($idp) {
+		$requete = 'delete from accueil where idportfolio = ?';
+		return $this->execMaj($requete, array($idp));
+	}
+
 
 
 	// CV
@@ -335,6 +340,11 @@ class DB {
 		return $this->execMaj($requete, $tparam);
 	}
 
+	public function deleteCvWithIdp($idp) {
+		$requete = 'delete from cv where idportfolio = ?';
+		return $this->execMaj($requete, array($idp));
+	}
+
 
 	// Compétence
 	public function getCompetences() {
@@ -348,8 +358,23 @@ class DB {
 	}
 
 	public function getCompetenceByIdComp($idcomp, $ida, $idp) {
-		$requete = 'select * from Competence where idcomp = ? and idauteur = ? and idportfolio = ? order by idcomp';
+		$requete = 'select * from competence where idcomp = ? and idauteur = ? and idportfolio = ? order by idcomp';
 		return $this->execQuery($requete, array($idcomp, $ida, $idp), 'Competence');
+	}
+
+	public function getCompTexte($id, $idp) {
+		$requete = 'select texte from competence where idcomp = ? and idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($id, $idp));
+	}
+
+	public function getCompTitre($id, $idp) {
+		$requete = 'select titre from competence where idcomp = ? and idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($id, $idp));
+	}
+
+	public function getCompCouleur($id, $idp) {
+		$requete = 'select couleur from competence where idcomp = ? and idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($id, $idp));
 	}
 
 	public function getMaxCompetence() {
@@ -373,6 +398,11 @@ class DB {
 
 	}
 
+	public function deleteCompWithIdp($idp) {
+		$requete = 'delete from competence where idportfolio = ?';
+		return $this->execMaj($requete, array($idp));
+	}
+
 
 
 	// Projet
@@ -391,24 +421,24 @@ class DB {
 		return $this->execQuery($requete, array($idprojet, $ida, $idp), 'Projet');
 	}
 
-	public function getTitreProjet($idp) {
-		$requete = 'select titrep from projet where idprojet = ?';
-		return $this->execQueryNoObject($requete, array($idp));
+	public function getTitreProjet($idp, $idport) {
+		$requete = 'select titrep from projet where idprojet = ? and idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idp, $idport));
 	}
 
-	public function getTexteProjet($idp) {
-		$requete = 'select descriptionp from projet where idprojet = ?';
-		return $this->execQueryNoObject($requete, array($idp));
+	public function getTexteProjet($idp, $idport) {
+		$requete = 'select descriptionp from projet where idprojet = ? and idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idp, $idport));
 	}
 
-	public function getCouleurProjet($idp) {
-		$requete = 'select couleur from projet where idprojet = ?';
-		return $this->execQueryNoObject($requete, array($idp));
+	public function getCouleurProjet($idp, $idport) {
+		$requete = 'select couleur from projet where idprojet = ? and idportfolio = ?';
+		return $this->execQueryNoObject($requete, array($idp, $idport));
 	}
 
-	public function getNbProjet($idp) {
-		$requete = 'select count(*) from projet where idportfolio = ?';
-		return $this->execQueryNoObject($requete, array($idp));
+	public function getNbProjet($idp, $ida) {
+		$requete = 'select count(*) from projet where idportfolio = ? and idauteur = ?';
+		return $this->execQueryNoObject($requete, array($idp, $ida));
 	}
 
 	public function getMaxProjet($idp) {
@@ -435,6 +465,13 @@ class DB {
 		$requete = 'delete from projet * where idportfolio = ? and idauteur = ?';
 		return $this->execMaj($requete, array($idp, $ida));
 	}
+
+	public function deleteProjetWithIdp($idp) {
+		$requete = 'delete from projet where idportfolio = ?';
+		return $this->execMaj($requete, array($idp));
+	}
+
+
 
 	// =======
 	// Licence
@@ -478,6 +515,12 @@ class DB {
 		$tparam = array($titrel, $textel, $idlicence, $idp, $ida);
 		return $this->execMaj($requete, $tparam);
 	}
+
+	public function deleteLicenceWithIdp($idp) {
+		$requete = 'delete from licence where idportfolio = ?';
+		return $this->execMaj($requete, array($idp));
+	}
+
 
 
 	// Contact
@@ -545,6 +588,11 @@ class DB {
 	public function getLinkedin($idport) {
 		$requete = 'select linkedin from contact where idportfolio = ?';
 		return $this->execQueryNoObject($requete, array($idport));
+	}
+
+	public function deleteContactWithIdp($idp) {
+		$requete = 'delete from contact where idportfolio = ?';
+		return $this->execMaj($requete, array($idp));
 	}
 
 } //fin classe DB

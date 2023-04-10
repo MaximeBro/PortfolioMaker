@@ -20,11 +20,13 @@
 			if($count >= 100) { echo("DB unreachable"); }
 
 			try {
-				$existe = portfolioExist($idp);
-
-				if($existe == 0) {
-					$db->deletePortfolio($idp);
-				}
+				$db->deleteAccueilWithIdp($idp);
+				$db->deleteCvWithIdp($idp);
+				$db->deleteCompWithIdp($idp);
+				$db->deleteProjetWithIdp($idp);
+				$db->deleteLicenceWithIdp($idp);
+				$db->deleteContactWithIdp($idp);
+				$db->deletePortfolio($idp);
 
 				echo 0;
 			} catch(Exception $e) { $e->getMessage(); }

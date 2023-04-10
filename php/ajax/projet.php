@@ -15,7 +15,6 @@
 				$projets = $db->getProjets();
 				
 				foreach($projets as $projet) {
-					echo $projet;
 					$ida = $projet->getId();
 					$idp = $projet->getIdP();
 					if($idp == $idport && $ida == $id) {
@@ -33,11 +32,11 @@
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			// Récupération des données venant de creation.js par la méthode POST
-			$titres = explode(",", $_POST['titreProjet']);
-			$textes = explode(",", $_POST['texteProjet']);
-			$couleurs = explode(",", $_POST['couleurProjet']);
+			$titres = explode(";sepProj;", $_POST['titreProjet']);
+			$textes = explode(";sepProj;", $_POST['texteProjet']);
+			$couleurs = explode(";sepProj;", $_POST['couleurProjet']);
 
-			echo $titres[0].'  '.$textes[0].'  '.$couleurs[0];
+			echo "récupération projet ";
 
 			$count = 0;
 			$db = DB::getInstance();
@@ -59,29 +58,24 @@
 				for ($i = 0; $i < $nb; $i++) {
 					$ind = $i + 1;
 
-					$titre = $titres[$i];
-					$texte = $textes[$i];
-					$couleur = $couleurs[$i];
+					$titre = is_null($titres[$i]) ? "" : $titres[$i];
+					$texte = is_null($textes[$i]) ? "" : $textes[$i];
+					$couleur = is_null($couleurs[$i]) ? "" : $couleurs[$i];
 
-					if($titre == "" && $texte == "" && $couleur == "") { exit(); }
+					if($titre !== "" && $texte !== "" && $couleur !== "") {
 
-					$titre = is_null($titres[$i]) ? exit() : $titres[$i];
-					$texte = is_null($textes[$i]) ? exit() : $textes[$i];
-					$couleur = is_null($couleurs[$i]) ? exit() : $couleurs[$i];
+						$existe = projetExist($ind, $idp);
 
-					echo $titre .'  '.$texte.'  '.$couleur."\n";
-					echo $ind .'  '.$idp.'  ';
-
-					$existe = projetExist($ind, $idp);
-
-					if($existe != 0)
-						$db->insertProjet($ind, $idp, $ida, $titre, $texte, $couleur);
-					else
-						$db->updateProjet($ind, $idp, $ida, $titre, $texte, $couleur);
-					
+						if($existe != 0) {
+							$db->insertProjet($ind, $idp, $ida, $titre, $texte, $couleur);
+						}
+						else {
+							$db->updateProjet($ind, $idp, $ida, $titre, $texte, $couleur);
+						}
+					}
 				}
 
-				// echo 0;
+				echo 0;
 			} catch(Exception $e) { $e->getMessage(); }
 
 		}

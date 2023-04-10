@@ -212,34 +212,34 @@ function creerRubriqueProjet() {
 
 	var h2 = document.createElement("h2");
 	h2.setAttribute("class", "accordion-header");
-	h2.setAttribute("id", "heading"+nbProjet);
+	h2.setAttribute("id", "heading"+(nbProjet + 1));
 
 	var button = document.createElement("button");
-	button.setAttribute("id", "btnProjet"+nbProjet);
+	button.setAttribute("id", "btnProjet"+(nbProjet + 1));
 	button.setAttribute("class", "accordion-button collapsed fs-5");
 	button.setAttribute("type", "button");
 	button.setAttribute("data-bs-toggle", "collapse");
-	button.setAttribute("data-bs-target", "#collapse"+nbProjet);
+	button.setAttribute("data-bs-target", "#collapse"+(nbProjet + 1));
 	button.setAttribute("aria-expanded", "false");
-	button.setAttribute("aria-controls", "collapse"+nbProjet);
-	button.innerHTML = "Projet n°"+(nbProjet + 1)+" : " + "<input class=\"mx-2\" type=\"text\" id=\"titreProjet"+nbProjet+"\" required><input class=\"mx-2\" type=\"color\" id=\"couleurProjet" + nbProjet + "\" value=\"#ffffff\">";
+	button.setAttribute("aria-controls", "collapse"+(nbProjet + 1));
+	button.innerHTML = "Projet n°"+(nbProjet + 1)+" : " + "<input class=\"mx-2\" type=\"text\" id=\"titreProjet"+(nbProjet+1)+"\" required><input class=\"mx-2\" type=\"color\" id=\"couleurProjet" + (nbProjet+1) + "\" value=\"#ffffff\">";
 
 	var div2 = document.createElement("div");
-	div2.setAttribute("id", "collapse"+nbProjet);
+	div2.setAttribute("id", "collapse"+(nbProjet + 1));
 	div2.setAttribute("class", "accordion-collapse collapse");
-	div2.setAttribute("aria-labelledby", "heading"+nbProjet);
+	div2.setAttribute("aria-labelledby", "heading"+(nbProjet + 1));
 	div2.setAttribute("data-bs-parent", "#accordionProjet");
 
 	var div3 = document.createElement("div");
 	div3.setAttribute("class", "accordion-body");
 
 	var textArea = document.createElement("textarea");
-	textArea.setAttribute("id", "projet"+nbProjet+"");
-	textArea.setAttribute("name", "projet"+nbProjet+"");
+	textArea.setAttribute("id", "projet"+(nbProjet + 1)+"");
+	textArea.setAttribute("name", "projet"+(nbProjet + 1)+"");
 	textArea.setAttribute("required", "");
 	
 	var script = document.createElement("script");
-	script.innerHTML = "simplemdeProjet["+nbProjet+"] = new SimpleMDE({ element: document.getElementById(\"projet"+nbProjet+"\") });";
+	script.innerHTML = "simplemdeProjet["+(nbProjet + 1)+"] = new SimpleMDE({ element: document.getElementById(\"projet"+(nbProjet + 1)+"\") });";
 	
 	div3.appendChild(textArea);
 	div3.appendChild(script);
@@ -250,8 +250,8 @@ function creerRubriqueProjet() {
 	accordionProjet.appendChild(div);
 
 	// Ajout listener sur l'input couleur qui appelle la fonction couleurProjet
-	document.getElementById("couleurProjet" + nbProjet).addEventListener("change", function() {
-		couleurProjet(nbProjet);
+	document.getElementById("couleurProjet" + (nbProjet + 1)).addEventListener("change", function() {
+		couleurProjet((nbProjet + 1));
 	});
 }
 
@@ -320,9 +320,9 @@ function envoieDonner() {
 	var textCompetence = [];
 	var couleurCompetence = [];
 	for (let i = 1; i <= 6; i++) {
-		titreCompetence[i] = document.getElementById("titreCompetence"+i).value;
-		textCompetence[i] = simplemdeComp[i].value();
-		couleurCompetence[i] = document.getElementById("couleurComp"+i).value;
+		titreCompetence[i] = document.getElementById("titreCompetence"+i).value + ";sepComp;";
+		textCompetence[i] = simplemdeComp[i].value() + ";sepComp;";
+		couleurCompetence[i] = document.getElementById("couleurComp"+i).value + ";sepComp;";
 	}
 
 	// Projets
@@ -331,14 +331,15 @@ function envoieDonner() {
 	var textProjet = [];
 	var couleurProjet = [];
 	for (let i = 0; i < nbProjet; i++) {
-		titreProjet[i] = document.getElementById("titreProjet"+(i+1)).value;
-		textProjet[i] = simplemdeProjet[i+1].value();
-		couleurProjet[i] = document.getElementById("couleurProjet"+(i+1)).value;
+		titreProjet[i] = document.getElementById("titreProjet"+(i+1)).value + ";sepProj;";
+		textProjet[i] = simplemdeProjet[i+1].value() + ";sepProj;";
+		couleurProjet[i] = document.getElementById("couleurProjet"+(i+1)).value + ";sepProj;";
 	}
 
+
+	// Licences
 	var licence = "";
 	var licenceText = "";
-	// Licences
 	var select = document.getElementById("selectLicence").value;
 	if (select == "Custom") {
 		licence = "Custom";

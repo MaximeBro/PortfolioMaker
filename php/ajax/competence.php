@@ -13,7 +13,7 @@
 		} else {
 			try {
 				$competences = $db->getCompetences();
-				
+
 				foreach($competences as $competence) {
 					$ida = $competence->getId();
 					$idp = $competence->getIdP();
@@ -32,9 +32,9 @@
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			// Récupération des données venant de creation.js par la méthode POST
-			$titres = explode(",", $_POST['titreCompetence']);
-			$textes = explode(",", $_POST['texteCompetence']);
-			$couleurs = explode(",", $_POST['couleurCompetence']);
+			$titres = explode(";sepComp;", $_POST['titreCompetence']);
+			$textes = explode(";sepComp;", $_POST['texteCompetence']);
+			$couleurs = explode(";sepComp;", $_POST['couleurCompetence']);
 
 			$count = 0;
 			$db = DB::getInstance();
@@ -50,13 +50,20 @@
 				$idp = $_SESSION['idP'];
 				$image = $_SESSION['image'];
 
-				for ($i = 1; $i <= 6; $i++) {
+
+				$nb = count($couleurs);
+				for ($i = 0; $i < $nb; $i++) {
+					$ind = $i + 1;
+
 					$titre = is_null($titres[$i]) ? "" : $titres[$i];
 					$texte = is_null($textes[$i]) ? "" : $textes[$i];
 					$couleur = is_null($couleurs[$i]) ? "" : $couleurs[$i];
 
-					$ind = $i;
 					$existe = competenceExist($ind, $idp);
+
+					if($titre[0] === ',') { $titre = substr($titre, 1); }
+					if($texte[0] === ',') { $texte = substr($texte, 1); }
+					if($couleur[0] === ',') { $couleur = substr($couleur, 1); }
 
 					if($existe != 0)
 						$db->insertCompetence($ind, $idp, $ida, $titre, $texte, $couleur);
